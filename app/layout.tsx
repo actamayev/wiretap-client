@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "../src/styles/globals.css"
 import TailwindIndicator from "../src/components/tailwind-indicator"
+import { youngSerif } from "../src/utils/fonts"
 
 export const viewport: Viewport = {
 	width: "device-width",
@@ -19,6 +20,7 @@ export default function RootLayout({
 		<html
 			lang="en"
 			suppressHydrationWarning
+			className={youngSerif.variable}
 		>
 			<body className="overscroll-none">
 				{children}
