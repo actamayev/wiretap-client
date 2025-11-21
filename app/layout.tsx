@@ -22,7 +22,7 @@ export default function RootLayout({
 			suppressHydrationWarning
 			className={youngSerif.variable}
 		>
-			<body className="overscroll-none">
+			<body className="overscroll-none overflow-hidden">
 				{children}
 				<TailwindIndicator />
 				{process.env.VERCEL_ENV === "production" && (
