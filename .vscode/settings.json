@@ -1,0 +1,31 @@
+{
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact"
+  ],
+  "eslint.enable": true,
+  "eslint.run": "onType",
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "editor.insertSpaces": false,
+  "editor.tabSize": 4,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "cSpell.enabled": true,
+  "cSpell.words": [
+    "COOLDOWN",
+    "shiki"
+  ]
+}

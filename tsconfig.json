@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2022",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,17 +22,45 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      // Add explicit path mapping for your package (fallback)
+      // "@lever-labs/common-ts/*": [
+      //   "./node_modules/@lever-labs/common-ts/dist/src/*"
+      // ]
+    },
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "useUnknownInCatchVariables": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noImplicitThis": true,
+    "verbatimModuleSyntax": false,
+    // Ensure proper resolution of exports
+    "allowImportingTsExtensions": false,
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "tailwind.config.mjs",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "eslint.config.mjs",
+    "postcss.config.js",
+    "next.config.js",
+    "keepalive-worker.js"
+  ]
 }
