@@ -6,7 +6,7 @@ export default function Home(): React.ReactNode {
 		<div className="w-full h-screen relative">
 			<DarkVeil
 				speed={0.8}
-				hueShift={0}
+				tintColor={[0, 65, 220]}
 				noiseIntensity={0}
 				scanlineIntensity={0}
 				scanlineFrequency={5}
