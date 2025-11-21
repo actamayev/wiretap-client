@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { useRef, useEffect } from "react"
 import { Renderer, Program, Mesh, Triangle, Vec2 } from "ogl"
 
@@ -12,7 +13,7 @@ precision lowp float;
 #endif
 uniform vec2 uResolution;
 uniform float uTime;
-uniform float uHueShift;
+uniform vec3 uTintColor;
 uniform float uNoise;
 uniform float uScan;
 uniform float uScanFreq;
@@ -22,17 +23,6 @@ uniform float uWarp;
 
 vec4 buf[8];
 float rand(vec2 c){return fract(sin(dot(c,vec2(12.9898,78.233)))*43758.5453);}
-
-mat3 rgb2yiq=mat3(0.299,0.587,0.114,0.596,-0.274,-0.322,0.211,-0.523,0.312);
-mat3 yiq2rgb=mat3(1.0,0.956,0.621,1.0,-0.272,-0.647,1.0,-1.106,1.703);
-
-vec3 hueShiftRGB(vec3 col,float deg){
-    vec3 yiq=rgb2yiq*col;
-    float rad=radians(deg);
-    float cosh=cos(rad),sinh=sin(rad);
-    vec3 yiqShift=vec3(yiq.x,yiq.y*cosh-yiq.z*sinh,yiq.y*sinh+yiq.z*cosh);
-    return clamp(yiq2rgb*yiqShift,0.0,1.0);
-}
 
 vec4 sigmoid(vec4 x){return 1./(1.+exp(-x));}
 
@@ -65,7 +55,7 @@ void mainImage(out vec4 fragColor,in vec2 fragCoord){
 
 void main(){
     vec4 col;mainImage(col,gl_FragCoord.xy);
-    col.rgb=hueShiftRGB(col.rgb,uHueShift);
+col.rgb*=uTintColor;
     float scanline_val=sin(gl_FragCoord.y*uScanFreq)*0.5+0.5;
     col.rgb*=1.-(scanline_val*scanline_val)*uScan;
     col.rgb+=(rand(gl_FragCoord.xy+uTime)-0.5)*uNoise;
@@ -74,7 +64,7 @@ void main(){
 `
 
 type Props = {
-	hueShift?: number;
+	tintColor?: [number, number, number]; // RGB values 0-255
 	noiseIntensity?: number;
 	scanlineIntensity?: number;
 	speed?: number;
@@ -84,7 +74,7 @@ type Props = {
 };
 
 export default function DarkVeil({
-	hueShift = 0,
+	tintColor = [255, 255, 255],
 	noiseIntensity = 0,
 	scanlineIntensity = 0,
 	speed = 0.5,
@@ -111,7 +101,7 @@ export default function DarkVeil({
 			uniforms: {
 				uTime: { value: 0 },
 				uResolution: { value: new Vec2() },
-				uHueShift: { value: hueShift },
+				uTintColor: { value: [tintColor[0] / 255, tintColor[1] / 255, tintColor[2] / 255] },
 				uNoise: { value: noiseIntensity },
 				uScan: { value: scanlineIntensity },
 				uScanFreq: { value: scanlineFrequency },
@@ -136,7 +126,7 @@ export default function DarkVeil({
 
 		const loop = () => {
 			program.uniforms.uTime.value = ((performance.now() - start) / 1000) * speed
-			program.uniforms.uHueShift.value = hueShift
+			program.uniforms.uTintColor.value = [tintColor[0] / 255, tintColor[1] / 255, tintColor[2] / 255]
 			program.uniforms.uNoise.value = noiseIntensity
 			program.uniforms.uScan.value = scanlineIntensity
 			program.uniforms.uScanFreq.value = scanlineFrequency
@@ -151,6 +141,6 @@ export default function DarkVeil({
 			cancelAnimationFrame(frame)
 			window.removeEventListener("resize", resize)
 		}
-	}, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale])
+	}, [noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, tintColor])
 	return <canvas ref={ref} className="w-full h-full block" />
 }
