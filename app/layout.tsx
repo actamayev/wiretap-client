@@ -8,7 +8,7 @@ import { youngSerif } from "../src/utils/fonts"
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
-	themeColor: "#003da5",
+	themeColor: "#0042dc",
 }
 
 export default function RootLayout({
