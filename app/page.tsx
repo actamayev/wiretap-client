@@ -3,7 +3,7 @@ import DarkVeil from "../src/components/DarkVeil"
 
 export default function Home(): React.ReactNode {
 	return (
-		<div className="w-full h-screen relative">
+		<div className="w-full h-dvh relative">
 			<DarkVeil
 				speed={0.8}
 				tintColor={[0, 65, 220]}
