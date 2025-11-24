@@ -81,15 +81,6 @@ export function createMetadata({
 		creator: "Wiretap",
 		publisher: "Wiretap",
 
-		// Add icons configuration
-		icons: {
-			icon: [
-				{ url: "/favicon.ico", sizes: "32x32 16x16", type: "image/x-icon" },
-				{ url: "/favicon.svg", type: "image/svg+xml" },
-			],
-			apple: "/apple-touch-icon.png",
-		},
-
 		// Add manifest
 		manifest: "/manifest.webmanifest",
 
