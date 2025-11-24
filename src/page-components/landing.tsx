@@ -24,7 +24,15 @@ export default function Landing(): React.ReactNode {
 				warpAmount={0.5}
 			/>
 			<div className="absolute inset-0 flex items-center justify-center">
-				<h1 className="text-4xl font-bold text-white">Wiretap</h1>
+				<h1 className="text-8xl font-bold text-white">
+					Wiretap
+					<span
+						className="text-2xl font-normal leading-none relative inline-block"
+						style={{ verticalAlign: "top", marginLeft: "0.25em", top: "1em" }}
+					>
+						BETA
+					</span>
+				</h1>
 			</div>
 		</div>
 	)
