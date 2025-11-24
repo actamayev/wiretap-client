@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import { createMetadata } from "../../src/utils/seo/create-metadata"
+import DashboardPage from "../../src/page-components/dashboard"
 
 export const metadata = createMetadata({
 	title: "Wiretap | Dashboard",
@@ -10,8 +11,6 @@ export const metadata = createMetadata({
 
 export default function Dashboard(): React.ReactNode {
 	return (
-		<div className="w-full h-dvh relative overflow-hidden">
-			<h1 className="text-4xl font-bold text-white">Dashboard</h1>
-		</div>
+		<DashboardPage />
 	)
 }
