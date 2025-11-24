@@ -112,8 +112,8 @@ export default function DarkVeil({
 		const mesh = new Mesh(gl, { geometry, program })
 
 		const resize = () => {
-			const w = parent.clientWidth,
-				h = parent.clientHeight
+			const w = Math.max(parent.clientWidth, window.innerWidth),
+				h = Math.max(parent.clientHeight, window.innerHeight)
 			renderer.setSize(w * resolutionScale, h * resolutionScale)
 			program.uniforms.uResolution.value.set(w, h)
 		}
@@ -142,5 +142,5 @@ export default function DarkVeil({
 			window.removeEventListener("resize", resize)
 		}
 	}, [noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, tintColor])
-	return <canvas ref={ref} className="w-full h-full block" />
+	return <canvas ref={ref} className="absolute inset-0 w-full h-full block" />
 }
