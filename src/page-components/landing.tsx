@@ -27,7 +27,7 @@ export default function Landing(): React.ReactNode {
 				<h1 className="text-8xl font-bold text-white">
 					Wiretap
 					<span
-						className="text-2xl font-normal leading-none relative inline-block"
+						className="text-xs sm:text-sm md:text-base lg:text-xl xl:text-2xl font-normal leading-none relative inline-block"
 						style={{ verticalAlign: "top", marginLeft: "0.25em", top: "1em" }}
 					>
 						BETA
