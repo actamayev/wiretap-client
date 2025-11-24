@@ -10,3 +10,4 @@ To scan the whole repo for unused exports:
 
 TODO:
 - Add back proxy.ts
+- Button: https://reactbits.dev/animations/star-border
