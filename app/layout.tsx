@@ -1,10 +1,20 @@
-import { Viewport } from "next"
+import { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "../src/styles/globals.css"
 import Providers from "./providers"
 import { youngSerif } from "../src/utils/fonts"
 import TailwindIndicator from "../src/components/tailwind-indicator"
+
+export const metadata: Metadata = {
+	icons: {
+		icon: [
+			{ url: "/favicon.ico", sizes: "32x32 16x16", type: "image/x-icon" },
+			{ url: "/favicon.svg", type: "image/svg+xml" },
+		],
+		apple: "/apple-touch-icon.png",
+	},
+}
 
 export const viewport: Viewport = {
 	width: "device-width",
