@@ -1,30 +1,37 @@
-"use client"
-import DarkVeil from "../src/components/DarkVeil"
+import Landing from "../src/page-components/landing"
+import { structuredData } from "../src/utils/seo/landing-data"
+import { createMetadata } from "../src/utils/seo/create-metadata"
+
+export const metadata = createMetadata({
+	title: "Wiretap | Bloomberg Terminal for Prediction Markets",
+	// eslint-disable-next-line max-len
+	description: "We give prediction market traders an unfair advantage. Aggregate thousands of real-time sources and get breaking news to your feed within seconds. Personalized for your events, built for power users.",
+	path: "/",
+	keywords: [
+		"prediction markets",
+		"trading intelligence",
+		"real-time news",
+		"market data",
+		"bloomberg terminal",
+		"trading tools",
+		"news aggregation",
+		"market intelligence",
+		"breaking news",
+		"trading platform"
+	],
+	needsWiretapSuffix: false
+})
 
 export default function Home(): React.ReactNode {
 	return (
-		<div
-			className="absolute overflow-hidden"
-			style={{
-				top: "calc(-1 * env(safe-area-inset-top, 0px))",
-				left: "calc(-1 * env(safe-area-inset-left, 0px))",
-				right: "calc(-1 * env(safe-area-inset-right, 0px))",
-				bottom: "calc(-1 * env(safe-area-inset-bottom, 0px))",
-				width: "calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))",
-				height: "calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))",
-			}}
-		>
-			<DarkVeil
-				speed={0.8}
-				tintColor={[0, 65, 220]}
-				noiseIntensity={0}
-				scanlineIntensity={0}
-				scanlineFrequency={5}
-				warpAmount={0.5}
+		<>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify(structuredData)
+				}}
 			/>
-			<div className="absolute inset-0 flex items-center justify-center">
-				<h1 className="text-4xl font-bold text-white">Wiretap</h1>
-			</div>
-		</div>
+			<Landing />
+		</>
 	)
 }
