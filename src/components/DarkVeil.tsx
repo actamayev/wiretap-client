@@ -81,7 +81,7 @@ export default function DarkVeil({
 	scanlineFrequency = 0,
 	warpAmount = 0,
 	resolutionScale = 1
-}: Props) {
+}: Props): React.ReactNode {
 	const ref = useRef<HTMLCanvasElement>(null)
 	useEffect(() => {
 		const canvas = ref.current as HTMLCanvasElement
@@ -138,7 +138,7 @@ export default function DarkVeil({
 
 		loop()
 
-		return () => {
+		return (): void => {
 			cancelAnimationFrame(frame)
 			window.removeEventListener("resize", resize)
 		}
