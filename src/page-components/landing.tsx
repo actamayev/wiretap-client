@@ -23,16 +23,25 @@ export default function Landing(): React.ReactNode {
 				scanlineFrequency={5}
 				warpAmount={0.5}
 			/>
-			<div className="absolute inset-0 flex items-center justify-center">
-				<h1 className="text-8xl font-bold text-white">
-					Wiretap
-					<span
-						className="text-xs sm:text-sm md:text-base lg:text-xl xl:text-2xl font-normal leading-none relative inline-block"
-						style={{ verticalAlign: "top", marginLeft: "0.25em", top: "1em" }}
-					>
-						BETA
-					</span>
-				</h1>
+			<div className="absolute inset-0 flex flex-col items-center justify-center">
+				<div className="flex flex-col items-center">
+					<h1 className="text-8xl font-bold text-white">
+						Wiretap
+						<span
+							className={
+								"text-xs sm:text-sm md:text-base lg:text-xl xl:text-2xl font-normal leading-none relative inline-block"
+							}
+							style={{
+								verticalAlign: "top",
+								marginLeft: "0.25em",
+								top: "1em",
+							}}
+						>
+							BETA
+						</span>
+					</h1>
+					<p className="text-white text-lg mt-4">Polymarket paper trading</p>
+				</div>
 			</div>
 		</div>
 	)
