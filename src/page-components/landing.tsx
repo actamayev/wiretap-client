@@ -1,6 +1,7 @@
 "use client"
 
 import DarkVeil from "../components/DarkVeil"
+import SubscribeForUpdatesForm from "../components/subscribe-for-updates-form"
 
 export default function Landing(): React.ReactNode {
 	return (
@@ -24,7 +25,7 @@ export default function Landing(): React.ReactNode {
 				warpAmount={0.5}
 			/>
 			<div className="absolute inset-0 flex flex-col items-center justify-center">
-				<div className="flex flex-col items-center">
+				<div className="flex flex-col items-center mb-6">
 					<h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white">
 						Wiretap
 						<span
@@ -42,6 +43,7 @@ export default function Landing(): React.ReactNode {
 					</h1>
 					<p className="text-white text-base lg:text-lg xl:text-lg mt-4">Polymarket paper trading</p>
 				</div>
+				<SubscribeForUpdatesForm />
 			</div>
 		</div>
 	)
