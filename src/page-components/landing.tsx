@@ -25,7 +25,7 @@ export default function Landing(): React.ReactNode {
 			/>
 			<div className="absolute inset-0 flex flex-col items-center justify-center">
 				<div className="flex flex-col items-center">
-					<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white">
+					<h1 className="text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white">
 						Wiretap
 						<span
 							className={
@@ -40,7 +40,7 @@ export default function Landing(): React.ReactNode {
 							BETA
 						</span>
 					</h1>
-					<p className="text-white text-xs sm:text-sm md:text-base lg:text-lg xl:text-lg mt-4">Polymarket paper trading</p>
+					<p className="text-white text-base lg:text-lg xl:text-lg mt-4">Polymarket paper trading</p>
 				</div>
 			</div>
 		</div>
