@@ -3,21 +3,18 @@ import { structuredData } from "../src/utils/seo/landing-data"
 import { createMetadata } from "../src/utils/seo/create-metadata"
 
 export const metadata = createMetadata({
-	title: "Wiretap | Bloomberg Terminal for Prediction Markets",
+	title: "Wiretap | Paper trading for Polymarket",
 	// eslint-disable-next-line max-len
 	description: "We give prediction market traders an unfair advantage. Aggregate thousands of real-time sources and get breaking news to your feed within seconds. Personalized for your events, built for power users.",
 	path: "/",
 	keywords: [
 		"prediction markets",
 		"trading intelligence",
-		"real-time news",
 		"market data",
-		"bloomberg terminal",
+		"polymarket",
+		"paper trading",
 		"trading tools",
-		"news aggregation",
-		"market intelligence",
-		"breaking news",
-		"trading platform"
+		"market intelligence"
 	],
 	needsWiretapSuffix: false
 })
