@@ -9,10 +9,16 @@ import { Button } from "@/components/ui/button"
 
 export default function SubscribeForUpdatesForm(): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
+	const [success, setSuccess] = useState(false)
 
 	const onSubmit = useCallback(async (values: EmailUpdatesRequest): Promise<void> => {
 		if (isLoading) return
-		await subscribeForUpdates(values, setIsLoading)
+		const successResponse = await subscribeForUpdates(values, setIsLoading)
+		if (successResponse) {
+			setSuccess(true)
+		} else {
+			setSuccess(false)
+		}
 	}, [isLoading])
 
 	const form = useForm<EmailUpdatesRequest>({
@@ -27,6 +33,12 @@ export default function SubscribeForUpdatesForm(): React.ReactNode {
 		return isEmailValid(formValues.email) === "Email"
 	}, [formValues.email])
 
+	const buttonText = useMemo((): string => {
+		if (isLoading) return "Subscribing..."
+		if (success) return "Subscribed!"
+		return "Get early access"
+	}, [isLoading, success])
+
 	return (
 		<div className="text-white">
 			<form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
@@ -38,9 +50,9 @@ export default function SubscribeForUpdatesForm(): React.ReactNode {
 				/>
 				<Button
 					type="submit"
-					disabled={isLoading || !isEmailValidMemo}
+					disabled={isLoading || !isEmailValidMemo || success}
 					className="bg-white text-black hover:bg-white/90 hover:cursor-pointer duration-0">
-					{isLoading ? "Subscribing..." : "Get early access"}
+					{buttonText}
 				</Button>
 			</form>
 			{form.formState.errors.email && (
