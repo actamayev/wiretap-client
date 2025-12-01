@@ -4,7 +4,7 @@ import typescriptParser from "@typescript-eslint/parser"
 import react from "eslint-plugin-react"
 import reactHooks from "eslint-plugin-react-hooks"
 
-const eslintConfig = [
+export default [
 	{
 		ignores: [
 			"node_modules/**",
@@ -210,5 +210,3 @@ const eslintConfig = [
 		},
 	},
 ]
-
-export default eslintConfig
