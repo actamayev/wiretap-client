@@ -41,7 +41,7 @@ export default function Landing(): React.ReactNode {
 							BETA
 						</span>
 					</h1>
-					<p className="text-white text-base lg:text-lg xl:text-lg mt-4">Polymarket paper trading</p>
+					<p className="text-white text-base lg:text-lg xl:text-lg mt-4">Paper trading for Polymarket</p>
 				</div>
 				<SubscribeForUpdatesForm />
 			</div>
