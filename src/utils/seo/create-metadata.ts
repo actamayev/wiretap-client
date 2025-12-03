@@ -3,14 +3,13 @@ import { Metadata } from "next"
 
 const BASE_URL = "https://wiretap.pro"
 
-const DEFAULT_OG_IMAGE = "/og-default.jpg"
+const DEFAULT_OG_IMAGE = "/logo512.png"
 
-// Static keywords that appear on every page
 const STATIC_KEYWORDS = [
 	"prediction markets",
-	"wiretap",
+	"polymarket",
+	"paper trading",
 	"trading tools",
-	"real-time news",
 	"market intelligence"
 ] as const
 
