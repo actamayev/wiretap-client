@@ -5,12 +5,10 @@ const organizationSchema = {
 	"@type": "Organization",
 	"name": "Wiretap",
 	"alternateName": [
-		"Wiretap Trading Intelligence",
+		"Wiretap Paper Trading",
 		"Wiretap Pro",
-		"Wiretap Prediction Markets",
-		"Wiretap Trading",
-		"Wiretap News",
-		"Wiretap Market Data"
+		"Wiretap Polymarket",
+		"Wiretap Trading Simulator"
 	],
 	"url": "https://wiretap.pro",
 	"logo": {
@@ -20,8 +18,8 @@ const organizationSchema = {
 		"height": 512
 	},
 
-	"description": "Bloomberg Terminal for prediction markets. Real-time news aggregation and market intelligence platform designed to give prediction market traders an unfair advantage.",
-	"slogan": "We give prediction market traders an unfair advantage",
+	"description": "Paper trading platform for Polymarket. Improve your trading strategy without risking real money. Paper trade until you're not a joke.",
+	"slogan": "Paper trade on Wiretap until you're not a joke",
 	"foundingDate": "2025",
 
 	// Contact information
@@ -43,22 +41,22 @@ const organizationSchema = {
 	// What you offer
 	"offers": {
 		"@type": "Offer",
-		"category": "Trading Intelligence Software",
-		"description": "Real-time news aggregation and market intelligence platform for prediction market traders"
+		"category": "Trading Software",
+		"description": "Paper trading platform for Polymarket where traders improve their strategies without risking real money"
 	},
 
 	// Target audience
 	"audience": {
 		"@type": "BusinessAudience",
-		"audienceType": "Prediction Market Traders, Power Users, Professional Traders"
+		"audienceType": "Polymarket Traders, Aspiring Traders, Trading Enthusiasts"
 	},
 
 	// Business categories
 	"knowsAbout": [
+		"Polymarket",
+		"Paper Trading",
 		"Prediction Markets",
-		"Trading Intelligence",
-		"Real-time News Aggregation",
-		"Market Data",
+		"Trading Simulation",
 		"Financial Technology",
 		"Trading Tools"
 	],
@@ -76,7 +74,7 @@ const websiteSchema = {
 	"@type": "WebSite",
 	"name": "Wiretap",
 	"url": "https://wiretap.pro",
-	"description": "Bloomberg Terminal for prediction markets. Real-time news aggregation and market intelligence.",
+	"description": "Paper trading platform for Polymarket. Improve your trading strategy without risking real money.",
 	"publisher": {
 		"@type": "Organization",
 		"name": "Wiretap"
@@ -97,22 +95,21 @@ const softwareApplicationSchema = {
 	"@context": "https://schema.org",
 	"@type": "SoftwareApplication",
 	"name": "Wiretap",
-	"description": "Real-time news aggregation platform that aggregates thousands of sources to deliver breaking news to your feed within seconds. Personalized for your events and built for power users.",
+	"description": "Paper trading platform for Polymarket where you can practice and improve your trading strategy without risking real money. Get better before you go broke.",
 	"applicationCategory": "Trading Software",
 	"operatingSystem": "Web",
 	"offers": {
 		"@type": "Offer",
 		"price": "0",
 		"priceCurrency": "USD",
-		"availability": "https://schema.org/InStock",
+		"availability": "https://schema.org/PreOrder",
 		"url": "https://wiretap.pro"
 	},
 	"featureList": [
-		"Real-time news aggregation from thousands of sources",
-		"Breaking news delivered within seconds",
-		"Summarized headlines for faster decision-making",
-		"Personalized event tracking",
-		"Built for power users"
+		"Paper trading on Polymarket markets",
+		"Risk-free trading practice",
+		"Improve your trading strategy",
+		"Track your performance"
 	],
 	"screenshot": "https://wiretap.pro/screenshot.png"
 }
@@ -121,13 +118,13 @@ const softwareApplicationSchema = {
 const serviceSchema = {
 	"@context": "https://schema.org",
 	"@type": "Service",
-	"name": "Wiretap Trading Intelligence",
-	"description": "Ears to the ground, so you don't have to. We aggregate thousands of real-time sources to get you the information you need to make your best trades.",
+	"name": "Wiretap Paper Trading",
+	"description": "Paper trade on Polymarket until you're not a joke. Improve your trading strategy without risking real money.",
 	"provider": {
 		"@type": "Organization",
 		"name": "Wiretap"
 	},
-	"serviceType": "Trading Intelligence Service",
+	"serviceType": "Trading Service",
 	"areaServed": {
 		"@type": "Country",
 		"name": "United States"
@@ -140,24 +137,16 @@ const serviceSchema = {
 				"@type": "Offer",
 				"itemOffered": {
 					"@type": "Service",
-					"name": "Real-time News Aggregation",
-					"description": "Aggregate thousands of real-time sources into your personalized feed"
+					"name": "Paper Trading on Polymarket",
+					"description": "Practice trading on Polymarket markets without risking real money"
 				}
 			},
 			{
 				"@type": "Offer",
 				"itemOffered": {
 					"@type": "Service",
-					"name": "Event Tracking",
-					"description": "Select events to track and get real-time news relating to your events"
-				}
-			},
-			{
-				"@type": "Offer",
-				"itemOffered": {
-					"@type": "Service",
-					"name": "News Delivery Within Seconds",
-					"description": "Breaking news to your feed within seconds"
+					"name": "Performance Tracking",
+					"description": "Track your paper trading performance and see what works"
 				}
 			}
 		]
@@ -174,15 +163,15 @@ const faqSchema = {
 			"name": "What is Wiretap?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap is a Bloomberg Terminal for prediction markets. We aggregate thousands of real-time sources to deliver breaking news to your feed within seconds, giving prediction market traders an unfair advantage."
+				"text": "Wiretap is a paper trading platform for Polymarket. Paper trade until you're not a joke. Improve your trading strategy without risking real money."
 			}
 		},
 		{
 			"@type": "Question",
-			"name": "How fast is Wiretap's news delivery?",
+			"name": "When does Wiretap beta open?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "We deliver breaking news to your feed within seconds. Our platform aggregates and summarizes live news from thousands of sources in real-time."
+				"text": "Wiretap beta opens December 10th. Sign up at wiretap.pro to get access to paper trading on Polymarket markets."
 			}
 		},
 		{
@@ -190,7 +179,7 @@ const faqSchema = {
 			"name": "How does Wiretap work?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap works in two simple steps: 1) Select events to track, and 2) Get real-time news relating to your events. We aggregate thousands of sources, summarize the information, and deliver it to your personalized feed instantly."
+				"text": "Wiretap lets you paper trade on Polymarket markets without risking real money. Practice your trading strategy and improve before you go broke with real trades."
 			}
 		},
 		{
@@ -198,7 +187,7 @@ const faqSchema = {
 			"name": "What makes Wiretap different?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap aggregates data from thousands of sources, condenses live news into summarized headlines that help you make decisions faster, and does this all within seconds. It's personalized for your events and built for power users."
+				"text": "Wiretap is built specifically for Polymarket paper trading. If your Polymarket strategy is hope and vibes, that's why you're broke. Wiretap helps you improve your trading before risking real money."
 			}
 		},
 		{
@@ -206,7 +195,7 @@ const faqSchema = {
 			"name": "Who is Wiretap for?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap is built for power users and prediction market traders who need real-time information to make the best trades. If you need foresight into what happens right when it happens, Wiretap is for you."
+				"text": "Wiretap is for anyone trading on Polymarket who wants to improve. If you're tired of losing money because your strategy is hope and vibes, Wiretap helps you practice until you're not a joke."
 			}
 		},
 		{

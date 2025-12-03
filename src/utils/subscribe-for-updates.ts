@@ -5,6 +5,7 @@ import isEqual from "lodash-es/isEqual"
 import wiretapApiClient from "../classes/wiretap-api-client-class"
 import { isMessageResponse, isNonSuccessResponse } from "./type-checks"
 
+// eslint-disable-next-line complexity
 export default async function subscribeForUpdates(
 	values: EmailUpdatesRequest,
 	setIsLoading: (value: React.SetStateAction<boolean>) => void
