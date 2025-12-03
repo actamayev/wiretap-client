@@ -83,7 +83,7 @@ export default function DarkVeil({
 	resolutionScale = 1
 }: Props): React.ReactNode {
 	const ref = useRef<HTMLCanvasElement>(null)
-	useEffect(() => {
+	useEffect((): ()=> void => {
 		const canvas = ref.current as HTMLCanvasElement
 		const parent = canvas.parentElement as HTMLElement
 
@@ -111,7 +111,7 @@ export default function DarkVeil({
 
 		const mesh = new Mesh(gl, { geometry, program })
 
-		const resize = () => {
+		const resize = (): void => {
 			// Use the parent's actual dimensions which include safe areas
 			const w = parent.offsetWidth || parent.clientWidth || window.innerWidth
 			const h = parent.offsetHeight || parent.clientHeight || window.innerHeight
@@ -125,7 +125,7 @@ export default function DarkVeil({
 		const start = performance.now()
 		let frame = 0
 
-		const loop = () => {
+		const loop = (): void => {
 			program.uniforms.uTime.value = ((performance.now() - start) / 1000) * speed
 			program.uniforms.uTintColor.value = [tintColor[0] / 255, tintColor[1] / 255, tintColor[2] / 255]
 			program.uniforms.uNoise.value = noiseIntensity

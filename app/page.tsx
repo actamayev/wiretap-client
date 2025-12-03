@@ -4,8 +4,7 @@ import { createMetadata } from "../src/utils/seo/create-metadata"
 
 export const metadata = createMetadata({
 	title: "Wiretap | Paper trading on Polymarket",
-	// eslint-disable-next-line max-len
-	description: "We give prediction market traders an unfair advantage. Aggregate thousands of real-time sources and get breaking news to your feed within seconds. Personalized for your events, built for power users.",
+	description: "Paper trade on Polymarket",
 	path: "/",
 	keywords: [
 		"prediction markets",
