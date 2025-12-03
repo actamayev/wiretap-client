@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import subscribeForUpdates from "../utils/subscribe-for-updates"
 import { useForm } from "react-hook-form"
 import { emailUpdatesSchema } from "../utils/auth/auth-schemas"
@@ -11,11 +11,14 @@ export default function SubscribeForUpdatesForm(): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 	const [success, setSuccess] = useState(false)
 
+	const successfulEmailRef = useRef<string>("")
+
 	const onSubmit = useCallback(async (values: EmailUpdatesRequest): Promise<void> => {
 		if (isLoading) return
 		const successResponse = await subscribeForUpdates(values, setIsLoading)
 		if (successResponse) {
 			setSuccess(true)
+			successfulEmailRef.current = values.email
 		} else {
 			setSuccess(false)
 		}
@@ -29,6 +32,13 @@ export default function SubscribeForUpdatesForm(): React.ReactNode {
 	})
 
 	const formValues = form.watch()
+
+	// Clear success state when user starts typing
+	useEffect((): void => {
+		if (!success || formValues.email === successfulEmailRef.current) return
+		setSuccess(false)
+	}, [formValues.email, success])
+
 	const isEmailValidMemo = useMemo((): boolean => {
 		return isEmailValid(formValues.email) === "Email"
 	}, [formValues.email])
