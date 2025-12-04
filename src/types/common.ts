@@ -17,6 +17,9 @@ declare global {
 		exp?: number
 	}
 
+	type FundsUUID = UUID & { readonly __brand: unique symbol }
+	type EventUUID = UUID & { readonly __brand: unique symbol }
+
 	type ContractUUID = UUID & { readonly __brand: unique symbol }
 
 	interface TransactionResponse {
@@ -25,25 +28,50 @@ declare global {
 	}
 
 	interface CommonTransactionFields {
-		contractUUID: ContractUUID
+		outcomeId: number
 		transactionDate: Date
+		marketQuestion: string
 	}
 
 	interface PurchaseOrder extends CommonTransactionFields {
+		outcomeId: number
 		numberContractsPurchased: number
+		marketQuestion: string
 	}
 
 	interface SaleOrder extends CommonTransactionFields {
+		outcomeId: number
 		numberContractsSold: number
+		marketQuestion: string
 	}
 
 	interface SinglePosition {
-		contractUUID: ContractUUID
+		outcomeId: number
+		marketQuestion: string
 		numberOfContractsHeld: number
+	}
+
+	interface SingleFund {
+		fundUUID: FundsUUID
+		fundName: string
+		startingAccountBalanceUsd: number
+		currentAccountBalanceUsd: number
 	}
 
 	interface PositionsResponse {
 		positions: SinglePosition[]
+	}
+
+	interface AllMyFundsResponse {
+		funds: SingleFund[]
+	}
+
+	interface SingleFundResponse {
+		singleFund: SingleFund | null
+	}
+
+	interface CreateFundResponse {
+		fundUUID: FundsUUID
 	}
 
 	interface IncomingLoginRequest {
@@ -75,8 +103,43 @@ declare global {
 		email: string
 	}
 
+	interface SuccessBuyOrderResponse {
+		success: "Buy order executed successfully"
+		pricePerContract: number
+		totalCost: number
+		newAccountBalance: number
+	}
+
+	interface SuccessSellOrderResponse {
+		success: "Sell order executed successfully"
+		saleId: number
+		positionClosed: boolean
+		contractsSold: number
+		pricePerContract: number
+		totalProceeds: number
+		realizedPnl: number
+		newAccountBalance: number
+	}
+
 	interface EmailUpdatesRequest {
 		email: string
+	}
+
+	interface LoginSuccess {
+		personalInfo: BasicPersonalInfoResponse
+	}
+
+	interface IncomingCreateFundRequest {
+		fundName: string
+		startingAccountBalanceUsd: number
+	}
+
+	interface SingleEvent {
+		eventUUID: EventUUID
+		eventName: string
+		eventDescription: string
+		eventImage: string
+		eventLink: string
 	}
 }
 

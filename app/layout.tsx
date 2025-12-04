@@ -35,9 +35,9 @@ export default function RootLayout({
 		<html
 			lang="en"
 			suppressHydrationWarning
-			className={youngSerif.variable}
+			className={`${youngSerif.variable} dark`}
 		>
-			<body className="overscroll-none overflow-hidden">
+			<body className="overflow-hidden">
 				<Providers>
 					{children}
 				</Providers>
