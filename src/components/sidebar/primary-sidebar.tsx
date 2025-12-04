@@ -13,6 +13,12 @@ export default function PrimarySidebar(): React.ReactNode {
 	const isPrivatePage = PrivatePageNames.some((privatePage): boolean => {
 		// Exact match for most pages
 		if (pathname === privatePage) return true
+		if (
+			(privatePage === "/events" || privatePage === "/funds") &&
+			pathname.startsWith(privatePage + "/")
+		) {
+			return true
+		}
 
 		return false
 	})
