@@ -19,13 +19,13 @@ const baseNavData: SidebarNavData[] = [
 		title: "Events",
 		url: "/events",
 		icon: Map,
-		textColor: "text-black"
+		textColor: "text-white"
 	},
 	{
 		title: "Funds",
 		url: "/funds",
 		icon: Briefcase,
-		textColor: "text-black"
+		textColor: "text-white"
 	},
 ]
 

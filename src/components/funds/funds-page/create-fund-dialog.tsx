@@ -13,7 +13,7 @@ import { Input } from "../../ui/input"
 import { handleTypeNumber } from "../../../utils/handle-type-validation/handle-type-fields"
 import createFund from "../../../utils/funds/create-fund"
 
-function CreateFundsDialog(): React.ReactNode {
+function CreateFundDialog(): React.ReactNode {
 	return (
 		<Dialog open={fundsClass.isCreateFundDialogOpen} onOpenChange={fundsClass.setIsCreateFundDialogOpen}>
 			<DialogContent className="w-96 border-none" onClick={(e): void => e.stopPropagation()}>
@@ -23,20 +23,26 @@ function CreateFundsDialog(): React.ReactNode {
 				</DialogHeader>
 				<Input
 					id="fundName"
-					value={fundsClass.createFundData?.fundName}
+					value={fundsClass.createFundData.fundName}
 					onChange={(e): void => fundsClass.setCreateFundKey("fundName", e.target.value)}
 					placeholder="Fund name"
 					className="w-full text-xl! h-10"
 					maxLength={50}
 				/>
 				<Input
-					type="number"
+					type="text"
 					inputMode="numeric"
 					placeholder="Starting account balance (USD)"
-					value={fundsClass.createFundData?.startingAccountBalanceUsd?.toString() || ""}
+					value={
+						fundsClass.createFundData.startingAccountBalanceUsd === 0
+							? ""
+							: fundsClass.createFundData.startingAccountBalanceUsd.toString()
+					}
 					onChange={(e): void => {
 						const sanitizedValue = handleTypeNumber(e)
-						fundsClass.setCreateFundKey("startingAccountBalanceUsd", Number(sanitizedValue))
+						// Convert to number, or keep as 0 if empty
+						const numValue = sanitizedValue === "" ? 0 : Number(sanitizedValue)
+						fundsClass.setCreateFundKey("startingAccountBalanceUsd", numValue)
 					}}
 					className="w-full h-12 rounded-xl text-xl! font-light border-2 bg-polar shadow-none border-swan"
 					maxLength={3}
@@ -49,7 +55,12 @@ function CreateFundsDialog(): React.ReactNode {
 						CANCEL
 					</Button>
 					<Button
-						onClick={(): void => void createFund()}
+						onClick={async (): Promise<void> => {
+							const fundUUID = await createFund()
+							if (fundUUID !== undefined) {
+								fundsClass.setIsCreateFundDialogOpen(false)
+							}
+						}}
 						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan">
 						CREATE
 					</Button>
@@ -59,4 +70,4 @@ function CreateFundsDialog(): React.ReactNode {
 	)
 }
 
-export default observer(CreateFundsDialog)
+export default observer(CreateFundDialog)

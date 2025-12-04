@@ -6,32 +6,32 @@ import AuthenticatedLayout from "../../../src/components/layouts/authenticated-l
 
 interface SandboxProjectPageProps {
 	params: Promise<{
-		fundUUID: FundsUUID
+		fundId: FundsUUID
 	}>
 }
 
 export async function generateMetadata({ params }: SandboxProjectPageProps): Promise<Metadata> {
-	const { fundUUID } = await params
+	const { fundId } = await params
 	return createMetadata({
 		title: "Fund",
 		description: "View and manage your fund",
-		path: `/funds/${fundUUID}`,
+		path: `/funds/${fundId}`,
 		keywords: ["funds", "management", "investments"]
 	})
 }
 
 export default async function CustomSandboxProjectPage({ params }: SandboxProjectPageProps): Promise<React.ReactNode> {
-	const { fundUUID } = await params
+	const { fundId } = await params
 
 	// Basic validation - adjust regex based on your UUID format
 
-	if (!fundUUID || !/^[a-fA-F0-9-]{36}$/.test(fundUUID)) {
+	if (!fundId || !/^[a-fA-F0-9-]{36}$/.test(fundId)) {
 		notFound()
 	}
 
 	return (
 		<AuthenticatedLayout>
-			<SingleFundPage fundUUID={fundUUID} />
+			<SingleFundPage fundId={fundId} />
 		</AuthenticatedLayout>
 	)
 }

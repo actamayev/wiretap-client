@@ -1,3 +1,4 @@
+"use client"
 import { observer } from "mobx-react"
 import { useEffect, useMemo } from "react"
 import isUndefined from "lodash-es/isUndefined"
@@ -5,17 +6,17 @@ import authClass from "../../../classes/auth-class"
 import fundsClass from "../../../classes/funds-class"
 import retrieveSingleFund from "../../../utils/funds/retrieve-single-fund"
 
-function SingleFundPage({ fundUUID }: { fundUUID: FundsUUID}): React.ReactNode {
+function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 	useEffect((): void => {
-		void retrieveSingleFund(fundUUID)
+		void retrieveSingleFund(fundId)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fundUUID, authClass.isFinishedWithSignup])
+	}, [fundId, authClass.isFinishedWithSignup])
 
-	const isLoading = fundsClass.isRetrievingSingleFund(fundUUID)
+	const isLoading = fundsClass.isRetrievingSingleFund(fundId)
 	const fund = useMemo((): SingleFund | undefined => {
-		return fundsClass.funds.get(fundUUID)
+		return fundsClass.funds.get(fundId)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fundUUID, fundsClass.funds.size])
+	}, [fundId, fundsClass.funds.size])
 
 	useEffect((): void => {
 		document.title = `${fund?.fundName} | Wiretap`
@@ -27,7 +28,13 @@ function SingleFundPage({ fundUUID }: { fundUUID: FundsUUID}): React.ReactNode {
 
 	return (
 		<div>
-			{fund.fundName}
+			<h1 className="text-2xl font-bold">{fund.fundName}</h1>
+			<p className="text-sm text-gray-500">
+				Starting balance: ${fund.startingAccountBalanceUsd}
+			</p>
+			<p className="text-sm text-gray-500">
+				Current balance: ${fund.currentAccountBalanceUsd}
+			</p>
 		</div>
 	)
 }

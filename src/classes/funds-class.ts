@@ -9,7 +9,10 @@ class FundsClass {
 	public retrievingSingleFunds: Map<FundsUUID, boolean> = new Map()
 	public funds: Map<FundsUUID, SingleFund> = new Map()
 	public isCreateFundDialogOpen = false
-	public createFundData: IncomingCreateFundRequest | undefined = undefined
+	public createFundData: IncomingCreateFundRequest = {
+		fundName: "",
+		startingAccountBalanceUsd: 0
+	}
 
 	constructor() {
 		makeAutoObservable(this)
@@ -17,6 +20,12 @@ class FundsClass {
 
 	public setIsCreateFundDialogOpen = action((newIsCreateFundDialogOpen: boolean): void => {
 		this.isCreateFundDialogOpen = newIsCreateFundDialogOpen
+		if (newIsCreateFundDialogOpen) return
+		// Reset createFundData when closing the dialog
+		this.setCreateFundData({
+			fundName: "",
+			startingAccountBalanceUsd: 0
+		})
 	})
 
 	public setIsRetrievingAllFunds = action((newIsRetrievingAllFunds: boolean): void => {
@@ -53,11 +62,10 @@ class FundsClass {
 	})
 
 	public setCreateFundKey = action(<K extends keyof IncomingCreateFundRequest>(key: K, value: IncomingCreateFundRequest[K]): void => {
-		if (isUndefined(this.createFundData)) return
 		this.createFundData[key] = value
 	})
 
-	private setCreateFundData = action((createFundData: IncomingCreateFundRequest | undefined): void => {
+	private setCreateFundData = action((createFundData: IncomingCreateFundRequest): void => {
 		this.createFundData = createFundData
 	})
 
@@ -68,7 +76,10 @@ class FundsClass {
 		this.funds = new Map()
 		this.retrievingSingleFunds = new Map()
 		this.setIsCreateFundDialogOpen(false)
-		this.setCreateFundData(undefined)
+		this.setCreateFundData({
+			fundName: "",
+			startingAccountBalanceUsd: 0
+		})
 	}
 }
 

@@ -8,13 +8,14 @@ function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 		<div
 			key={fund.fundUUID}
 			onClick={(): void => navigate(`/funds/${fund.fundUUID}`)}
-			className="flex flex-col gap-2 p-4 rounded-xl border border-swan">
+			className="flex flex-col gap-2 p-4 rounded-xl border border-swan cursor-pointer"
+		>
 			<h1 className="text-2xl font-bold">{fund.fundName}</h1>
 			<p className="text-sm text-gray-500">
-				{fund.startingAccountBalanceUsd}
+				Starting balance: ${fund.startingAccountBalanceUsd}
 			</p>
 			<p className="text-sm text-gray-500">
-				{fund.currentAccountBalanceUsd}
+				Current balance: ${fund.currentAccountBalanceUsd}
 			</p>
 		</div>
 	)
