@@ -58,7 +58,6 @@ function PriceChart({ seed, timeframe }: { seed: string; timeframe: Timeframe })
 
 	// Generate month labels for x-axis
 	const monthLabels = ["Aug", "Sep", "Oct", "Nov", "Dec"]
-	const yAxisLabels = ["60%", "70%", "80%", "90%", "100%"]
 
 	return (
 		<div className="w-full">
@@ -154,9 +153,6 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 	const balance = 0
 
 	const timeframes: Timeframe[] = ["1H", "6H", "1D", "1W", "1M", "ALL"]
-	const relatedEvents: SingleEvent[] = Array.from(eventsClass.events.values()).filter(
-		(e): boolean => e.eventUUID !== eventUUID
-	).slice(0, 5)
 
 	const formatCurrency = (value: number): string => {
 		if (value >= 1000000) {
@@ -333,44 +329,6 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 						>
 							Unavailable
 						</Button>
-
-						{/* Disclaimer */}
-						<div className="text-xs text-muted-foreground mt-4 text-center">
-							By trading, you agree to the Terms of Use.
-						</div>
-					</div>
-
-					{/* Related Markets */}
-					<div className="bg-card border border-border rounded-lg p-4">
-						<div className="flex gap-2 mb-4 overflow-x-auto">
-							{["All", "Crypto", "Pre-Market", "Tech"].map((category): React.ReactNode => (
-								<Button
-									key={category}
-									variant="outline"
-									size="sm"
-									className="shrink-0"
-								>
-									{category}
-								</Button>
-							))}
-						</div>
-
-						<div className="flex flex-col gap-3">
-							{relatedEvents.map((relatedEvent): React.ReactNode => (
-								<div
-									key={relatedEvent.eventUUID}
-									className="flex items-center gap-3 p-2 hover:bg-muted rounded-md cursor-pointer"
-								>
-									<div className="w-8 h-8 shrink-0 rounded bg-muted flex items-center justify-center text-xs">
-										R
-									</div>
-									<div className="flex-1 min-w-0">
-										<div className="text-sm truncate">{relatedEvent.eventName}</div>
-									</div>
-									<div className="text-sm font-semibold shrink-0">60%</div>
-								</div>
-							))}
-						</div>
 					</div>
 				</div>
 			</div>
