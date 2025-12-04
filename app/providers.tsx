@@ -5,6 +5,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google"
 import authClass from "../src/classes/auth-class"
 import personalInfoClass from "../src/classes/personal-info-class"
 import retrievePersonalInfo from "../src/utils/personal-info/retrieve-personal-info"
+import retrieveAllFunds from "../src/utils/funds/retrieve-all-funds"
 
 const retrieveInfo = async (): Promise<void> => {
 	// Only retrieve if user is authenticated but we don't have personal info yet
@@ -12,6 +13,7 @@ const retrieveInfo = async (): Promise<void> => {
 	if (!authClass.isLoggedIn || personalInfoClass.retrievedPersonalInfo) return
 	try {
 		await retrievePersonalInfo()
+		await retrieveAllFunds()
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (error) {
 		// If this fails, user might not actually be authenticated
