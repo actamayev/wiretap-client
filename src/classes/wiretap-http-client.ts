@@ -2,7 +2,7 @@
 
 import axios, { AxiosInstance } from "axios"
 
-export default class LeverLabsHttpClient {
+export default class WiretapHttpClient {
 	public readonly http: AxiosInstance
 
 	constructor() {

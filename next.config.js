@@ -40,15 +40,11 @@ const nextConfig = {
 		// remotePatterns: [
 		// 	{
 		// 		protocol: "https",
-		// 		hostname: "lever-labs-local-bucket.s3.us-east-1.amazonaws.com",
+		// 		hostname: "wiretap-local-bucket.s3.us-east-1.amazonaws.com",
 		// 	},
 		// 	{
 		// 		protocol: "https",
-		// 		hostname: "lever-labs-staging-bucket.s3.us-east-1.amazonaws.com",
-		// 	},
-		// 	{
-		// 		protocol: "https",
-		// 		hostname: "lever-labs-production-bucket.s3.us-east-1.amazonaws.com",
+		// 		hostname: "wiretap-production-bucket.s3.us-east-1.amazonaws.com",
 		// 	},
 		// ],
 		formats: ["image/webp", "image/avif"], // Use modern image formats
@@ -96,7 +92,7 @@ const nextConfig = {
 					  },
 					//   {
 					// 	key: "Link",
-					// 	value: "<https://lever-labs-production-bucket.s3.us-east-1.amazonaws.com>; rel=preconnect"
+					// 	value: "<https://wiretap-production-bucket.s3.us-east-1.amazonaws.com>; rel=preconnect"
 					//   }
 				],
 			},

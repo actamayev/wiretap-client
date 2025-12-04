@@ -1,0 +1,25 @@
+"use client"
+
+import Link from "next/link"
+
+export default function TermsAndPrivacyAgreement(): React.ReactNode {
+	return (
+		<div className="text-xs font-normal mt-10 text-center text-gray-600">
+			<p>
+				By signing in to Wiretap, you agree to our{" "}
+				<Link
+					href="/terms"
+					className="font-semibold"
+				>
+					Terms
+				</Link>{" "}and{" "}
+				<Link
+					href="/privacy"
+					className="font-semibold"
+				>
+					Privacy Policy
+				</Link>
+			</p>
+		</div>
+	)
+}
