@@ -11,7 +11,7 @@ export default function AuthTemplate({ children }: { children: React.ReactNode }
 				<div className="flex justify-center gap-2 md:justify-start">
 					<Link href="/" className="flex items-center gap-2 font-medium">
 						<div className="flex size-8 items-center justify-center rounded-md">
-							<Image src="/favicon.svg" alt="Wiretap" width={40} height={40} />
+							<Image src="/favicon-light.svg" alt="Wiretap" width={40} height={40} />
 						</div>
 						<span className="text-2xl font-bold">Wiretap</span>
 					</Link>

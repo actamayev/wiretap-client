@@ -12,4 +12,16 @@ export default class PersonalInfoDataService extends BaseDataService {
 			this.buildUrl("/get-personal-info")
 		)
 	}
+
+	async changePassword(oldPassword: string, newPassword: string): Promise<AxiosResponse<AllCommonResponses>> {
+		return await this.httpClient.http.post<AllCommonResponses>(
+			this.buildUrl("/change-password"), { oldPassword, newPassword }
+		)
+	}
+
+	async updateUsername(username: string): Promise<AxiosResponse<AllCommonResponses>> {
+		return await this.httpClient.http.post<AllCommonResponses>(
+			this.buildUrl(`/update-username/${username}`)
+		)
+	}
 }

@@ -19,7 +19,7 @@ export default function SidebarLogo(): React.ReactNode {
 					<div className="flex aspect-square items-start justify-start">
 						<div className="flex">
 							<Image
-								src="/favicon.svg"
+								src="/favicon-light.svg"
 								alt="Logo"
 								width={56}
 								height={56}

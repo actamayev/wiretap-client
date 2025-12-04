@@ -28,7 +28,7 @@ export default function Footer(): React.ReactNode {
 							className="inline-flex items-center font-semibold text-3xl sm:text-3xl shrink-0 duration-0"
 						>
 							<Image
-								src="/favicon.svg"
+								src="/favicon-light.svg"
 								alt="Logo"
 								className="h-8 sm:h-10 -ml-0.5"
 								style={{ verticalAlign: "middle", width: "auto" }}
@@ -36,7 +36,7 @@ export default function Footer(): React.ReactNode {
 								height={32}
 							/>
 							<span className="ml-2 inline">
-								Lever Labs
+								Wiretap
 							</span>
 						</Link>
 						<FooterSocialSection />

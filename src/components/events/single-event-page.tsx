@@ -244,18 +244,6 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 							</Button>
 						</div>
 
-						{/* Market Dropdown */}
-						<div className="mb-4">
-							<select
-								value={selectedMarket}
-								onChange={(e): void => setSelectedMarket(e.target.value)}
-								className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-							>
-								<option value="Yes">Yes</option>
-								<option value="No">No</option>
-							</select>
-						</div>
-
 						{/* Yes/No Buttons */}
 						<div className="flex gap-2 mb-4">
 							<Button
@@ -266,7 +254,7 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 								)}
 								onClick={(): void => setSelectedMarket("Yes")}
 							>
-								<div className="flex flex-col">
+								<div className="flex items-center justify-between w-full">
 									<span className="font-semibold">Yes</span>
 									<span className="text-xs opacity-90">{formatPrice(yesPrice)}</span>
 								</div>
@@ -279,7 +267,7 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 								)}
 								onClick={(): void => setSelectedMarket("No")}
 							>
-								<div className="flex flex-col">
+								<div className="flex items-center justify-between w-full">
 									<span className="font-semibold">No</span>
 									<span className="text-xs opacity-90">{formatPrice(noPrice)}</span>
 								</div>
@@ -297,37 +285,14 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 								onChange={(e): void => setAmount(e.target.value)}
 								className="mb-2"
 							/>
-							<div className="flex gap-2">
-								{["+$1", "+$20", "+$100", "Max"].map((quickAmount): React.ReactNode => (
-									<Button
-										key={quickAmount}
-										variant="outline"
-										size="sm"
-										onClick={(): void => {
-											if (quickAmount === "Max") {
-												setAmount(balance.toString())
-											} else {
-												const value = parseInt(quickAmount.replace("+$", ""), 10)
-												setAmount((prev): string => {
-													const current = parseFloat(prev) || 0
-													return (current + value).toString()
-												})
-											}
-										}}
-									>
-										{quickAmount}
-									</Button>
-								))}
-							</div>
 						</div>
 
 						{/* Action Button */}
 						<Button
 							variant="default"
 							className="w-full bg-gray-600 hover:bg-gray-700 text-white"
-							disabled
 						>
-							Unavailable
+							Trade
 						</Button>
 					</div>
 				</div>

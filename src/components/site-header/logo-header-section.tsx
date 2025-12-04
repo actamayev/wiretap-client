@@ -32,7 +32,7 @@ function LogoHeaderSection(): React.ReactNode {
 				className="flex items-center font-semibold text-3xl sm:text-3xl shrink-0 duration-0"
 			>
 				<Image
-					src="/favicon.svg"
+					src="/favicon-light.svg"
 					alt="Logo"
 					className="size-16"
 					style={{ verticalAlign: "middle", width: "auto" }}

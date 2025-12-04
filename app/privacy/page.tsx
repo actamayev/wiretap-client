@@ -1,0 +1,18 @@
+import PrivacyPage from "../../src/page-components/privacy"
+import LayoutOnlyWrapper from "../../src/components/layouts/layout-only-wrapper"
+import { createMetadata } from "../../src/utils/seo/create-metadata"
+
+export const metadata = createMetadata({
+	title: "Privacy",
+	description: "Your privacy is important to us. Read the Wiretap privacy policy to learn more.",
+	path: "/privacy",
+	keywords: ["privacy", "wiretap", "privacy policy"]
+})
+
+export default function Privacy(): React.ReactNode {
+	return (
+		<LayoutOnlyWrapper>
+			<PrivacyPage />
+		</LayoutOnlyWrapper>
+	)
+}
