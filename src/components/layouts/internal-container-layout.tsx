@@ -127,7 +127,7 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 	return (
 		<div className={cn("h-screen flex flex-col w-full", extraParentClasses)}>
 			{/* Header */}
-			<header className="border-b border-border bg-sidebar-blue px-6 py-4">
+			<header className="border-b border-border bg-sidebar-blue pr-6 py-10">
 				<ObservedHeaderContent />
 			</header>
 
