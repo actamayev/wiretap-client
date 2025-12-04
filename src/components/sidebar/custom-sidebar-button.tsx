@@ -28,14 +28,14 @@ export default function CustomSidebarButton({
 	return (
 		<Link
 			href={goTo}
-			className="block w-full"
+			className="block w-full cursor-pointer"
 		>
 			<SidebarMenuButton
 				isActive={isActive}
 				className={cn(
 					// Base styles - ensure consistent sizing
-					"transition-none flex! items-center justify-start p-0! h-[50px]! w-full", // Added w-full
-					"border-2 border-transparent rounded-xl",
+					"transition-none flex! items-center justify-start p-0! h-[50px]! w-full",
+					"cursor-pointer border-2 border-transparent rounded-xl",
 					// Active/hover states
 					isActive
 						? "bg-selected-sidebar-button-background!"
