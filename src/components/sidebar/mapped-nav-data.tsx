@@ -26,7 +26,7 @@ const baseNavData: SidebarNavData[] = [
 		url: "/funds",
 		icon: Briefcase,
 		textColor: "text-white"
-	},
+	}
 ]
 
 function MappedNavData(): React.ReactNode {
