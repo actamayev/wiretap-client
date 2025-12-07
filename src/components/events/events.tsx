@@ -6,11 +6,13 @@ import SingleEvent from "./single-event"
 import eventsClass from "../../classes/events-class"
 import InternalContainerLayout from "../layouts/internal-container-layout"
 import retrieveAllEvents from "../../utils/events/retrieve-all-events"
+import authClass from "../../classes/auth-class"
 
 function Events(): React.ReactNode {
 	useEffect((): void => {
 		void retrieveAllEvents()
-	}, [])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [authClass.isFinishedWithSignup])
 
 	const events = useMemo((): SingleEvent[] => {
 		return Array.from(eventsClass.events.values())
