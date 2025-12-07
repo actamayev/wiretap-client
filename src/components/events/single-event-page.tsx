@@ -9,6 +9,7 @@ import { Input } from "../ui/input"
 import eventsClass from "../../classes/events-class"
 import isUndefined from "lodash-es/isUndefined"
 import InternalContainerLayout from "../layouts/internal-container-layout"
+import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 
 interface SingleEventPageProps {
 	eventSlug: EventSlug
@@ -122,6 +123,10 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 	const [tradeTab, setTradeTab] = useState<TradeTab>("Buy")
 	const [amount, setAmount] = useState("")
 	const [selectedMarket, setSelectedMarket] = useState<OutcomeString>("Yes" as OutcomeString)
+
+	useEffect((): void => {
+		void retrieveSingleEvent(eventSlug)
+	}, [eventSlug])
 
 	const event = useMemo((): SingleEvent | undefined => {
 		return eventsClass.events.get(eventSlug)

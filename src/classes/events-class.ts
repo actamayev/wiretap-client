@@ -1,20 +1,5 @@
 import { action, makeAutoObservable } from "mobx"
 
-const events: SingleEvent[] = [
-	{
-		eventId: 123321n as EventId,
-		eventSlug: "event-1" as EventSlug,
-		eventTitle: "Event 1",
-		eventDescription: "Event 1 description",
-		eventImageUrl: "https://example.com/event1.jpg",
-		eventIconUrl: "https://example.com/event1.jpg",
-		eventPolymarketUrl: "https://example.com/event1",
-		eventCreatedAt: new Date(),
-		eventUpdatedAt: new Date(),
-		eventMarkets: []
-	}
-]
-
 class EventsClass {
 	public isRetrievingAllEvents = false
 	public hasRetrievedAllEvents = false
@@ -23,7 +8,6 @@ class EventsClass {
 
 	constructor() {
 		makeAutoObservable(this)
-		this.setEvents(events)
 	}
 
 	public setIsRetrievingAllEvents = action((newIsRetrievingAllEvents: boolean): void => {
