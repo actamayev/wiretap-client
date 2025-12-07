@@ -2,19 +2,24 @@ import { action, makeAutoObservable } from "mobx"
 
 const events: SingleEvent[] = [
 	{
-		eventUUID: "123e4567-e89b-12d3-a456-426614174000" as EventUUID,
-		eventName: "Event 1",
+		eventId: 123321n as EventId,
+		eventSlug: "event-1" as EventSlug,
+		eventTitle: "Event 1",
 		eventDescription: "Event 1 description",
-		eventImage: "https://example.com/event1.jpg",
-		eventLink: "https://example.com/event1"
+		eventImageUrl: "https://example.com/event1.jpg",
+		eventIconUrl: "https://example.com/event1.jpg",
+		eventPolymarketUrl: "https://example.com/event1",
+		eventCreatedAt: new Date(),
+		eventUpdatedAt: new Date(),
+		eventMarkets: []
 	}
 ]
 
 class EventsClass {
 	public isRetrievingAllEvents = false
 	public hasRetrievedAllEvents = false
-	public retrievingSingleEvent: Map<EventUUID, boolean> = new Map()
-	public events: Map<EventUUID, SingleEvent> = new Map()
+	public retrievingSingleEvent: Map<EventSlug, boolean> = new Map()
+	public events: Map<EventSlug, SingleEvent> = new Map()
 
 	constructor() {
 		makeAutoObservable(this)
@@ -29,22 +34,22 @@ class EventsClass {
 		this.hasRetrievedAllEvents = newHasRetrievedAllEvents
 	})
 
-	public setIsRetrievingSingleEvent = action((eventUUID: EventUUID, newIsRetrievingSingleEvent: boolean): void => {
-		this.retrievingSingleEvent.set(eventUUID, newIsRetrievingSingleEvent)
+	public setIsRetrievingSingleEvent = action((eventSlug: EventSlug, newIsRetrievingSingleEvent: boolean): void => {
+		this.retrievingSingleEvent.set(eventSlug, newIsRetrievingSingleEvent)
 	})
 
 	public setEvents = action((newEvents: SingleEvent[]): void => {
-		newEvents.forEach((event): void => this.addEvent(event.eventUUID, event))
+		newEvents.forEach((event): void => this.addEvent(event.eventSlug, event))
 		this.setHasRetrievedAllEvents(true)
 		this.setIsRetrievingAllEvents(false)
 	})
 
-	public addEvent = action((eventUUID: EventUUID, event: SingleEvent): void => {
-		this.events.set(eventUUID, event)
+	public addEvent = action((eventSlug: EventSlug, event: SingleEvent): void => {
+		this.events.set(eventSlug, event)
 	})
 
-	public isRetrievingSingleEvent = (eventUUID: EventUUID): boolean => {
-		return this.retrievingSingleEvent.get(eventUUID) || false
+	public isRetrievingSingleEvent = (eventSlug: EventSlug): boolean => {
+		return this.retrievingSingleEvent.get(eventSlug) || false
 	}
 
 	logout(): void {

@@ -3,7 +3,7 @@ import { staticPages } from "../utils/constants/page-constants"
 declare global {
 	type EventsPages =
 		| "/events"
-		| `/events/${EventUUID}`
+		| `/event/${EventSlug}`
 
 	type FundsPages =
 		| "/funds"

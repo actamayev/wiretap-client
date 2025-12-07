@@ -63,7 +63,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 
 	return (
 		<div
-			onClick={(): void => navigate(`/events/${event.eventUUID}`)}
+			onClick={(): void => navigate(`/event/${event.eventSlug}`)}
 			className="cursor-pointer border border-border rounded-lg p-4 hover:shadow-md transition-shadow bg-card"
 		>
 			<div className="flex gap-4 w-full">
@@ -77,7 +77,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 							</div>
 						</div>
 						<div className="flex-1 min-w-0">
-							<h3 className="font-semibold text-sm truncate">{event.eventName}</h3>
+							<h3 className="font-semibold text-sm truncate">{event.eventTitle}</h3>
 						</div>
 						<div className="shrink-0 text-lg font-bold text-primary">
 							{yesPercentage}%
@@ -92,7 +92,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 							className="flex-1 bg-green-600 hover:bg-green-700 text-white"
 							onClick={(e): void => {
 								e.stopPropagation()
-								navigate(`/events/${event.eventUUID}`)
+								navigate(`/event/${event.eventSlug}`)
 							}}
 						>
 							Yes
@@ -103,7 +103,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 							className="flex-1 bg-red-600 hover:bg-red-700 text-white"
 							onClick={(e): void => {
 								e.stopPropagation()
-								navigate(`/events/${event.eventUUID}`)
+								navigate(`/event/${event.eventSlug}`)
 							}}
 						>
 							No
@@ -118,7 +118,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 
 				{/* Right Section - 2/5 width */}
 				<div className="w-2/5 flex items-center justify-center">
-					<SimpleChart seed={event.eventUUID} />
+					<SimpleChart seed={event.eventSlug} />
 				</div>
 			</div>
 		</div>

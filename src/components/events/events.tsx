@@ -17,7 +17,7 @@ function Events(): React.ReactNode {
 			<div className="flex flex-col h-full w-full p-6">
 				<div className="flex flex-col gap-6 w-full">
 					{events.map((event): React.ReactNode => {
-						return <SingleEvent key={event.eventUUID} event={event} />
+						return <SingleEvent key={event.eventId} event={event} />
 					})}
 				</div>
 			</div>
