@@ -35,7 +35,7 @@ export default function UsernameInput<T extends FormWithUsername>({
 									field.onChange(sanitizedValue)
 								}}
 								className="w-full pr-16 truncate h-12 rounded-xl text-xl! \
-								font-light border-2 bg-gray-50 shadow-none border-gray-700"
+								font-light border-2 bg-gray-50 shadow-none border-gray-700 focus-visible:ring-0 focus-visible:ring-offset-0"
 								maxLength={100}
 							/>
 							<CharacterCounter

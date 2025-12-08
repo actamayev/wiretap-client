@@ -37,13 +37,13 @@ class FundsClass {
 	})
 
 	public setFunds = action((funds: SingleFund[]): void => {
-		funds.forEach((fund): void => this.addFund(fund.fundUUID, fund))
+		funds.forEach((fund): void => this.addFund(fund))
 		this.setHasRetrievedAllFunds(true)
 		this.setIsRetrievingAllFunds(false)
 	})
 
-	public addFund = action((fundUUID: FundsUUID, fund: SingleFund): void => {
-		this.funds.set(fundUUID, fund)
+	public addFund = action((fund: SingleFund): void => {
+		this.funds.set(fund.fundUUID, fund)
 	})
 
 	public setIsRetrievingSingleFund = action((fundUUID: FundsUUID, isRetrieving: boolean): void => {

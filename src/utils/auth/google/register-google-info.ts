@@ -6,6 +6,7 @@ import { isNonSuccessResponse } from "../../type-checks"
 import personalInfoClass from "../../../classes/personal-info-class"
 import wiretapApiClient from "../../../classes/wiretap-api-client-class"
 import setErrorAxiosResponse from "../../error-handling/set-error-axios-response"
+import fundsClass from "../../../classes/funds-class"
 
 export default async function registerGoogleInfo(
 	googleInfo: NewGoogleInfoFormValues,
@@ -29,6 +30,7 @@ export default async function registerGoogleInfo(
 			isAuthenticated: true,
 			hasCompletedSignup: true
 		})
+		fundsClass.addFund(response.data.fund)
 		return true
 	} catch (error: unknown) {
 		setErrorAxiosResponse(error, setError)

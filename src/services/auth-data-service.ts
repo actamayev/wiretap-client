@@ -19,14 +19,14 @@ export default class AuthDataService extends BaseDataService {
 		)
 	}
 
-	async register(registerInformation: IncomingRegisterRequest): Promise<AxiosResponse<SuccessResponse | NonSuccessResponse>> {
-		return await this.httpClient.http.post<SuccessResponse | NonSuccessResponse>(
+	async register(registerInformation: IncomingRegisterRequest): Promise<AxiosResponse<AllMyFundsResponse | NonSuccessResponse>> {
+		return await this.httpClient.http.post<AllMyFundsResponse | NonSuccessResponse>(
 			this.buildUrl("/register"), { registerInformation }
 		)
 	}
 
-	async registerGoogleInfo(googleInfo: NewGoogleInfoRequest): Promise<AxiosResponse<EmailUpdatesRequest | NonSuccessResponse>> {
-		return await this.httpClient.http.post<EmailUpdatesRequest | NonSuccessResponse>(
+	async registerGoogleInfo(googleInfo: NewGoogleInfoRequest): Promise<AxiosResponse<NewGoogleUserResponse | NonSuccessResponse>> {
+		return await this.httpClient.http.post<NewGoogleUserResponse | NonSuccessResponse>(
 			this.buildUrl("/register-google-info"), { ...googleInfo }
 		)
 	}

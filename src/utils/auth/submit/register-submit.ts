@@ -7,6 +7,7 @@ import confirmRegisterFields from "../confirm-register-fields"
 import personalInfoClass from "../../../classes/personal-info-class"
 import wiretapApiClient from "../../../classes/wiretap-api-client-class"
 import setErrorAxiosResponse from "../../error-handling/set-error-axios-response"
+import fundsClass from "../../../classes/funds-class"
 
 export default async function registerSubmit(
 	registerCredentials: IncomingRegisterRequest,
@@ -34,6 +35,7 @@ export default async function registerSubmit(
 			registerCredentials.username,
 			registerCredentials.email,
 		)
+		fundsClass.setFunds(response.data.funds)
 		return true
 	} catch (error: unknown) {
 		setErrorAxiosResponse(error, setError)
