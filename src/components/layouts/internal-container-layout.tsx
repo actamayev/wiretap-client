@@ -22,7 +22,7 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 	return (
 		<div className={cn("h-screen flex flex-col w-full bg-sidebar-blue", extraParentClasses)}>
 			{/* Header */}
-			<header className="bg-sidebar-blue py-3">
+			<header className="bg-sidebar-blue py-3 mr-6">
 				<HeaderContent />
 			</header>
 
