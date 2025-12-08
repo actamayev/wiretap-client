@@ -5,13 +5,15 @@ import PrimarySidebar from "../sidebar/primary-sidebar"
 
 export default function InternalPagesLayout({ children } : { children: React.ReactNode }): React.ReactNode {
 	return (
-		<SidebarProvider>
-			<PrimarySidebar />
-			<SidebarInset>
-				<div className="duration-0 bg-off-sidebar-blue">
-					{children}
-				</div>
-			</SidebarInset>
-		</SidebarProvider>
+		<div className="h-screen overflow-hidden flex flex-col">
+			<SidebarProvider>
+				<PrimarySidebar />
+				<SidebarInset className="overflow-y-auto min-h-0">
+					<div className="duration-0 bg-off-sidebar-blue">
+						{children}
+					</div>
+				</SidebarInset>
+			</SidebarProvider>
+		</div>
 	)
 }
