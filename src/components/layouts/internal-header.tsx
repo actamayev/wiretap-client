@@ -67,7 +67,7 @@ export default function HeaderContent(): React.ReactNode {
 			<Button
 				onClick={(): void => setIsFeedbackDialogOpen(true)}
 				className={cn("shrink-0 rounded-full bg-off-sidebar-blue! border-none shadow-none",
-					"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2 ml-auto"
+					"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2"
 				)}
 			>
 				<MessageSquare className="h-5 w-5 text-button-text" />
