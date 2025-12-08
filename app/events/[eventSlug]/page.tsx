@@ -15,16 +15,17 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 	return createMetadata({
 		title: "Event",
 		description: "View and trade on this event",
-		path: `/event/${eventSlug}`,
+		path: `/events/${eventSlug}`,
 		keywords: ["events", "prediction", "markets"]
 	})
 }
 
 export default async function EventPage({ params }: EventPageProps): Promise<React.ReactNode> {
 	const { eventSlug } = await params
+	console.log("eventSlug", eventSlug)
 
 	// Basic validation - adjust regex based on your UUID format
-	if (!eventSlug || !/^[a-fA-F0-9-]{36}$/.test(eventSlug)) {
+	if (!eventSlug) {
 		notFound()
 	}
 

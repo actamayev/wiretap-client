@@ -10,6 +10,7 @@ import eventsClass from "../../classes/events-class"
 import isUndefined from "lodash-es/isUndefined"
 import InternalContainerLayout from "../layouts/internal-container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
+import authClass from "../../classes/auth-class"
 
 interface SingleEventPageProps {
 	eventSlug: EventSlug
@@ -126,7 +127,8 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
-	}, [eventSlug])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [eventSlug, authClass.isFinishedWithSignup])
 
 	const event = useMemo((): SingleEvent | undefined => {
 		return eventsClass.events.get(eventSlug)

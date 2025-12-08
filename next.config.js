@@ -37,16 +37,20 @@ const nextConfig = {
 
 	// Image optimization
 	images: {
-		// remotePatterns: [
-		// 	{
-		// 		protocol: "https",
-		// 		hostname: "wiretap-local-bucket.s3.us-east-1.amazonaws.com",
-		// 	},
-		// 	{
-		// 		protocol: "https",
-		// 		hostname: "wiretap-production-bucket.s3.us-east-1.amazonaws.com",
-		// 	},
-		// ],
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "wiretap-local-bucket.s3.us-east-1.amazonaws.com",
+			},
+			{
+				protocol: "https",
+				hostname: "wiretap-production-bucket.s3.us-east-1.amazonaws.com",
+			},
+			{
+				protocol: "https",
+				hostname: "polymarket-upload.s3.us-east-2.amazonaws.com",
+			},
+		],
 		formats: ["image/webp", "image/avif"], // Use modern image formats
 		minimumCacheTTL: 60 * 60 * 24 * 30, // Cache images for 30 days
 		dangerouslyAllowSVG: false, // Security: disable SVG optimization

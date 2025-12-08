@@ -1,5 +1,3 @@
-import { LucideIcon } from "lucide-react"
-
 declare global {
 	type EmailOrUnknown = "Email" | "Unknown"
 
@@ -14,7 +12,6 @@ declare global {
 	interface SidebarNavData {
 		title: "Events" | "Funds"
 		url: PageNames
-		icon: LucideIcon
 		textColor: string
 	}
 

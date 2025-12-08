@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation"
 import { cn } from "../../lib/utils"
 
 interface CustomSidebarButtonProps {
-	icon: React.ReactNode
 	text: string
 	isActive?: boolean
 	goTo: PageNames
@@ -15,7 +14,6 @@ interface CustomSidebarButtonProps {
 }
 
 export default function CustomSidebarButton({
-	icon,
 	text,
 	isActive,
 	goTo,
@@ -48,9 +46,6 @@ export default function CustomSidebarButton({
 				)}
 			>
 				<div className="flex items-center justify-start space-x-4 w-full pl-2.5"> {/* Added w-full */}
-					<div className="w-[35px] h-[35px] text-beetle">
-						{icon}
-					</div>
 					<div className={cn(
 						"text-base font-medium",
 						isActive ? "text-macaw" : "text-wolf"
