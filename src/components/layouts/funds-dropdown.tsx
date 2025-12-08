@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo, useEffect } from "react"
 import { observer } from "mobx-react"
 import { Plus } from "lucide-react"
 import { cn } from "../../lib/utils"
@@ -13,14 +13,20 @@ import {
 	SelectValue,
 } from "../ui/select"
 import fundsClass from "../../classes/funds-class"
+import setPrimaryFund from "../../utils/funds/set-primary-fund"
 
 function FundsDropdown(): React.ReactNode {
-	const [selectedFundUUID, setSelectedFundUUID] = useState<FundsUUID | "">("")
-
 	const funds = useMemo((): SingleFund[] => {
 		return Array.from(fundsClass.funds.values())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundsClass.funds.size])
+
+	// Fallback: Set first fund as selected if no fund is selected (shouldn't happen if primary fund is set correctly)
+	useEffect((): void => {
+		if (funds.length > 0 && !fundsClass.selectedFundUuid) {
+			fundsClass.setSelectedFundUuid(funds[0].fundUUID)
+		}
+	}, [funds])
 
 	if (funds.length === 0) {
 		return (
@@ -40,11 +46,17 @@ function FundsDropdown(): React.ReactNode {
 		)
 	}
 
+	const handleFundChange = (fundUUID: FundsUUID): void => {
+		fundsClass.setSelectedFundUuid(fundUUID)
+		// Set the new fund as primary
+		setPrimaryFund(fundUUID)
+	}
+
 	return (
 		<div className="shrink-0">
 			<Select
-				value={selectedFundUUID || funds[0]?.fundUUID}
-				onValueChange={(value): void => setSelectedFundUUID(value as FundsUUID)}
+				value={fundsClass.selectedFundUuid || funds[0]?.fundUUID}
+				onValueChange={(value): void => handleFundChange(value as FundsUUID)}
 			>
 				<SelectTrigger
 					className={cn(

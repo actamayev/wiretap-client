@@ -13,26 +13,43 @@ interface PortfolioStats {
 }
 
 function PortfolioStats(): React.ReactNode {
-	const funds = useMemo((): SingleFund[] => {
+	const selectedFund = useMemo((): SingleFund | undefined => {
+		if (!fundsClass.selectedFundUuid) {
+			return undefined // We'll handle this case below
+		}
+		return fundsClass.funds.get(fundsClass.selectedFundUuid)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [fundsClass.selectedFundUuid, fundsClass.funds.size])
+
+	const allFunds = useMemo((): SingleFund[] => {
 		return Array.from(fundsClass.funds.values())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundsClass.funds.size])
 
 	const portfolioStats = useMemo((): PortfolioStats => {
-		const totalFunds = funds.length
-		const totalBalance = funds.reduce((sum: number, fund: SingleFund): number =>
+		if (selectedFund) {
+			// Show data for selected fund only
+			return {
+				totalFunds: 1,
+				totalBalance: selectedFund.currentAccountBalanceUsd,
+				totalStartingBalance: selectedFund.startingAccountBalanceUsd,
+				totalPnL: selectedFund.currentAccountBalanceUsd - selectedFund.startingAccountBalanceUsd
+			}
+		}
+
+		// Show data for all funds combined
+		const totalBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
 			sum + fund.currentAccountBalanceUsd, 0)
-		const totalStartingBalance = funds.reduce((sum: number, fund: SingleFund): number =>
+		const totalStartingBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
 			sum + fund.startingAccountBalanceUsd, 0)
-		const totalPnL = totalBalance - totalStartingBalance
 
 		return {
-			totalFunds,
+			totalFunds: allFunds.length,
 			totalBalance,
 			totalStartingBalance,
-			totalPnL
+			totalPnL: totalBalance - totalStartingBalance
 		}
-	}, [funds])
+	}, [selectedFund, allFunds])
 
 	// TODO: Calculate positions value from actual positions data
 	// For now, using placeholder - positions would need to be fetched for each fund
