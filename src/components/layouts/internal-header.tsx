@@ -47,7 +47,7 @@ function HeaderContent(): React.ReactNode {
 	return (
 		<div className="flex items-center gap-6 w-full">
 			{/* Search Bar */}
-			<div className="flex-1 max-w-md relative">
+			<div className="flex-1 max-w-lg relative">
 				<Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
 				<Input
 					ref={searchInputRef}
@@ -70,7 +70,7 @@ function HeaderContent(): React.ReactNode {
 				>
 					<SelectTrigger
 						className={cn(
-							"h-12! w-64 rounded-full bg-off-sidebar-blue! border-none shadow-none",
+							"h-12! w-80 rounded-full bg-off-sidebar-blue! border-none shadow-none",
 							"focus-visible:ring-0 focus-visible:ring-offset-0",
 							"**:data-select-icon:text-button-text! **:data-select-icon:opacity-100!",
 							"text-base pl-5"
