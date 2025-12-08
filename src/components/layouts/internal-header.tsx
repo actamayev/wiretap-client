@@ -48,7 +48,7 @@ function HeaderContent(): React.ReactNode {
 		<div className="flex items-center gap-6 w-full">
 			{/* Search Bar */}
 			<div className="flex-1 max-w-lg relative">
-				<Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+				<Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-button-text" />
 				<Input
 					ref={searchInputRef}
 					type="search"
@@ -56,8 +56,9 @@ function HeaderContent(): React.ReactNode {
 					value={searchQuery}
 					onChange={(e): void => setSearchQuery(e.target.value)}
 					className={cn(
-						"pl-12 rounded-full bg-off-sidebar-blue! border-none",
-						"shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 text-base!"
+						"pl-12 rounded-full bg-off-sidebar-blue! border-none text-button-text! placeholder:text-button-text!",
+						"shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 text-base!",
+						"[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
 					)}
 				/>
 			</div>

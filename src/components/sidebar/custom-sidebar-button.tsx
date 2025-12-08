@@ -36,8 +36,8 @@ export default function CustomSidebarButton({
 					"cursor-pointer border-2 border-transparent rounded-xl",
 					// Active/hover states
 					isActive
-						? "bg-selected-sidebar-button-background!"
-						: "hover:bg-polar!",
+						? "bg-off-sidebar-blue!"
+						: "hover:bg-off-sidebar-blue!",
 					// Size and dimensions - apply consistent sizing regardless of collapsible state
 					"group-data-[collapsible=icon]:h-[50px]! group-data-[collapsible=icon]:w-[170px]!",
 					// Custom styles passed from parent
