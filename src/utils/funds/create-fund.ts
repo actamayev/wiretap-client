@@ -16,7 +16,7 @@ export default async function createFund(): Promise<FundsUUID | undefined> {
 			throw Error ("Unable to create new fund")
 		}
 
-		fundsClass.addFund(createFundResponse.data.fundUUID, {
+		fundsClass.addFund({
 			fundUUID: createFundResponse.data.fundUUID,
 			fundName: fundInformation.fundName,
 			startingAccountBalanceUsd: fundInformation.startingAccountBalanceUsd,

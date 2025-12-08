@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Search, MessageSquare } from "lucide-react"
+import { Search } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
@@ -70,9 +70,7 @@ export default function HeaderContent(): React.ReactNode {
 						"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2"
 					)}
 				>
-					<MessageSquare className="h-5 w-5 text-button-text" />
 					<span className="text-button-text text-base">Feedback</span>
-					<span className="text-button-text text-base font-semibold">F</span>
 				</Button>
 			</div>
 

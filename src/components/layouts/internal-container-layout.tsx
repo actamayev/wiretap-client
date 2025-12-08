@@ -3,6 +3,7 @@
 import { observer } from "mobx-react"
 import { cn } from "../../lib/utils"
 import HeaderContent from "./internal-header"
+import CreateFundDialog from "../funds/funds-page/create-fund-dialog"
 
 interface InternalContainerLayoutProps {
 	children: React.ReactNode
@@ -42,6 +43,7 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 			>
 				{children}
 			</div>
+			<CreateFundDialog />
 		</div>
 	)
 }
