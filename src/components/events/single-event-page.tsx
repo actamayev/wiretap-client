@@ -2,11 +2,14 @@
 
 import { useState, useMemo, useEffect, useRef } from "react"
 import { observer } from "mobx-react"
-import { ChevronDown } from "lucide-react"
+import Image from "next/image"
+import { ChevronDown, Clock } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
-import { Input } from "../ui/input"
+import CustomTooltip from "../custom-tooltip"
+import TradeCard from "./trade-card"
 import eventsClass from "../../classes/events-class"
+import tradeClass from "../../classes/trade-class"
 import isUndefined from "lodash-es/isUndefined"
 import InternalContainerLayout from "../layouts/internal-container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
@@ -17,7 +20,6 @@ interface SingleEventPageProps {
 }
 
 type Timeframe = "1H" | "6H" | "1D" | "1W" | "1M" | "ALL"
-type TradeTab = "Buy" | "Sell"
 
 function PriceChart({ seed, timeframe }: { seed: string; timeframe: Timeframe }): React.ReactNode {
 	const dataPoints = useMemo((): number[] => {
@@ -121,9 +123,6 @@ function PriceChart({ seed, timeframe }: { seed: string; timeframe: Timeframe })
 // eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 	const [timeframe, setTimeframe] = useState<Timeframe>("ALL")
-	const [tradeTab, setTradeTab] = useState<TradeTab>("Buy")
-	const [amount, setAmount] = useState("")
-	const [selectedMarket, setSelectedMarket] = useState<OutcomeString>("Yes" as OutcomeString)
 	const [rulesExpanded, setRulesExpanded] = useState(false)
 	const [rulesMaxHeight, setRulesMaxHeight] = useState<number | undefined>(undefined)
 	const chartRef = useRef<HTMLDivElement>(null)
@@ -138,6 +137,19 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 		return eventsClass.events.get(eventSlug)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, eventsClass.events.size])
+
+	// Dummy data - these should eventually come from the event or API
+	const yesPrice = 0.993
+	const noPrice = 0.008
+	const balance = 0
+
+	// Update trade class with prices when event is available
+	useEffect((): void => {
+		if (event) {
+			tradeClass.setPrices(yesPrice, noPrice)
+			tradeClass.setBalance(balance)
+		}
+	}, [event])
 
 	useEffect((): void => {
 		if (event) {
@@ -172,27 +184,15 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 		)
 	}
 
-	// Dummy data
-	const totalVolume = 33215269
-	const resolutionDate = "Dec 31, 2025"
-	const yesPrice = 0.993
-	const noPrice = 0.008
-	const balance = 0
-
 	const timeframes: Timeframe[] = ["1H", "6H", "1D", "1W", "1M", "ALL"]
 
-	const formatCurrency = (value: number): string => {
-		if (value >= 1000000) {
-			return `$${(value / 1000000).toFixed(2)}M`
-		}
-		if (value >= 1000) {
-			return `$${(value / 1000).toFixed(2)}K`
-		}
-		return `$${value.toFixed(2)}`
-	}
 
-	const formatPrice = (price: number): string => {
-		return `${(price * 100).toFixed(1)}¢`
+	const formatDate = (date: Date): string => {
+		return new Intl.DateTimeFormat("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric"
+		}).format(new Date(date))
 	}
 
 	return (
@@ -201,15 +201,29 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 				{/* Row 1: Title with prefix, Volume and End Date */}
 				<div className="flex flex-col items-center gap-3">
 					<div className="flex items-center gap-3">
-						<div className="w-10 h-10 shrink-0 rounded-md bg-muted flex items-center justify-center text-foreground">
-							M
+						<div className="relative w-10 h-10 shrink-0 rounded-md overflow-hidden bg-muted">
+							<Image
+								src={event.eventIconUrl}
+								alt={event.eventTitle}
+								width={40}
+								height={40}
+								className="w-full h-full object-cover"
+							/>
 						</div>
 						<h1 className="text-2xl font-semibold">{event.eventTitle}</h1>
 					</div>
 					<div className="flex items-center gap-4 text-sm text-muted-foreground">
-						<span>{formatCurrency(totalVolume)} Vol.</span>
-						<span>•</span>
-						<span>Resolution {resolutionDate}</span>
+						<span>${Math.floor(event.eventTotalVolume).toLocaleString()} Vol.</span>
+						<CustomTooltip
+							tooltipTrigger={
+								<div className="flex items-center gap-1">
+									<Clock className="h-4 w-4" />
+									<span>{formatDate(event.eventEndDate)}</span>
+								</div>
+							}
+							tooltipContent="This is the estimated end date. See rules below for specific resolution details."
+							contentSide="bottom"
+						/>
 					</div>
 				</div>
 
@@ -239,79 +253,7 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 
 					{/* Right Section - Trading Interface and Rules */}
 					<div className="flex-1 flex flex-col gap-6 min-h-0">
-						{/* Trading Panel */}
-						<div className="bg-card border border-border rounded-lg p-4">
-							{/* Tabs */}
-							<div className="flex gap-2 mb-4">
-								<Button
-									variant={tradeTab === "Buy" ? "default" : "ghost"}
-									size="sm"
-									onClick={(): void => setTradeTab("Buy")}
-									className="flex-1"
-								>
-									Buy
-								</Button>
-								<Button
-									variant={tradeTab === "Sell" ? "default" : "ghost"}
-									size="sm"
-									onClick={(): void => setTradeTab("Sell")}
-									className="flex-1"
-								>
-									Sell
-								</Button>
-							</div>
-
-							{/* Yes/No Buttons */}
-							<div className="flex gap-2 mb-4">
-								<Button
-									variant={selectedMarket === "Yes" ? "default" : "outline"}
-									className={cn(
-										"flex-1 h-12",
-										selectedMarket === "Yes" ? "bg-green-600 hover:bg-green-700 text-white" : ""
-									)}
-									onClick={(): void => setSelectedMarket("Yes" as OutcomeString)}
-								>
-									<div className="flex items-center justify-between w-full">
-										<span className="font-semibold">Yes</span>
-										<span className="text-xs opacity-90">{formatPrice(yesPrice)}</span>
-									</div>
-								</Button>
-								<Button
-									variant={selectedMarket === "No" ? "default" : "outline"}
-									className={cn(
-										"flex-1 h-12",
-										selectedMarket === "No" ? "bg-gray-600 hover:bg-gray-700 text-white" : ""
-									)}
-									onClick={(): void => setSelectedMarket("No" as OutcomeString)}
-								>
-									<div className="flex items-center justify-between w-full">
-										<span className="font-semibold">No</span>
-										<span className="text-xs opacity-90">{formatPrice(noPrice)}</span>
-									</div>
-								</Button>
-							</div>
-
-							{/* Amount Input */}
-							<div className="mb-4">
-								<div className="text-xs text-muted-foreground mb-1">Amount</div>
-								<div className="text-xs text-muted-foreground mb-2">Balance {formatCurrency(balance)}</div>
-								<Input
-									type="number"
-									placeholder="$0"
-									value={amount}
-									onChange={(e): void => setAmount(e.target.value)}
-									className="mb-2 focus-visible:ring-0 focus-visible:ring-offset-0"
-								/>
-							</div>
-
-							{/* Action Button */}
-							<Button
-								variant="default"
-								className="w-full bg-gray-600 hover:bg-gray-700 text-white"
-							>
-								Trade
-							</Button>
-						</div>
+						<TradeCard />
 
 						{/* Rules Section */}
 						<div className="bg-card border border-border rounded-lg p-4 flex flex-col min-h-0">
