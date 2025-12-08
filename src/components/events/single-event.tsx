@@ -3,6 +3,8 @@
 import { useMemo } from "react"
 import { Button } from "../ui/button"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
+import Image from "next/image"
+import formatVolume from "../../utils/events/format-volume"
 
 interface SingleEventProps {
 	event: SingleEvent
@@ -43,56 +45,58 @@ function SimpleChart({ seed }: { seed: string }): React.ReactNode {
 	}).join(" ")
 
 	return (
-		<svg width={width} height={height} className="w-full h-full">
+		<svg className="w-full h-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+			<rect width={width} height={height} fill="var(--chart-background)" />
 			<polyline
 				points={points}
 				fill="none"
-				stroke="currentColor"
+				stroke="var(--chart-line)"
 				strokeWidth="2"
-				className="text-primary"
 			/>
 		</svg>
 	)
 }
 
-function SingleEvent({ event }: SingleEventProps): React.ReactNode {
+export default function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 	const navigate = useTypedNavigate()
-	// Dummy data
-	const yesPercentage = 65
-	const volume = 33 // in millions
 
 	return (
-		<div
-			onClick={(): void => navigate(`/events/${event.eventUUID}`)}
-			className="cursor-pointer border border-border rounded-lg p-4 hover:shadow-md transition-shadow bg-card"
-		>
-			<div className="flex gap-4 w-full">
+		<div className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue aspect-615/175 flex flex-col">
+			<div className="flex gap-8 w-full flex-1 min-h-0">
 				{/* Left Section - 3/5 width */}
-				<div className="w-3/5 flex flex-col gap-4">
+				<div className="w-3/5 flex flex-col gap-3 h-full">
 					{/* Row 1: Image, Name, Percentage */}
 					<div className="flex items-center gap-3">
 						<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
-							<div className="w-full h-full flex items-center justify-center text-muted-foreground">
-								📊
-							</div>
+							<Image
+								src={event.eventImageUrl}
+								alt={event.eventTitle}
+								width={48}
+								height={48}
+								className="w-full h-full object-cover"
+							/>
 						</div>
 						<div className="flex-1 min-w-0">
-							<h3 className="font-semibold text-sm truncate">{event.eventName}</h3>
+							<h3
+								onClick={(): void => navigate(`/events/${event.eventSlug}`)}
+								className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
+							>
+								{event.eventTitle}
+							</h3>
 						</div>
-						<div className="shrink-0 text-lg font-bold text-primary">
-							{yesPercentage}%
+						<div className="shrink-0 text-xl font-bold text-yes-green">
+							{Math.round((event.eventMarkets[0].lastTradePrice ?? 0) * 100)}%
 						</div>
 					</div>
 
 					{/* Row 2: Yes/No Buttons */}
-					<div className="flex gap-2">
+					<div className="flex gap-4">
 						<Button
 							variant="default"
 							size="sm"
-							className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-							onClick={(e): void => {
-								e.stopPropagation()
-								navigate(`/events/${event.eventUUID}`)
+							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
+							onClick={(): void => {
+								navigate(`/events/${event.eventSlug}`)
 							}}
 						>
 							Yes
@@ -100,10 +104,9 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 						<Button
 							variant="default"
 							size="sm"
-							className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-							onClick={(e): void => {
-								e.stopPropagation()
-								navigate(`/events/${event.eventUUID}`)
+							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
+							onClick={(): void => {
+								navigate(`/events/${event.eventSlug}`)
 							}}
 						>
 							No
@@ -111,18 +114,18 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 					</div>
 
 					{/* Row 3: Volume */}
-					<div className="text-sm text-muted-foreground">
-						${volume}m vol
+					<div className="text-sm text-volume-text">
+						{formatVolume(event.eventTotalVolume)}
 					</div>
 				</div>
 
 				{/* Right Section - 2/5 width */}
-				<div className="w-2/5 flex items-center justify-center">
-					<SimpleChart seed={event.eventUUID} />
+				<div className="w-2/5 flex flex-col h-full min-h-0">
+					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
+						<SimpleChart seed={event.eventSlug} />
+					</div>
 				</div>
 			</div>
 		</div>
 	)
 }
-
-export default SingleEvent

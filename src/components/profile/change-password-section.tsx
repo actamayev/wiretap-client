@@ -8,8 +8,9 @@ import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import changePassword from "../../utils/personal-info/change-password"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card"
+import personalInfoClass from "../../classes/personal-info-class"
 
-// eslint-disable-next-line max-lines-per-function
+// eslint-disable-next-line max-lines-per-function, complexity
 function ChangePasswordSection(): React.ReactNode {
 	const [currentPassword, setCurrentPassword] = useState("")
 	const [newPassword, setNewPassword] = useState("")
@@ -48,6 +49,8 @@ function ChangePasswordSection(): React.ReactNode {
 	const isPasswordChangeValid = currentPassword.length >= 6 &&
 		newPassword.length >= 6 &&
 		currentPassword !== newPassword
+
+	if (personalInfoClass.isGoogleUser) return null
 
 	return (
 		<Card className="mb-8 max-w-xl w-full border-2 shadow-none">
@@ -114,13 +117,13 @@ function ChangePasswordSection(): React.ReactNode {
 						</Button>
 					</div>
 					{newPassword.length > 0 && newPassword.length < 6 && (
-						<p className="text-sm text-cardinal">
+						<p className="text-sm text-red-500">
 							Password must be at least 6 characters.
 						</p>
 					)}
 				</div>
 				{passwordError && (
-					<p className="text-sm text-cardinal mt-1">
+					<p className="text-sm text-red-500 mt-1">
 						{passwordError}
 					</p>
 				)}

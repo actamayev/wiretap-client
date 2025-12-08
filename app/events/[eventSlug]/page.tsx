@@ -6,31 +6,32 @@ import AuthenticatedLayout from "../../../src/components/layouts/authenticated-l
 
 interface EventPageProps {
 	params: Promise<{
-		eventId: EventUUID
+		eventSlug: EventSlug
 	}>
 }
 
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
-	const { eventId } = await params
+	const { eventSlug } = await params
 	return createMetadata({
 		title: "Event",
 		description: "View and trade on this event",
-		path: `/events/${eventId}`,
+		path: `/events/${eventSlug}`,
 		keywords: ["events", "prediction", "markets"]
 	})
 }
 
 export default async function EventPage({ params }: EventPageProps): Promise<React.ReactNode> {
-	const { eventId } = await params
+	const { eventSlug } = await params
+	console.log("eventSlug", eventSlug)
 
 	// Basic validation - adjust regex based on your UUID format
-	if (!eventId || !/^[a-fA-F0-9-]{36}$/.test(eventId)) {
+	if (!eventSlug) {
 		notFound()
 	}
 
 	return (
 		<AuthenticatedLayout>
-			<SingleEventPage eventUUID={eventId} />
+			<SingleEventPage eventSlug={eventSlug} />
 		</AuthenticatedLayout>
 	)
 }

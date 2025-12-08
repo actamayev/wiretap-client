@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Button } from "../../ui/button"
 import { observer } from "mobx-react"
 import {
@@ -10,13 +11,41 @@ import {
 } from "../../ui/dialog"
 import fundsClass from "../../../classes/funds-class"
 import { Input } from "../../ui/input"
-import { handleTypeNumber } from "../../../utils/handle-type-validation/handle-type-fields"
 import createFund from "../../../utils/funds/create-fund"
 
+const addCommas = (num: string | number): string => {
+	const numStr = num.toString()
+	return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
+const removeNonNumeric = (num: string): string => {
+	return num.toString().replace(/[^0-9]/g, "")
+}
+
 function CreateFundDialog(): React.ReactNode {
+	const isValid = useMemo((): boolean => {
+		const fundName = fundsClass.createFundData.fundName.trim()
+		const balance = fundsClass.createFundData.startingAccountBalanceUsd
+
+		return (
+			fundName.length >= 3 &&
+			fundName.length <= 100 &&
+			balance >= 10 &&
+			balance <= 1_000_000
+		)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [fundsClass.createFundData.fundName, fundsClass.createFundData.startingAccountBalanceUsd])
+
+	const handleCreateFund = async (): Promise<void> => {
+		const fundUUID = await createFund()
+		if (fundUUID !== undefined) {
+			fundsClass.setIsCreateFundDialogOpen(false)
+		}
+	}
+
 	return (
 		<Dialog open={fundsClass.isCreateFundDialogOpen} onOpenChange={fundsClass.setIsCreateFundDialogOpen}>
-			<DialogContent className="w-96 border-none" onClick={(e): void => e.stopPropagation()}>
+			<DialogContent className="max-w-2xl border-none" onClick={(e): void => e.stopPropagation()}>
 				<DialogHeader>
 					<DialogTitle className="text-2xl">Create Fund</DialogTitle>
 					<DialogClose />
@@ -26,27 +55,33 @@ function CreateFundDialog(): React.ReactNode {
 					value={fundsClass.createFundData.fundName}
 					onChange={(e): void => fundsClass.setCreateFundKey("fundName", e.target.value)}
 					placeholder="Fund name"
-					className="w-full text-xl! h-10"
-					maxLength={50}
+					className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0"
+					maxLength={100}
 				/>
-				<Input
-					type="text"
-					inputMode="numeric"
-					placeholder="Starting account balance (USD)"
-					value={
-						fundsClass.createFundData.startingAccountBalanceUsd === 0
-							? ""
-							: fundsClass.createFundData.startingAccountBalanceUsd.toString()
-					}
-					onChange={(e): void => {
-						const sanitizedValue = handleTypeNumber(e)
-						// Convert to number, or keep as 0 if empty
-						const numValue = sanitizedValue === "" ? 0 : Number(sanitizedValue)
-						fundsClass.setCreateFundKey("startingAccountBalanceUsd", numValue)
-					}}
-					className="w-full h-12 rounded-xl text-xl! font-light border-2 bg-polar shadow-none border-swan"
-					maxLength={3}
-				/>
+				<div className="relative">
+					<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-muted-foreground">$</span>
+					<Input
+						type="text"
+						inputMode="numeric"
+						placeholder="Starting account balance (USD)"
+						value={
+							fundsClass.createFundData.startingAccountBalanceUsd === 0
+								? ""
+								: addCommas(fundsClass.createFundData.startingAccountBalanceUsd)
+						}
+						onChange={(e): void => {
+							const numericValue = removeNonNumeric(e.target.value)
+							// Convert to number, or keep as 0 if empty
+							let numValue = numericValue === "" ? 0 : Number(numericValue)
+							// Cap at maximum of 1,000,000
+							if (numValue > 1_000_000) {
+								numValue = 1_000_000
+							}
+							fundsClass.setCreateFundKey("startingAccountBalanceUsd", numValue)
+						}}
+						className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0 pl-8"
+					/>
+				</div>
 				<DialogFooter className="flex justify-end gap-2">
 					<Button
 						onClick={(): void => fundsClass.setIsCreateFundDialogOpen(false)}
@@ -55,13 +90,10 @@ function CreateFundDialog(): React.ReactNode {
 						CANCEL
 					</Button>
 					<Button
-						onClick={async (): Promise<void> => {
-							const fundUUID = await createFund()
-							if (fundUUID !== undefined) {
-								fundsClass.setIsCreateFundDialogOpen(false)
-							}
-						}}
-						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan">
+						onClick={handleCreateFund}
+						disabled={!isValid}
+						// eslint-disable-next-line max-len
+						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan disabled:opacity-50 disabled:cursor-not-allowed">
 						CREATE
 					</Button>
 				</DialogFooter>
