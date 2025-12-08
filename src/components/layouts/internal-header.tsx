@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { observer } from "mobx-react"
 import { Search, MessageSquare } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Input } from "../ui/input"
