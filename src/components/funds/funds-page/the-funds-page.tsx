@@ -3,7 +3,6 @@
 import { observer } from "mobx-react"
 import { useMemo } from "react"
 import WorkbenchLayout from "../../layouts/internal-container-layout"
-import CreateFundDialog from "./create-fund-dialog"
 import fundsClass from "../../../classes/funds-class"
 import SingleFundRow from "./single-fund-row"
 import { Button } from "../../ui/button"
@@ -27,7 +26,6 @@ function TheFundsPage(): React.ReactNode {
 			{funds.map((fund): React.ReactNode => (
 				<SingleFundRow key={fund.fundUUID} fund={fund} />
 			))}
-			<CreateFundDialog />
 		</WorkbenchLayout>
 	)
 }
