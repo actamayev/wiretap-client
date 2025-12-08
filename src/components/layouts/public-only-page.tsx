@@ -19,9 +19,9 @@ export default function PublicOnlyPage(props: PublicOnlyPageProps): React.ReactN
 	if (!isOpenPage) return children
 
 	return (
-		<div className="min-h-screen bg-standardBackground flex flex-col duration-0">
+		<div className="h-screen bg-standardBackground flex flex-col duration-0 overflow-hidden">
 			<HeaderNav />
-			<main className={cn(!extraClasses ? "flex-1 w-full overflow-y-auto pt-14 px-14" : extraClasses)}>
+			<main className={cn(!extraClasses ? "flex-1 w-full overflow-y-auto pt-14 px-14 min-h-0" : extraClasses)}>
 				{children}
 			</main>
 			<Footer />
