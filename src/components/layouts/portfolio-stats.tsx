@@ -48,13 +48,13 @@ function PortfolioStats(): React.ReactNode {
 
 	return (
 		<div className="shrink-0 flex flex-col text-left">
-			<div className="text-2xl font-semibold text-center">
-				Portfolio:
+			<div className="text-3xl font-semibold text-start">
+				Portfolio:{" "}
 				<span className={cn(portfolioStats.totalBalance > 0 && "text-yes-green")}>
 					${formatCurrency(portfolioStats.totalBalance)}
 				</span>
 			</div>
-			<div className="flex items-center gap-4 text-lg text-muted-foreground">
+			<div className="flex items-center gap-4 text-base text-muted-foreground">
 				<span>
 					Positions:
 					<span className={cn(positionsValue > 0 && "text-yes-green")}>
