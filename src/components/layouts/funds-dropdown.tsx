@@ -2,7 +2,9 @@
 
 import { useState, useMemo } from "react"
 import { observer } from "mobx-react"
+import { Plus } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { Button } from "../ui/button"
 import {
 	Select,
 	SelectContent,
@@ -20,11 +22,29 @@ function FundsDropdown(): React.ReactNode {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundsClass.funds.size])
 
+	if (funds.length === 0) {
+		return (
+			<div className="shrink-0">
+				<Button
+					onClick={(): void => fundsClass.setIsCreateFundDialogOpen(true)}
+					className={cn(
+						"h-12! w-80 rounded-full bg-off-sidebar-blue! border-none shadow-none",
+						"focus-visible:ring-0 focus-visible:ring-offset-0",
+						"text-base pl-5 flex items-center gap-2 text-button-text"
+					)}
+				>
+					<Plus className="h-5 w-5" />
+					<span>Create Fund</span>
+				</Button>
+			</div>
+		)
+	}
+
 	return (
 		<div className="shrink-0">
 			<Select
-				value={selectedFundUUID || "all"}
-				onValueChange={(value): void => setSelectedFundUUID(value === "all" ? "" : value as FundsUUID)}
+				value={selectedFundUUID || funds[0]?.fundUUID}
+				onValueChange={(value): void => setSelectedFundUUID(value as FundsUUID)}
 			>
 				<SelectTrigger
 					className={cn(
@@ -37,7 +57,6 @@ function FundsDropdown(): React.ReactNode {
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>
-					<SelectItem value="all">All Funds</SelectItem>
 					{funds.map((fund: SingleFund): React.ReactNode => (
 						<SelectItem key={fund.fundUUID} value={fund.fundUUID}>
 							{fund.fundName}

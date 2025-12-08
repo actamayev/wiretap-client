@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button"
 export default function SubscribeForUpdatesForm(): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 	const [success, setSuccess] = useState(false)
-
 	const successfulEmailRef = useRef<string>("")
 
 	const onSubmit = useCallback(async (values: EmailUpdatesRequest): Promise<void> => {

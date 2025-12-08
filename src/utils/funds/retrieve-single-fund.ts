@@ -29,7 +29,7 @@ export default async function retrieveSingleFund(fundUUID: FundsUUID): Promise<v
 			throw Error ("Unable to retrieve fund")
 		}
 
-		fundsClass.addFund(fundResponse.data.singleFund.fundUUID, fundResponse.data.singleFund)
+		fundsClass.addFund(fundResponse.data.singleFund)
 	} catch (error) {
 		console.error(error)
 		fundsClass.setIsRetrievingSingleFund(fundUUID, false)
