@@ -6,23 +6,13 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import tradeClass from "../../classes/trade-class"
 
-const formatCurrency = (value: number): string => {
-	if (value >= 1000000) {
-		return `$${(value / 1000000).toFixed(2)}M`
-	}
-	if (value >= 1000) {
-		return `$${(value / 1000).toFixed(2)}K`
-	}
-	return `$${value.toFixed(2)}`
-}
-
 const formatPrice = (price: number): string => {
 	return `${(price * 100).toFixed(1)}¢`
 }
 
 function TradeCard(): React.ReactNode {
 	return (
-		<div className="bg-card border border-border rounded-lg p-4">
+		<div className="bg-card rounded-lg p-4">
 			{/* Tabs */}
 			<div className="flex gap-2 mb-4">
 				<Button
@@ -76,7 +66,6 @@ function TradeCard(): React.ReactNode {
 			{/* Amount Input */}
 			<div className="mb-4">
 				<div className="text-xs text-muted-foreground mb-1">Amount</div>
-				<div className="text-xs text-muted-foreground mb-2">Balance {formatCurrency(tradeClass.balance)}</div>
 				<Input
 					type="number"
 					placeholder="$0"
