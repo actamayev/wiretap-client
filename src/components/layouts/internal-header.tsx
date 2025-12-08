@@ -12,8 +12,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select"
-import fundsClass from "../../classes/funds-class"
 import PortfolioStats from "./portfolio-stats"
+import fundsClass from "../../classes/funds-class"
 
 function HeaderContent(): React.ReactNode {
 	const [searchQuery, setSearchQuery] = useState("")
