@@ -1,29 +1,19 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useRef } from "react"
 import { observer } from "mobx-react"
-import { Search } from "lucide-react"
+import { Search, MessageSquare } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Input } from "../ui/input"
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "../ui/select"
+import { Button } from "../ui/button"
 import PortfolioStats from "./portfolio-stats"
-import fundsClass from "../../classes/funds-class"
+import FeedbackDialog from "./feedback-dialog"
+import FundsDropdown from "./funds-dropdown"
 
-function HeaderContent(): React.ReactNode {
+export default function HeaderContent(): React.ReactNode {
 	const [searchQuery, setSearchQuery] = useState("")
-	const [selectedFundUUID, setSelectedFundUUID] = useState<FundsUUID | "">("")
+	const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false)
 	const searchInputRef = useRef<HTMLInputElement>(null)
-
-	const funds = useMemo((): SingleFund[] => {
-		return Array.from(fundsClass.funds.values())
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fundsClass.funds.size])
 
 	useEffect((): (() => void) => {
 		const handleKeyDown = (e: KeyboardEvent): void => {
@@ -36,6 +26,12 @@ function HeaderContent(): React.ReactNode {
 				e.preventDefault()
 				searchInputRef.current?.focus()
 			}
+
+			// Open feedback dialog with "f" key
+			if (e.key === "f" && !isInputElement && !isSelectTrigger) {
+				e.preventDefault()
+				setIsFeedbackDialogOpen(true)
+			}
 		}
 
 		window.addEventListener("keydown", handleKeyDown)
@@ -47,7 +43,7 @@ function HeaderContent(): React.ReactNode {
 	return (
 		<div className="flex items-center gap-6 w-full">
 			{/* Search Bar */}
-			<div className="flex-1 max-w-lg relative">
+			<div className="flex-1 max-w-md relative">
 				<Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-button-text" />
 				<Input
 					ref={searchInputRef}
@@ -63,36 +59,23 @@ function HeaderContent(): React.ReactNode {
 				/>
 			</div>
 
-			{/* Fund Dropdown */}
-			<div className="shrink-0">
-				<Select
-					value={selectedFundUUID || "all"}
-					onValueChange={(value): void => setSelectedFundUUID(value === "all" ? "" : value as FundsUUID)}
-				>
-					<SelectTrigger
-						className={cn(
-							"h-12! w-80 rounded-full bg-off-sidebar-blue! border-none shadow-none",
-							"focus-visible:ring-0 focus-visible:ring-offset-0",
-							"**:data-select-icon:text-button-text! **:data-select-icon:opacity-100!",
-							"text-base pl-5"
-						)}
-					>
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="all">All Funds</SelectItem>
-						{funds.map((fund: SingleFund): React.ReactNode => (
-							<SelectItem key={fund.fundUUID} value={fund.fundUUID}>
-								{fund.fundName}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</div>
+			<FundsDropdown />
 
 			<PortfolioStats />
+
+			{/* Feedback Button */}
+			<Button
+				onClick={(): void => setIsFeedbackDialogOpen(true)}
+				className={cn("shrink-0 rounded-full bg-off-sidebar-blue! border-none shadow-none",
+					"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2 ml-auto"
+				)}
+			>
+				<MessageSquare className="h-5 w-5 text-button-text" />
+				<span className="text-button-text text-base">Feedback</span>
+				<span className="text-button-text text-base font-semibold">F</span>
+			</Button>
+
+			<FeedbackDialog open={isFeedbackDialogOpen} onOpenChange={setIsFeedbackDialogOpen} />
 		</div>
 	)
 }
-
-export default observer(HeaderContent)
