@@ -14,8 +14,10 @@ import {
 } from "../ui/select"
 import fundsClass from "../../classes/funds-class"
 import setPrimaryFund from "../../utils/funds/set-primary-fund"
+import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 
 function FundsDropdown(): React.ReactNode {
+	const navigate = useTypedNavigate()
 	const funds = useMemo((): SingleFund[] => {
 		return Array.from(fundsClass.funds.values())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,6 +54,15 @@ function FundsDropdown(): React.ReactNode {
 		setPrimaryFund(fundUUID)
 	}
 
+	const formatCurrency = (value: number): string => {
+		return value.toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		})
+	}
+
+	const selectedFund = funds.find((fund: SingleFund): boolean => fund.fundUUID === fundsClass.selectedFundUuid) || funds[0]
+
 	return (
 		<div className="shrink-0">
 			<Select
@@ -63,15 +74,38 @@ function FundsDropdown(): React.ReactNode {
 						"h-12! w-80 rounded-full bg-off-sidebar-blue! border-none shadow-none",
 						"focus-visible:ring-0 focus-visible:ring-offset-0",
 						"**:data-select-icon:text-button-text! **:data-select-icon:opacity-100!",
-						"text-base pl-5"
+						"text-base pl-5 cursor-pointer"
 					)}
 				>
-					<SelectValue />
+					<SelectValue>
+						{selectedFund?.fundName || ""}
+					</SelectValue>
 				</SelectTrigger>
 				<SelectContent>
 					{funds.map((fund: SingleFund): React.ReactNode => (
-						<SelectItem key={fund.fundUUID} value={fund.fundUUID}>
-							{fund.fundName}
+						<SelectItem
+							key={fund.fundUUID}
+							value={fund.fundUUID}
+							className="cursor-pointer"
+						>
+							<div className="flex items-center justify-between w-full gap-2">
+								<span>{fund.fundName} - ${formatCurrency(fund.currentAccountBalanceUsd)}</span>
+								<Button
+									variant="ghost"
+									size="sm"
+									className={cn(
+										"h-auto p-1 hover:bg-transparent text-button-text",
+										"hover:text-yes-green text-xs pointer-events-auto"
+									)}
+									onMouseDown={(e): void => {
+										e.preventDefault()
+										e.stopPropagation()
+										navigate(`/funds/${fund.fundUUID}`)
+									}}
+								>
+									Go to fund
+								</Button>
+							</div>
 						</SelectItem>
 					))}
 				</SelectContent>
