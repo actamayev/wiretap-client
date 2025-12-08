@@ -1,6 +1,7 @@
 
 "use client"
 
+import Link from "next/link"
 import { ComplianceParagraph, ComplianceSectionHeader } from "../components/compliance"
 import ProfileLayout from "../components/profile/profile-layout"
 import SupportSectionContainer from "../components/support/support-section-container"
@@ -32,10 +33,28 @@ export default function PrivacyPage(): React.ReactNode {
 
 					<ComplianceSectionHeader>2. How We Use Your Information</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						We use your information to: • Operate, maintain, and improve the platform • Track your paper trading
-						activity and portfolio • Send platform updates, notifications, and security alerts • Respond to your
-						requests and provide customer support • Analyze usage patterns and optimize user experience • Prevent
-						fraud, abuse, and security threats • Comply with legal obligations
+						We use your information to:
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Operate, maintain, and improve the platform
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Track your paper trading activity and portfolio
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Send platform updates, notifications, and security alerts
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Respond to your requests and provide customer support
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Analyze usage patterns and optimize user experience
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Prevent fraud, abuse, and security threats
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Comply with legal obligations
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>3. Information Sharing</ComplianceSectionHeader>
@@ -64,9 +83,16 @@ export default function PrivacyPage(): React.ReactNode {
 					<ComplianceSectionHeader>4. Data Retention</ComplianceSectionHeader>
 					<ComplianceParagraph>
 						We retain your information for as long as your account is active or as needed to provide services. If
-						you delete your account, we'll delete your personal information within 30 days, except: • Data we're
-						required to retain by law • Aggregated, anonymized data used for analytics • Backup copies (deleted
-						within 90 days)
+						you delete your account, we'll delete your personal information within 30 days, except:
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Data we're required to retain by law
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Aggregated, anonymized data used for analytics
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Backup copies (deleted within 90 days)
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>5. Data Security</ComplianceSectionHeader>
@@ -104,14 +130,27 @@ export default function PrivacyPage(): React.ReactNode {
 						restriction of processing
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						To exercise these rights, email hello@wiretap.pro
+						To exercise these rights, email{" "}
+						<Link href="mailto:hello@wiretap.pro?subject=Privacy Rights Request" className="underline">
+							hello@wiretap.pro
+						</Link>
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>7. Cookies and Tracking</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						We use cookies, local storage, and similar technologies for: • Authentication and account security •
-						Remembering your preferences • Analytics and performance monitoring • Understanding how users interact
-						with the platform
+						We use cookies, local storage, and similar technologies for:
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Authentication and account security
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Remembering your preferences
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Analytics and performance monitoring
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Understanding how users interact with the platform
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						You can disable cookies in your browser settings, but some platform features may not work properly.
@@ -141,7 +180,11 @@ export default function PrivacyPage(): React.ReactNode {
 					<ComplianceParagraph>
 						Wiretap is not intended for anyone under 18. We don't knowingly collect information from minors. If
 						we learn we've collected data from someone under 18, we'll delete it promptly. If you believe we've
-						collected information from a minor, contact us immediately at hello@wiretap.pro.
+						collected information from a minor, contact us immediately at{" "}
+						<Link href="mailto:hello@wiretap.pro?subject=Minor Data Removal Request" className="underline">
+							hello@wiretap.pro
+						</Link>
+						.
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>11. Do Not Track</ComplianceSectionHeader>
@@ -168,15 +211,27 @@ export default function PrivacyPage(): React.ReactNode {
 
 					<ComplianceSectionHeader>14. Your California Privacy Rights</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						California residents have additional rights under the California Consumer Privacy Act (CCPA): • Right
-						to know what personal information we collect, use, and share • Right to delete personal information •
-						Right to opt-out of sale of personal information (we don't sell data) • Right to non-discrimination
-						for exercising these rights
+						California residents have additional rights under the California Consumer Privacy Act (CCPA):
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Right to know what personal information we collect, use, and share
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Right to delete personal information
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Right to opt-out of sale of personal information (we don't sell data)
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Right to non-discrimination for exercising these rights
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>15. Contact</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						Questions or requests regarding this Privacy Policy? Email hello@wiretap.pro
+						Questions or requests regarding this Privacy Policy? Email{" "}
+						<Link href="mailto:hello@wiretap.pro?subject=Privacy Policy Inquiry" className="underline">
+							hello@wiretap.pro
+						</Link>
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						For GDPR/CCPA requests or data protection inquiries, please include "Privacy Request" in your subject

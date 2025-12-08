@@ -1,6 +1,7 @@
 
 "use client"
 
+import Link from "next/link"
 import { ComplianceParagraph, ComplianceSectionHeader } from "../components/compliance"
 import ProfileLayout from "../components/profile/profile-layout"
 import SupportSectionContainer from "../components/support/support-section-container"
@@ -15,9 +16,12 @@ export default function TermsPage(): React.ReactNode {
 
 					<ComplianceSectionHeader>1. Acceptance of Terms</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						By accessing or using Wiretap, you agree to these Terms of Service and our Privacy Policy. If you
-						don't agree, don't use the platform. By using Wiretap, you represent that you are at least 18 years
-						old and have the legal capacity to enter into this agreement.
+						By accessing or using Wiretap, you agree to these Terms of Service and our{" "}
+						<Link href="/privacy" className="underline">
+							Privacy Policy
+						</Link>
+						. If you don't agree, don't use the platform. By using Wiretap, you represent that you are at least
+						18 years old and have the legal capacity to enter into this agreement.
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						Wiretap is operated by Blue Dot Robots Inc., a Delaware corporation ("Wiretap," "we," "us," or
@@ -53,9 +57,16 @@ export default function TermsPage(): React.ReactNode {
 						acknowledge and agree that:
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						• Data may be delayed, incomplete, or contain errors • We provide no warranty regarding the accuracy,
-						completeness, or timeliness of any data • Data is provided "as is" for simulation and educational
-						purposes only • You must independently verify any information before making real trading decisions
+						• Data may be delayed, incomplete, or contain errors
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• We provide no warranty regarding the accuracy, completeness, or timeliness of any data
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Data is provided "as is" for simulation and educational purposes only
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• You must independently verify any information before making real trading decisions
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						Wiretap is a paper trading platform. If you choose to trade on Polymarket or any other platform with
@@ -69,8 +80,16 @@ export default function TermsPage(): React.ReactNode {
 						disable certain features. However, you acknowledge that:
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						• We cannot guarantee real-time data delivery • Data staleness warnings may not appear in all cases •
-						Technical failures may occur without warning • You must independently verify all data before trading
+						• We cannot guarantee real-time data delivery
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Data staleness warnings may not appear in all cases
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Technical failures may occur without warning
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• You must independently verify all data before trading
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						The presence of data quality warnings on our platform does not create any duty to provide such
@@ -88,9 +107,19 @@ export default function TermsPage(): React.ReactNode {
 						Wiretap, including but not limited to:
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						• Financial losses from real trading decisions made on any platform • Losses resulting from inaccurate,
-						delayed, or incomplete data • Platform errors, bugs, downtime, or technical issues • Loss of profits,
-						revenue, data, or business opportunities • Any other damages or losses of any kind
+						• Financial losses from real trading decisions made on any platform
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Losses resulting from inaccurate, delayed, or incomplete data
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Platform errors, bugs, downtime, or technical issues
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Loss of profits, revenue, data, or business opportunities
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Any other damages or losses of any kind
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						Our total liability to you for any claims arising out of or related to these Terms or your use of
@@ -108,18 +137,38 @@ export default function TermsPage(): React.ReactNode {
 						merchantability, fitness for a particular purpose, title, and non-infringement.
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						We don't warrant that: • The platform will be error-free, secure, or uninterrupted • Defects will be
-						corrected • The platform is free of viruses or harmful components • Results or data will be accurate or
-						reliable
+						We don't warrant that:
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• The platform will be error-free, secure, or uninterrupted
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Defects will be corrected
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• The platform is free of viruses or harmful components
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Results or data will be accurate or reliable
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>7. Indemnification</ComplianceSectionHeader>
 					<ComplianceParagraph>
 						You agree to indemnify, defend, and hold harmless Blue Dot Robots Inc., its officers, directors,
 						employees, and affiliates from any claims, losses, damages, liabilities, costs, and expenses
-						(including reasonable attorneys' fees) arising from: • Your use of the platform • Your violation
-						of these terms • Any real trading decisions you make • Your violation of any law or third-party
-						rights
+						(including reasonable attorneys' fees) arising from:
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Your use of the platform
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Your violation of these terms
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Any real trading decisions you make
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• Your violation of any law or third-party rights
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>8. Real Trading is Your Responsibility</ComplianceSectionHeader>
@@ -146,13 +195,22 @@ export default function TermsPage(): React.ReactNode {
 						represent and warrant that:
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						• You are at least 18 years of age • You have the legal capacity to enter into this agreement • You
-						will not allow anyone under 18 to access your account
+						• You are at least 18 years of age
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• You have the legal capacity to enter into this agreement
+					</ComplianceParagraph>
+					<ComplianceParagraph>
+						• You will not allow anyone under 18 to access your account
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						We do not knowingly collect information from anyone under 18. If we learn we have collected data from a
 						minor, we will delete it promptly. If you believe someone under 18 is using the platform, contact us
-						immediately at hello@wiretap.pro.
+						immediately at{" "}
+						<Link href="mailto:hello@wiretap.pro?subject=Minor Account Report" className="underline">
+							hello@wiretap.pro
+						</Link>
+						.
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>11. Account Termination</ComplianceSectionHeader>
@@ -234,13 +292,20 @@ export default function TermsPage(): React.ReactNode {
 
 					<ComplianceSectionHeader>18. Entire Agreement</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						These Terms, together with our Privacy Policy, constitute the entire agreement between you and Blue Dot
-						Robots Inc. regarding your use of the platform and supersede all prior agreements.
+						These Terms, together with our{" "}
+						<Link href="/privacy" className="underline">
+							Privacy Policy
+						</Link>
+						, constitute the entire agreement between you and Blue Dot Robots Inc. regarding your use of the
+						platform and supersede all prior agreements.
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>19. Contact</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						Questions about these Terms? Email hello@wiretap.pro
+						Questions about these Terms? Email{" "}
+						<Link href="mailto:hello@wiretap.pro?subject=Terms of Service Inquiry" className="underline">
+							hello@wiretap.pro
+						</Link>
 					</ComplianceParagraph>
 				</div>
 			</SupportSectionContainer>
