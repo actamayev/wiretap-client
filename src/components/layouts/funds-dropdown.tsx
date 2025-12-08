@@ -16,6 +16,7 @@ import fundsClass from "../../classes/funds-class"
 import setPrimaryFund from "../../utils/funds/set-primary-fund"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 
+// eslint-disable-next-line max-lines-per-function
 function FundsDropdown(): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const funds = useMemo((): SingleFund[] => {
@@ -48,7 +49,12 @@ function FundsDropdown(): React.ReactNode {
 		)
 	}
 
-	const handleFundChange = (fundUUID: FundsUUID): void => {
+	const handleFundChange = (value: string): void => {
+		if (value === "create-fund") {
+			fundsClass.setIsCreateFundDialogOpen(true)
+			return
+		}
+		const fundUUID = value as FundsUUID
 		fundsClass.setSelectedFundUuid(fundUUID)
 		// Set the new fund as primary
 		setPrimaryFund(fundUUID)
@@ -67,7 +73,7 @@ function FundsDropdown(): React.ReactNode {
 		<div className="shrink-0">
 			<Select
 				value={fundsClass.selectedFundUuid || funds[0]?.fundUUID}
-				onValueChange={(value): void => handleFundChange(value as FundsUUID)}
+				onValueChange={handleFundChange}
 			>
 				<SelectTrigger
 					className={cn(
@@ -108,6 +114,18 @@ function FundsDropdown(): React.ReactNode {
 							</div>
 						</SelectItem>
 					))}
+					<SelectItem
+						value="create-fund"
+						className="cursor-pointer"
+						onSelect={(): void => {
+							fundsClass.setIsCreateFundDialogOpen(true)
+						}}
+					>
+						<div className="flex items-center gap-2">
+							<Plus className="h-4 w-4" />
+							<span>Create a fund</span>
+						</div>
+					</SelectItem>
 				</SelectContent>
 			</Select>
 		</div>
