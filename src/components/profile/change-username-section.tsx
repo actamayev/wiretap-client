@@ -51,8 +51,9 @@ function ChangeUsernameSection(): React.ReactNode {
 						value={username}
 						onChange={handleUsernameChange}
 						className={cn(
-							"w-full pr-14 h-10 md:h-12 text-lg md:text-xl! bg-polar text-eel! font-light shadow-none border-swan",
-							(username.length > 0 && username.length < 3) && "border-cardinal focus-visible:border-cardinal!"
+							"w-full pr-14 h-10 md:h-12 text-lg md:text-xl! text-eel! font-light shadow-none",
+							"border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-sidebar-blue!",
+							(username.length > 0 && username.length < 3) && "border-red-500 focus-visible:border-red-500!"
 						)}
 						maxLength={50}
 					/>
@@ -75,11 +76,11 @@ function ChangeUsernameSection(): React.ReactNode {
 			</div>
 			{username.length > 0 && (
 				username.length < 3 ? (
-					<p className="text-sm text-cardinal mt-1">
+					<p className="text-sm text-red-500 mt-1">
 						Username must be at least 3 characters.
 					</p>
 				) : (
-					<p className="text-sm text-cardinal mt-1">
+					<p className="text-sm text-red-500 mt-1">
 						{usernameError}
 					</p>
 				)

@@ -114,13 +114,13 @@ function ChangePasswordSection(): React.ReactNode {
 						</Button>
 					</div>
 					{newPassword.length > 0 && newPassword.length < 6 && (
-						<p className="text-sm text-cardinal">
+						<p className="text-sm text-red-500">
 							Password must be at least 6 characters.
 						</p>
 					)}
 				</div>
 				{passwordError && (
-					<p className="text-sm text-cardinal mt-1">
+					<p className="text-sm text-red-500 mt-1">
 						{passwordError}
 					</p>
 				)}
