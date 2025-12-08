@@ -56,13 +56,13 @@ function PortfolioStats(): React.ReactNode {
 			</div>
 			<div className="flex items-center gap-4 text-base text-muted-foreground">
 				<span>
-					Positions:
+					Positions: {" "}
 					<span className={cn(positionsValue > 0 && "text-yes-green")}>
 						${formatCurrency(positionsValue)}
 					</span>
 				</span>
 				<span>
-					Cash:
+					Cash: {" "}
 					<span className={cn(cashValue > 0 && "text-yes-green")}>
 						${formatCurrency(cashValue)}
 					</span>

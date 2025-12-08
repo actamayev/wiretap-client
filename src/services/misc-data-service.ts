@@ -12,4 +12,10 @@ export default class MiscDataService extends BaseDataService {
 			this.buildUrl("/subscribe-for-email-updates"), { email }
 		)
 	}
+
+	async sendFeedback(feedback: string): Promise<AxiosResponse<AllCommonResponses>> {
+		return await this.httpClient.http.post<AllCommonResponses>(
+			this.buildUrl("/user-feedback"), { feedback }
+		)
+	}
 }
