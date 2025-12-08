@@ -40,9 +40,9 @@ export default function HeaderContent(): React.ReactNode {
 	}, [])
 
 	return (
-		<div className="flex items-center gap-6 w-full">
+		<div className="flex items-center justify-between w-full">
 			{/* Search Bar */}
-			<div className="flex-1 max-w-md relative">
+			<div className="flex-1 max-w-lg relative">
 				<Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-button-text" />
 				<Input
 					ref={searchInputRef}
@@ -58,21 +58,19 @@ export default function HeaderContent(): React.ReactNode {
 				/>
 			</div>
 
-			<div className="flex-1 flex items-center justify-between">
-				<FundsDropdown />
+			<FundsDropdown />
 
-				<PortfolioStats />
+			<PortfolioStats />
 
-				{/* Feedback Button */}
-				<Button
-					onClick={(): void => setIsFeedbackDialogOpen(true)}
-					className={cn("shrink-0 rounded-full bg-off-sidebar-blue! border-none shadow-none",
-						"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2"
-					)}
-				>
-					<span className="text-button-text text-base">Feedback</span>
-				</Button>
-			</div>
+			{/* Feedback Button */}
+			<Button
+				onClick={(): void => setIsFeedbackDialogOpen(true)}
+				className={cn("shrink-0 rounded-full bg-off-sidebar-blue! border-none shadow-none",
+					"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2"
+				)}
+			>
+				<span className="text-button-text text-base">Feedback</span>
+			</Button>
 
 			<FeedbackDialog open={isFeedbackDialogOpen} onOpenChange={setIsFeedbackDialogOpen} />
 		</div>
