@@ -72,7 +72,7 @@ function ChangePasswordSection(): React.ReactNode {
 							value={currentPassword}
 							onChange={handleCurrentPasswordChange}
 							className="w-full pr-14 h-10 md:h-12 text-lg md:text-xl! shadow-none
-							bg-polar text-eel! font-light border-swan"
+							bg-polar text-eel! font-light border-swan focus-visible:ring-0 focus-visible:ring-offset-0"
 						/>
 						<Button
 							type="button"
@@ -100,7 +100,7 @@ function ChangePasswordSection(): React.ReactNode {
 							value={newPassword}
 							onChange={handleNewPasswordChange}
 							className="w-full pr-14 h-10 md:h-12 text-lg md:text-xl! shadow-none
-							bg-polar text-eel! font-light border-swan"
+							bg-polar text-eel! font-light border-swan focus-visible:ring-0 focus-visible:ring-offset-0"
 						/>
 						<Button
 							type="button"

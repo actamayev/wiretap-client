@@ -15,11 +15,12 @@ export default function GoogleSignIn(): React.ReactNode {
 
 	const onSuccess = useCallback(async (successResponse: CredentialResponse): Promise<void> => {
 		const response = await googleAuthCallback(successResponse)
-		if (isNull(response) || (pathname !== "/login" && pathname !== "/register")) return
+		if (isNull(response)) return
 		if (response.isNewUser === true || isUndefined(response.personalInfo)) {
 			navigate("/register-google")
 			return
 		}
+		if (pathname !== "/login" && pathname !== "/register") return
 		navigate(PageToNavigateAfterLogin)
 	}, [googleAuthCallback, navigate, pathname])
 

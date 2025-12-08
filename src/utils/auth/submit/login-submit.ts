@@ -7,6 +7,7 @@ import personalInfoClass from "../../../classes/personal-info-class"
 import confirmLoginFields from "../confirm-login-fields"
 import wiretapApiClient from "../../../classes/wiretap-api-client-class"
 import setErrorAxiosResponse from "../../error-handling/set-error-axios-response"
+import fundsClass from "../../../classes/funds-class"
 
 export default async function loginSubmit(
 	loginInformation: IncomingLoginRequest,
@@ -28,6 +29,7 @@ export default async function loginSubmit(
 			hasCompletedSignup: true
 		})
 		personalInfoClass.setRetrievedPersonalData(response.data.personalInfo)
+		fundsClass.setFunds(response.data.funds)
 		return true
 	} catch (error: unknown) {
 		setErrorAxiosResponse(error, setError)

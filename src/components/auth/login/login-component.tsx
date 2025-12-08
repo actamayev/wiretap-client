@@ -89,14 +89,14 @@ function LoginComponent(): React.ReactNode {
 					<div className="text-center text-sm">
 						Don&apos;t have an account?{" "}
 						{pathname === "/login" ? (
-							<Link href="/register" className="underline underline-offset-4">
+							<Link href="/register" className="underline underline-offset-4 cursor-pointer">
 								Register
 							</Link>
 						) : (
 							<button
 								type="button"
 								onClick={(): void => authClass.setShowLoginOrRegister("Register")}
-								className="underline underline-offset-4 font-semibold"
+								className="underline underline-offset-4 font-semibold cursor-pointer"
 							>
 								Register
 							</button>

@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import authClass from "../../../classes/auth-class"
 import AuthTemplate from "../auth-template"
 import { Button } from "@/components/ui/button"
+import { cn } from "../../../lib/utils"
 
 function RegisterComponent(): React.ReactNode {
 	const [error, setError] = useState("")
@@ -70,7 +71,8 @@ function RegisterComponent(): React.ReactNode {
 												maxLength={100}
 												required
 												// eslint-disable-next-line max-len
-												className="w-full h-12 rounded-xl text-xl! font-light border-2 bg-gray-50 shadow-none border-gray-700"
+												className={cn("w-full h-12 rounded-xl text-xl! font-light border-2 bg-gray-50 shadow-none border-gray-700",
+													"focus-visible:ring-0 focus-visible:ring-offset-0")}
 											/>
 										</FormControl>
 										<FormMessage />
@@ -93,14 +95,14 @@ function RegisterComponent(): React.ReactNode {
 					<div className="text-center text-sm">
 						Already have an account?{" "}
 						{pathname === "/register" ? (
-							<Link href="/login" className="underline underline-offset-4">
+							<Link href="/login" className="underline underline-offset-4 cursor-pointer">
 								Login
 							</Link>
 						) : (
 							<button
 								type="button"
 								onClick={(): void => authClass.setShowLoginOrRegister("Login")}
-								className="underline underline-offset-4"
+								className="underline underline-offset-4 cursor-pointer"
 							>
 								Login
 							</button>

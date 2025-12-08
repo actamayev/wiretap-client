@@ -22,7 +22,6 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 
 export default async function EventPage({ params }: EventPageProps): Promise<React.ReactNode> {
 	const { eventSlug } = await params
-	console.log("eventSlug", eventSlug)
 
 	// Basic validation - adjust regex based on your UUID format
 	if (!eventSlug) {

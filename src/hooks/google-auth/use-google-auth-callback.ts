@@ -8,6 +8,7 @@ import authClass from "../../classes/auth-class"
 import { isErrorResponses } from "../../utils/type-checks"
 import personalInfoClass from "../../classes/personal-info-class"
 import wiretapApiClient from "../../classes/wiretap-api-client-class"
+import fundsClass from "../../classes/funds-class"
 
 export default function useGoogleAuthCallback(): (successResponse: CredentialResponse) => Promise<GoogleAuthSuccess | null> {
 	return useCallback(async (successResponse: CredentialResponse): Promise<GoogleAuthSuccess | null> => {
@@ -37,6 +38,7 @@ export default function useGoogleAuthCallback(): (successResponse: CredentialRes
 			}
 
 			personalInfoClass.setRetrievedPersonalData(googleCallbackResponse.data.personalInfo)
+			fundsClass.setFunds(googleCallbackResponse.data.funds)
 			return googleCallbackResponse.data
 		} catch (error) {
 			console.error(error)
