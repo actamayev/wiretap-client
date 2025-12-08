@@ -125,16 +125,16 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 	} = props
 
 	return (
-		<div className={cn("h-screen flex flex-col w-full", extraParentClasses)}>
+		<div className={cn("h-screen flex flex-col w-full bg-sidebar-blue", extraParentClasses)}>
 			{/* Header */}
-			<header className="border-b border-border bg-sidebar-blue pr-6 py-10">
+			<header className="bg-sidebar-blue pr-6 py-10">
 				<ObservedHeaderContent />
 			</header>
 
 			{/* Main content area with hidden scrollbar */}
 			<div
 				className={cn(
-					"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue",
+					"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue mr-6 rounded-tl-lg rounded-tr-lg",
 					preventElasticScroll ? "overscroll-none" : "",
 					extraChildrenClasses
 				)}

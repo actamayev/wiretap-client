@@ -61,10 +61,10 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 	const navigate = useTypedNavigate()
 
 	return (
-		<div className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue">
-			<div className="flex gap-4 w-full items-stretch">
+		<div className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue aspect-615/175 flex flex-col">
+			<div className="flex gap-8 w-full flex-1 min-h-0">
 				{/* Left Section - 3/5 width */}
-				<div className="w-3/5 flex flex-col gap-4">
+				<div className="w-3/5 flex flex-col gap-3 h-full">
 					{/* Row 1: Image, Name, Percentage */}
 					<div className="flex items-center gap-3">
 						<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
@@ -79,22 +79,22 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 						<div className="flex-1 min-w-0">
 							<h3
 								onClick={(): void => navigate(`/events/${event.eventSlug}`)}
-								className="font-semibold text-sm truncate cursor-pointer hover:underline"
+								className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
 							>
 								{event.eventTitle}
 							</h3>
 						</div>
-						<div className="shrink-0 text-lg font-bold text-primary">
-							{(event.eventMarkets[0].lastTradePrice ?? 0) * 100}%
+						<div className="shrink-0 text-xl font-bold text-yes-green">
+							{Math.round((event.eventMarkets[0].lastTradePrice ?? 0) * 100)}%
 						</div>
 					</div>
 
 					{/* Row 2: Yes/No Buttons */}
-					<div className="flex gap-2">
+					<div className="flex gap-4">
 						<Button
 							variant="default"
 							size="sm"
-							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text"
+							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
 							onClick={(): void => {
 								navigate(`/events/${event.eventSlug}`)
 							}}
@@ -104,7 +104,7 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 						<Button
 							variant="default"
 							size="sm"
-							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text"
+							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
 							onClick={(): void => {
 								navigate(`/events/${event.eventSlug}`)
 							}}
@@ -120,7 +120,7 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 				</div>
 
 				{/* Right Section - 2/5 width */}
-				<div className="w-2/5 flex flex-col h-full">
+				<div className="w-2/5 flex flex-col h-full min-h-0">
 					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
 						<SimpleChart seed={event.eventSlug} />
 					</div>
