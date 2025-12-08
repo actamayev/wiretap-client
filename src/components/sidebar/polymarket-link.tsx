@@ -11,7 +11,7 @@ export default function PolymarketLink(): React.ReactNode {
 					href="https://polymarket.com?via=levi-sheridan"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="flex items-start gap-3 w-full p-2 rounded-lg hover:bg-off-sidebar-blue duration-0 rounded-xl"
+					className="flex items-start gap-3 w-full p-2 hover:bg-off-sidebar-blue duration-0 rounded-xl"
 				>
 					<Image
 						src="/polymarket-logo.png"
