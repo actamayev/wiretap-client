@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { observer } from "mobx-react"
-import { ArrowUp } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -124,6 +124,10 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 	const [tradeTab, setTradeTab] = useState<TradeTab>("Buy")
 	const [amount, setAmount] = useState("")
 	const [selectedMarket, setSelectedMarket] = useState<OutcomeString>("Yes" as OutcomeString)
+	const [rulesExpanded, setRulesExpanded] = useState(false)
+	const [rulesMaxHeight, setRulesMaxHeight] = useState<number | undefined>(undefined)
+	const chartRef = useRef<HTMLDivElement>(null)
+	const rulesRef = useRef<HTMLDivElement>(null)
 
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
@@ -142,6 +146,24 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event?.eventTitle])
 
+	// Calculate max height for rules based on chart height
+	useEffect((): () => void => {
+		const updateRulesHeight = (): void => {
+			if (chartRef.current && !rulesExpanded) {
+				const chartHeight = chartRef.current.offsetHeight
+				setRulesMaxHeight(chartHeight)
+			} else {
+				setRulesMaxHeight(undefined)
+			}
+		}
+
+		updateRulesHeight()
+		window.addEventListener("resize", updateRulesHeight)
+		return () => {
+			window.removeEventListener("resize", updateRulesHeight)
+		}
+	}, [rulesExpanded])
+
 	if (isUndefined(event)) {
 		return (
 			<div className="flex items-center justify-center h-full">
@@ -151,8 +173,6 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 	}
 
 	// Dummy data
-	const currentProbability = 99
-	const probabilityChange = 35
 	const totalVolume = 33215269
 	const resolutionDate = "Dec 31, 2025"
 	const yesPrice = 0.993
@@ -177,130 +197,164 @@ function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
-			<div className="flex gap-6 h-full p-6">
-				{/* Left Section - Event Details and Chart */}
-				<div className="flex-3 flex flex-col gap-6">
-					{/* Event Header */}
-					<div className="flex items-start gap-3">
+			<div className="flex flex-col gap-6 h-full p-6">
+				{/* Row 1: Title with prefix, Volume and End Date */}
+				<div className="flex flex-col items-center gap-3">
+					<div className="flex items-center gap-3">
 						<div className="w-10 h-10 shrink-0 rounded-md bg-muted flex items-center justify-center text-foreground">
 							M
 						</div>
-						<div className="flex-1">
-							<h1 className="text-2xl font-semibold mb-2">{event.eventTitle}</h1>
-							<div className="flex items-center gap-4 text-sm text-muted-foreground">
-								<span>{formatCurrency(totalVolume)} Vol.</span>
-								<span>•</span>
-								<span>Resolution {resolutionDate}</span>
-							</div>
-						</div>
+						<h1 className="text-2xl font-semibold">{event.eventTitle}</h1>
 					</div>
-
-					{/* Current Probability */}
-					<div className="flex items-baseline gap-2">
-						<span className="text-5xl font-bold">{currentProbability}%</span>
-						<span className="text-sm text-muted-foreground">chance</span>
-						<div className="flex items-center gap-1 text-green-600">
-							<ArrowUp className="h-4 w-4" />
-							<span className="text-sm font-medium">{probabilityChange}%</span>
-						</div>
-					</div>
-
-					{/* Chart */}
-					<div className="flex-1 min-h-0">
-						<div className="bg-card border border-border rounded-lg p-4 h-full">
-							<PriceChart seed={eventSlug} timeframe={timeframe} />
-						</div>
-					</div>
-
-					{/* Timeframe Selector */}
-					<div className="flex gap-2">
-						{timeframes.map((tf): React.ReactNode => (
-							<Button
-								key={tf}
-								variant={timeframe === tf ? "default" : "outline"}
-								size="sm"
-								onClick={(): void => setTimeframe(tf)}
-							>
-								{tf}
-							</Button>
-						))}
+					<div className="flex items-center gap-4 text-sm text-muted-foreground">
+						<span>{formatCurrency(totalVolume)} Vol.</span>
+						<span>•</span>
+						<span>Resolution {resolutionDate}</span>
 					</div>
 				</div>
 
-				{/* Right Section - Trading Interface and Related Markets */}
-				<div className="flex-2 flex flex-col gap-6">
-					{/* Trading Panel */}
-					<div className="bg-card border border-border rounded-lg p-4">
-						{/* Tabs */}
-						<div className="flex gap-2 mb-4">
+				{/* Row 2: Chart on left, Trade info on right */}
+				<div className="flex gap-6 flex-1 min-h-0">
+					{/* Left Section - Chart */}
+					<div className="flex-2 flex flex-col gap-4 min-h-0">
+						<div ref={chartRef} className="flex-1 min-h-0">
+							<div className="bg-card border border-border rounded-lg p-4 h-full">
+								<PriceChart seed={eventSlug} timeframe={timeframe} />
+							</div>
+						</div>
+						{/* Timeframe Selector */}
+						<div className="flex gap-2">
+							{timeframes.map((tf): React.ReactNode => (
+								<Button
+									key={tf}
+									variant={timeframe === tf ? "default" : "outline"}
+									size="sm"
+									onClick={(): void => setTimeframe(tf)}
+								>
+									{tf}
+								</Button>
+							))}
+						</div>
+					</div>
+
+					{/* Right Section - Trading Interface and Rules */}
+					<div className="flex-1 flex flex-col gap-6 min-h-0">
+						{/* Trading Panel */}
+						<div className="bg-card border border-border rounded-lg p-4">
+							{/* Tabs */}
+							<div className="flex gap-2 mb-4">
+								<Button
+									variant={tradeTab === "Buy" ? "default" : "ghost"}
+									size="sm"
+									onClick={(): void => setTradeTab("Buy")}
+									className="flex-1"
+								>
+									Buy
+								</Button>
+								<Button
+									variant={tradeTab === "Sell" ? "default" : "ghost"}
+									size="sm"
+									onClick={(): void => setTradeTab("Sell")}
+									className="flex-1"
+								>
+									Sell
+								</Button>
+							</div>
+
+							{/* Yes/No Buttons */}
+							<div className="flex gap-2 mb-4">
+								<Button
+									variant={selectedMarket === "Yes" ? "default" : "outline"}
+									className={cn(
+										"flex-1 h-12",
+										selectedMarket === "Yes" ? "bg-green-600 hover:bg-green-700 text-white" : ""
+									)}
+									onClick={(): void => setSelectedMarket("Yes" as OutcomeString)}
+								>
+									<div className="flex items-center justify-between w-full">
+										<span className="font-semibold">Yes</span>
+										<span className="text-xs opacity-90">{formatPrice(yesPrice)}</span>
+									</div>
+								</Button>
+								<Button
+									variant={selectedMarket === "No" ? "default" : "outline"}
+									className={cn(
+										"flex-1 h-12",
+										selectedMarket === "No" ? "bg-gray-600 hover:bg-gray-700 text-white" : ""
+									)}
+									onClick={(): void => setSelectedMarket("No" as OutcomeString)}
+								>
+									<div className="flex items-center justify-between w-full">
+										<span className="font-semibold">No</span>
+										<span className="text-xs opacity-90">{formatPrice(noPrice)}</span>
+									</div>
+								</Button>
+							</div>
+
+							{/* Amount Input */}
+							<div className="mb-4">
+								<div className="text-xs text-muted-foreground mb-1">Amount</div>
+								<div className="text-xs text-muted-foreground mb-2">Balance {formatCurrency(balance)}</div>
+								<Input
+									type="number"
+									placeholder="$0"
+									value={amount}
+									onChange={(e): void => setAmount(e.target.value)}
+									className="mb-2 focus-visible:ring-0 focus-visible:ring-offset-0"
+								/>
+							</div>
+
+							{/* Action Button */}
 							<Button
-								variant={tradeTab === "Buy" ? "default" : "ghost"}
-								size="sm"
-								onClick={(): void => setTradeTab("Buy")}
-								className="flex-1"
+								variant="default"
+								className="w-full bg-gray-600 hover:bg-gray-700 text-white"
 							>
-								Buy
-							</Button>
-							<Button
-								variant={tradeTab === "Sell" ? "default" : "ghost"}
-								size="sm"
-								onClick={(): void => setTradeTab("Sell")}
-								className="flex-1"
-							>
-								Sell
+								Trade
 							</Button>
 						</div>
 
-						{/* Yes/No Buttons */}
-						<div className="flex gap-2 mb-4">
-							<Button
-								variant={selectedMarket === "Yes" ? "default" : "outline"}
+						{/* Rules Section */}
+						<div className="bg-card border border-border rounded-lg p-4 flex flex-col min-h-0">
+							<div className="flex items-center justify-between mb-3">
+								<h3 className="font-semibold">Rules</h3>
+							</div>
+							<div
+								ref={rulesRef}
 								className={cn(
-									"flex-1 h-12",
-									selectedMarket === "Yes" ? "bg-green-600 hover:bg-green-700 text-white" : ""
+									"text-sm text-muted-foreground overflow-hidden transition-all",
+									!rulesExpanded && rulesMaxHeight ? "" : ""
 								)}
-								onClick={(): void => setSelectedMarket("Yes" as OutcomeString)}
+								style={
+									!rulesExpanded && rulesMaxHeight
+										? { maxHeight: `${rulesMaxHeight}px`, overflowY: "hidden" }
+										: {}
+								}
 							>
-								<div className="flex items-center justify-between w-full">
-									<span className="font-semibold">Yes</span>
-									<span className="text-xs opacity-90">{formatPrice(yesPrice)}</span>
-								</div>
-							</Button>
-							<Button
-								variant={selectedMarket === "No" ? "default" : "outline"}
-								className={cn(
-									"flex-1 h-12",
-									selectedMarket === "No" ? "bg-gray-600 hover:bg-gray-700 text-white" : ""
-								)}
-								onClick={(): void => setSelectedMarket("No" as OutcomeString)}
-							>
-								<div className="flex items-center justify-between w-full">
-									<span className="font-semibold">No</span>
-									<span className="text-xs opacity-90">{formatPrice(noPrice)}</span>
-								</div>
-							</Button>
+								{event.eventDescription || "No rules specified for this event."}
+							</div>
+							{!rulesExpanded && rulesMaxHeight && (
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={(): void => setRulesExpanded(true)}
+									className="mt-2 self-start flex items-center gap-1"
+								>
+									Show More
+									<ChevronDown className="h-4 w-4" />
+								</Button>
+							)}
+							{rulesExpanded && (
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={(): void => setRulesExpanded(false)}
+									className="mt-2 self-start flex items-center gap-1"
+								>
+									Show Less
+									<ChevronDown className="h-4 w-4 rotate-180" />
+								</Button>
+							)}
 						</div>
-
-						{/* Amount Input */}
-						<div className="mb-4">
-							<div className="text-xs text-muted-foreground mb-1">Amount</div>
-							<div className="text-xs text-muted-foreground mb-2">Balance {formatCurrency(balance)}</div>
-							<Input
-								type="number"
-								placeholder="$0"
-								value={amount}
-								onChange={(e): void => setAmount(e.target.value)}
-								className="mb-2"
-							/>
-						</div>
-
-						{/* Action Button */}
-						<Button
-							variant="default"
-							className="w-full bg-gray-600 hover:bg-gray-700 text-white"
-						>
-							Trade
-						</Button>
 					</div>
 				</div>
 			</div>
