@@ -44,6 +44,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-blue: var(--sidebar-blue);
   --color-off-sidebar-blue: var(--off-sidebar-blue);
+  --color-yes-green: var(--yes-green);
+  --color-yes-green-hover: var(--yes-green-hover);
+  --color-no-red: var(--no-red);
+  --color-no-red-hover: var(--no-red-hover);
+  --color-chart-line: var(--chart-line);
+  --color-chart-background: var(--chart-background);
+  --color-button-text: var(--button-text);
+  --color-volume-text: var(--volume-text);
 }
 
 :root {
@@ -81,6 +89,14 @@
   --sidebar-ring: oklch(0.708 0 0);
   --sidebar-blue: rgb(0 0 30);
   --off-sidebar-blue: rgb(0 60 60);
+  --yes-green: rgb(75 200 75);
+  --yes-green-hover: rgb(60 180 60);
+  --no-red: rgb(255 100 100);
+  --no-red-hover: rgb(240 80 80);
+  --chart-line: rgb(44 145 205);
+  --chart-background: rgb(29 42 57);
+  --button-text: rgb(250 250 255);
+  --volume-text: rgb(83 83 105);
 }
 
 .dark {
@@ -117,6 +133,14 @@
   --sidebar-ring: oklch(0.556 0 0);
   --sidebar-blue: rgb(0 0 30);
   --off-sidebar-blue: rgb(0 60 60);
+  --yes-green: rgb(75 200 75);
+  --yes-green-hover: rgb(60 180 60);
+  --no-red: rgb(255 100 100);
+  --no-red-hover: rgb(240 80 80);
+  --chart-line: rgb(44 145 205);
+  --chart-background: rgb(29 42 57);
+  --button-text: rgb(250 250 255);
+  --volume-text: rgb(83 83 105);
 }
 
 @layer base {

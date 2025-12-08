@@ -9,9 +9,11 @@ import { Input } from "../ui/input"
 import eventsClass from "../../classes/events-class"
 import isUndefined from "lodash-es/isUndefined"
 import InternalContainerLayout from "../layouts/internal-container-layout"
+import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
+import authClass from "../../classes/auth-class"
 
 interface SingleEventPageProps {
-	eventUUID: EventUUID
+	eventSlug: EventSlug
 }
 
 type Timeframe = "1H" | "6H" | "1D" | "1W" | "1M" | "ALL"
@@ -117,23 +119,28 @@ function PriceChart({ seed, timeframe }: { seed: string; timeframe: Timeframe })
 }
 
 // eslint-disable-next-line max-lines-per-function
-function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
+function SingleEventPage({ eventSlug }: SingleEventPageProps): React.ReactNode {
 	const [timeframe, setTimeframe] = useState<Timeframe>("ALL")
 	const [tradeTab, setTradeTab] = useState<TradeTab>("Buy")
 	const [amount, setAmount] = useState("")
-	const [selectedMarket, setSelectedMarket] = useState("Yes")
+	const [selectedMarket, setSelectedMarket] = useState<OutcomeString>("Yes" as OutcomeString)
+
+	useEffect((): void => {
+		void retrieveSingleEvent(eventSlug)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [eventSlug, authClass.isFinishedWithSignup])
 
 	const event = useMemo((): SingleEvent | undefined => {
-		return eventsClass.events.get(eventUUID)
+		return eventsClass.events.get(eventSlug)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [eventUUID, eventsClass.events.size])
+	}, [eventSlug, eventsClass.events.size])
 
 	useEffect((): void => {
 		if (event) {
-			document.title = `${event.eventName} | Wiretap`
+			document.title = `${event.eventTitle} | Wiretap`
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event?.eventName])
+	}, [event?.eventTitle])
 
 	if (isUndefined(event)) {
 		return (
@@ -179,7 +186,7 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 							M
 						</div>
 						<div className="flex-1">
-							<h1 className="text-2xl font-semibold mb-2">{event.eventName}</h1>
+							<h1 className="text-2xl font-semibold mb-2">{event.eventTitle}</h1>
 							<div className="flex items-center gap-4 text-sm text-muted-foreground">
 								<span>{formatCurrency(totalVolume)} Vol.</span>
 								<span>•</span>
@@ -201,7 +208,7 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 					{/* Chart */}
 					<div className="flex-1 min-h-0">
 						<div className="bg-card border border-border rounded-lg p-4 h-full">
-							<PriceChart seed={eventUUID} timeframe={timeframe} />
+							<PriceChart seed={eventSlug} timeframe={timeframe} />
 						</div>
 					</div>
 
@@ -252,7 +259,7 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 									"flex-1 h-12",
 									selectedMarket === "Yes" ? "bg-green-600 hover:bg-green-700 text-white" : ""
 								)}
-								onClick={(): void => setSelectedMarket("Yes")}
+								onClick={(): void => setSelectedMarket("Yes" as OutcomeString)}
 							>
 								<div className="flex items-center justify-between w-full">
 									<span className="font-semibold">Yes</span>
@@ -265,7 +272,7 @@ function SingleEventPage({ eventUUID }: SingleEventPageProps): React.ReactNode {
 									"flex-1 h-12",
 									selectedMarket === "No" ? "bg-gray-600 hover:bg-gray-700 text-white" : ""
 								)}
-								onClick={(): void => setSelectedMarket("No")}
+								onClick={(): void => setSelectedMarket("No" as OutcomeString)}
 							>
 								<div className="flex items-center justify-between w-full">
 									<span className="font-semibold">No</span>

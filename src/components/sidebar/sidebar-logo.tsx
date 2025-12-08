@@ -11,12 +11,12 @@ import { PageToNavigateAfterLogin } from "../../utils/constants/page-constants"
 export default function SidebarLogo(): React.ReactNode {
 	return (
 		<SidebarMenu>
-			<SidebarMenuItem className="flex justify-start">
+			<SidebarMenuItem className="flex justify-center">
 				<Link
 					href={PageToNavigateAfterLogin}
-					className="flex items-center justify-start rounded-lg mt-1"
+					className="flex items-center justify-center rounded-lg mt-1"
 				>
-					<div className="flex aspect-square items-start justify-start">
+					<div className="flex aspect-square items-center justify-center">
 						<div className="flex">
 							<Image
 								src="/favicon-light.svg"
