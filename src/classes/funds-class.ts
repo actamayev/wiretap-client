@@ -9,6 +9,7 @@ class FundsClass {
 	public retrievingSingleFunds: Map<FundsUUID, boolean> = new Map()
 	public funds: Map<FundsUUID, SingleFund> = new Map()
 	public isCreateFundDialogOpen = false
+	public selectedFundUuid: FundsUUID | "" = ""
 	public createFundData: IncomingCreateFundRequest = {
 		fundName: "",
 		startingAccountBalanceUsd: 0
@@ -40,6 +41,12 @@ class FundsClass {
 		funds.forEach((fund): void => this.addFund(fund))
 		this.setHasRetrievedAllFunds(true)
 		this.setIsRetrievingAllFunds(false)
+
+		// Set the primary fund as selected
+		const primaryFund = funds.find((fund: SingleFund): boolean => fund.isPrimaryFund)
+		if (primaryFund) {
+			this.setSelectedFundUuid(primaryFund.fundUUID)
+		}
 	})
 
 	public addFund = action((fund: SingleFund): void => {
@@ -61,6 +68,23 @@ class FundsClass {
 		fund.fundName = newName
 	})
 
+	public updatePrimaryFund = action((newPrimaryFundUUID: FundsUUID): void => {
+		// Set all funds to not primary
+		this.funds.forEach((fund: SingleFund): void => {
+			fund.isPrimaryFund = false
+		})
+
+		// Set the new primary fund
+		const newPrimaryFund = this.funds.get(newPrimaryFundUUID)
+		if (!isUndefined(newPrimaryFund)) {
+			newPrimaryFund.isPrimaryFund = true
+		}
+	})
+
+	public setSelectedFundUuid = action((fundUuid: FundsUUID | ""): void => {
+		this.selectedFundUuid = fundUuid
+	})
+
 	public setCreateFundKey = action(<K extends keyof IncomingCreateFundRequest>(key: K, value: IncomingCreateFundRequest[K]): void => {
 		this.createFundData[key] = value
 	})
@@ -76,6 +100,7 @@ class FundsClass {
 		this.funds = new Map()
 		this.retrievingSingleFunds = new Map()
 		this.setIsCreateFundDialogOpen(false)
+		this.setSelectedFundUuid("")
 		this.setCreateFundData({
 			fundName: "",
 			startingAccountBalanceUsd: 0

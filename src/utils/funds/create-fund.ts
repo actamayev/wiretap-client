@@ -20,7 +20,8 @@ export default async function createFund(): Promise<FundsUUID | undefined> {
 			fundUUID: createFundResponse.data.fundUUID,
 			fundName: fundInformation.fundName,
 			startingAccountBalanceUsd: fundInformation.startingAccountBalanceUsd,
-			currentAccountBalanceUsd: fundInformation.startingAccountBalanceUsd
+			currentAccountBalanceUsd: fundInformation.startingAccountBalanceUsd,
+			isPrimaryFund: false
 		})
 		return createFundResponse.data.fundUUID
 	} catch (error) {

@@ -42,4 +42,10 @@ export default class FundsDataService extends BaseDataService {
 			this.buildUrl(`/all-fund-transactions/${wiretapFundUUID}`)
 		)
 	}
+
+	async setPrimaryFund(wiretapFundUUID: FundsUUID): Promise<AxiosResponse<AllCommonResponses>> {
+		return await this.httpClient.http.post<AllCommonResponses>(
+			this.buildUrl(`/set-primary-fund/${wiretapFundUUID}`)
+		)
+	}
 }
