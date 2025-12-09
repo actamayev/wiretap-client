@@ -52,11 +52,14 @@ declare global {
 		marketQuestion: string | null
 		numberOfContractsHeld: number
 		clobToken: ClobTokenId
+		costBasisPerContractUsd: number
+		currentMarketPricePerContractUsd: number
 	}
 
 	interface SingleFund {
 		fundUUID: FundsUUID
 		fundName: string
+		fundCreatedAt: Date
 		startingAccountCashBalanceUsd: number
 		currentAccountCashBalanceUsd: number
 		isPrimaryFund: boolean

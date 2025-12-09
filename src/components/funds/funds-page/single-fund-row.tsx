@@ -25,7 +25,7 @@ function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 						Starting balance: ${formatCurrency(fund.startingAccountCashBalanceUsd)}
 					</p>
 					<p className="text-sm text-muted-foreground">
-						Start date: N/A
+						Start date: {(new Date(fund.fundCreatedAt)).toLocaleDateString()}
 					</p>
 				</div>
 

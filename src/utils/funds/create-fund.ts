@@ -18,6 +18,7 @@ export default async function createFund(): Promise<FundsUUID | undefined> {
 
 		fundsClass.addFund({
 			fundUUID: createFundResponse.data.fundUUID,
+			fundCreatedAt: new Date(),
 			fundName: fundInformation.fundName,
 			startingAccountCashBalanceUsd: fundInformation.startingAccountCashBalanceUsd,
 			currentAccountCashBalanceUsd: fundInformation.startingAccountCashBalanceUsd,

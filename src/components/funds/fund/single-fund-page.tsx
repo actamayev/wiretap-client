@@ -28,7 +28,7 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
-			<div className="flex flex-col h-full w-full p-6 gap-6">
+			<div className="flex flex-col h-full w-full px-6 pt-6 pb-[48px] gap-6">
 				{/* Fund Name */}
 				<h1 className="text-3xl font-bold">{fund.fundName}</h1>
 
