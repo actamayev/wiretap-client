@@ -130,7 +130,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 							<th className="text-left p-4 font-semibold">Yes/No</th>
 							<th className="text-left p-4 font-semibold">Average Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Share Price</th>
-							<th className="text-left p-4 font-semibold">Number of Shares</th>
+							<th className="text-left p-4 font-semibold">Shares</th>
 							<th className="text-left p-4 font-semibold">Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Value</th>
 							<th className="text-left p-4 font-semibold">Purchase Date</th>
