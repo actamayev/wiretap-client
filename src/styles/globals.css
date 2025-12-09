@@ -52,6 +52,8 @@
   --color-chart-background: var(--chart-background);
   --color-button-text: var(--button-text);
   --color-volume-text: var(--volume-text);
+  --color-trade-button: var(--trade-button);
+  --color-trade-button-hover: var(--trade-button-hover);
 }
 
 :root {
@@ -141,6 +143,8 @@
   --chart-background: rgb(29 42 57);
   --button-text: rgb(250 250 255);
   --volume-text: rgb(83 83 105);
+  --trade-button: rgb(0 65 220);
+  --trade-button-hover: rgb(0 55 200);
 }
 
 @layer base {

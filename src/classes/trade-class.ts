@@ -7,10 +7,11 @@ type TradeTab = "Buy" | "Sell"
 class TradeClass {
 	public tradeTab: TradeTab = "Buy"
 	public selectedMarket: OutcomeString = "Yes" as OutcomeString
+	public selectedClobToken: ClobTokenId | undefined = undefined
 	public amount: string = ""
 	public yesPrice: number = 0
 	public noPrice: number = 0
-	public balance: number = 0
+	public marketId: MarketId | undefined = undefined
 
 	constructor() {
 		makeAutoObservable(this)
@@ -22,6 +23,10 @@ class TradeClass {
 
 	public setSelectedMarket = action((market: OutcomeString): void => {
 		this.selectedMarket = market
+	})
+
+	public setSelectedClobToken = action((clobToken: ClobTokenId | undefined): void => {
+		this.selectedClobToken = clobToken
 	})
 
 	public setAmount = action((amount: string): void => {
@@ -36,22 +41,23 @@ class TradeClass {
 		this.noPrice = price
 	})
 
-	public setBalance = action((balance: number): void => {
-		this.balance = balance
-	})
-
 	public setPrices = action((yesPrice: number, noPrice: number): void => {
 		this.yesPrice = yesPrice
 		this.noPrice = noPrice
 	})
 
+	public setMarketId = action((marketId: MarketId | undefined): void => {
+		this.marketId = marketId
+	})
+
 	public reset(): void {
 		this.tradeTab = "Buy"
 		this.selectedMarket = "Yes" as OutcomeString
+		this.selectedClobToken = undefined
 		this.amount = ""
 		this.yesPrice = 0
 		this.noPrice = 0
-		this.balance = 0
+		this.marketId = undefined
 	}
 
 	public logout(): void {
