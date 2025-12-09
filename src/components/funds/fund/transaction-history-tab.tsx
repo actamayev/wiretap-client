@@ -64,9 +64,9 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 					return new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime()
 
 				case "value":
-					const aValue = a.transactionType === "purchase" ? a.numberContractsPurchased : a.numberContractsSold
-					const bValue = b.transactionType === "purchase" ? b.numberContractsPurchased : b.numberContractsSold
-					return bValue - aValue
+					const aCostProceeds = a.transactionType === "purchase" ? a.totalCost : a.totalProceeds
+					const bCostProceeds = b.transactionType === "purchase" ? b.totalCost : b.totalProceeds
+					return Math.abs(bCostProceeds) - Math.abs(aCostProceeds)
 
 				case "number-of-shares":
 					const aShares = a.transactionType === "purchase" ? a.numberContractsPurchased : a.numberContractsSold
@@ -107,7 +107,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 					<SelectContent className="bg-off-sidebar-blue cursor-pointer">
 						<SelectItem value="newest" className="cursor-pointer">Newest</SelectItem>
 						<SelectItem value="oldest" className="cursor-pointer">Oldest</SelectItem>
-						<SelectItem value="value" className="cursor-pointer">Value</SelectItem>
+						<SelectItem value="value" className="cursor-pointer">Cost/Proceeds</SelectItem>
 						<SelectItem value="number-of-shares" className="cursor-pointer">Shares</SelectItem>
 					</SelectContent>
 				</Select>
@@ -121,7 +121,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 							<th className="text-left p-4 font-semibold">Market</th>
 							<th className="text-left p-4 font-semibold">Yes/No</th>
 							<th className="text-left p-4 font-semibold">Shares</th>
-							<th className="text-left p-4 font-semibold">Value</th>
+							<th className="text-left p-4 font-semibold">Cost/Proceeds</th>
 							<th className="text-left p-4 font-semibold">Transaction Date</th>
 						</tr>
 					</thead>
