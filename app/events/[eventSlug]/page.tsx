@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { createMetadata } from "../../../src/utils/seo/create-metadata"
-import SingleEventPage from "../../../src/components/events/single-event-page"
+import SingleEventPage from "../../../src/components/event/single-event-page"
 import AuthenticatedLayout from "../../../src/components/layouts/authenticated-layout"
 
 interface EventPageProps {
