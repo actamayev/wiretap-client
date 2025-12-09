@@ -1,7 +1,7 @@
 "use client"
 
 import { observer } from "mobx-react"
-import { useCallback, useMemo } from "react"
+import { useCallback } from "react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -159,7 +159,7 @@ function TradeCard(): React.ReactNode {
 			{/* Action Button */}
 			<Button
 				variant="default"
-				className="w-full bg-trade-button hover:bg-trade-button-hover text-white"
+				className="w-full bg-trade-button hover:bg-trade-button-hover text-white text-2xl h-12"
 				onClick={handleTrade}
 			>
 				{tradeClass.tradeTab} {tradeClass.selectedMarket}

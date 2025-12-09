@@ -124,6 +124,26 @@ class FundsClass {
 			.reduce((total: number, position: SinglePosition): number => total + position.numberOfContractsHeld, 0)
 	}
 
+	public setPositionsForClobToken = action((
+		fundUUID: FundsUUID,
+		clobToken: ClobTokenId,
+		newPositions: SinglePosition[]
+	): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		// Initialize positions array if it doesn't exist
+		if (isUndefined(fund.positions)) fund.positions = []
+
+		// Remove all existing positions with this clobToken
+		fund.positions = fund.positions.filter(
+			(position): boolean => position.clobToken !== clobToken
+		)
+
+		// Add the new positions from the backend
+		fund.positions.push(...newPositions)
+	})
+
 	public updatePrimaryFund = action((newPrimaryFundUUID: FundsUUID): void => {
 		// Set all funds to not primary
 		this.funds.forEach((fund: SingleFund): void => {
