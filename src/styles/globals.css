@@ -44,6 +44,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-blue: var(--sidebar-blue);
   --color-off-sidebar-blue: var(--off-sidebar-blue);
+  --color-off-sidebar-blue-hover: var(--off-sidebar-blue-hover);
   --color-yes-green: var(--yes-green);
   --color-yes-green-hover: var(--yes-green-hover);
   --color-no-red: var(--no-red);
@@ -91,6 +92,7 @@
   --sidebar-ring: oklch(0.708 0 0);
   --sidebar-blue: rgb(0 0 30);
   --off-sidebar-blue: rgb(0 60 60);
+  --off-sidebar-blue-hover: rgb(0 70 70);
   --yes-green: rgb(75 200 75);
   --yes-green-hover: rgb(60 180 60);
   --no-red: rgb(255 100 100);
@@ -135,6 +137,7 @@
   --sidebar-ring: oklch(0.556 0 0);
   --sidebar-blue: rgb(0 0 30);
   --off-sidebar-blue: rgb(0 60 60);
+  --off-sidebar-blue-hover: rgb(0 70 70);
   --yes-green: rgb(75 200 75);
   --yes-green-hover: rgb(60 180 60);
   --no-red: rgb(255 100 100);
