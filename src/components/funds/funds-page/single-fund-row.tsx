@@ -1,22 +1,68 @@
+"use client"
+
 import { observer } from "mobx-react"
+import { cn } from "../../../lib/utils"
+import SimpleChart from "../../simple-chart"
 import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
+import { formatCurrency } from "../../../utils/format"
 
 function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 	const navigate = useTypedNavigate()
+
+	const totalPortfolioValue = fund.positionsValueUsd + fund.currentAccountCashBalanceUsd
 
 	return (
 		<div
 			key={fund.fundUUID}
 			onClick={(): void => navigate(`/funds/${fund.fundUUID}`)}
-			className="flex flex-col gap-2 p-4 rounded-xl border border-swan cursor-pointer"
+			className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue cursor-pointer"
 		>
-			<h1 className="text-2xl font-bold">{fund.fundName}</h1>
-			<p className="text-sm text-gray-500">
-				Starting balance: ${fund.startingAccountCashBalanceUsd}
-			</p>
-			<p className="text-sm text-gray-500">
-				Current balance: ${fund.currentAccountCashBalanceUsd}
-			</p>
+			<div className="flex gap-8 w-full">
+				{/* Column 1: Fund Info */}
+				<div className="flex-1 flex flex-col gap-2">
+					<h1 className="text-2xl font-bold">{fund.fundName}</h1>
+					<p className="text-sm text-muted-foreground">
+						Starting balance: ${formatCurrency(fund.startingAccountCashBalanceUsd)}
+					</p>
+					<p className="text-sm text-muted-foreground">
+						Start date: N/A
+					</p>
+				</div>
+
+				{/* Column 2: Empty */}
+				<div className="flex-1" />
+
+				{/* Column 3: Portfolio Stats */}
+				<div className="flex-1 flex flex-col text-left">
+					<div className="text-2xl font-semibold text-start">
+						Portfolio:{" "}
+						<span className={cn(totalPortfolioValue > 0 && "text-yes-green")}>
+							${formatCurrency(totalPortfolioValue)}
+						</span>
+					</div>
+					<div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+						<span>
+							Positions: {" "}
+							<span className={cn(fund.positionsValueUsd > 0 && "text-yes-green")}>
+								${formatCurrency(fund.positionsValueUsd)}
+							</span>
+						</span>
+						<span>
+							Cash: {" "}
+							<span className={cn(fund.currentAccountCashBalanceUsd > 0 && "text-yes-green")}>
+								${formatCurrency(fund.currentAccountCashBalanceUsd)}
+							</span>
+						</span>
+					</div>
+				</div>
+
+				{/* Column 4: Performance Chart */}
+				<div className="flex-1 flex flex-col h-full min-h-0">
+					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden h-24">
+						<SimpleChart seed={fund.fundUUID} />
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }

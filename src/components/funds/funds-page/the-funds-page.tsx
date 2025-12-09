@@ -120,9 +120,11 @@ function TheFundsPage(): React.ReactNode {
 						</SelectContent>
 					</Select>
 				</div>
-				{filteredAndSortedFunds.map((fund): React.ReactNode => (
-					<SingleFundRow key={fund.fundUUID} fund={fund} />
-				))}
+				<div className="flex flex-col gap-4">
+					{filteredAndSortedFunds.map((fund): React.ReactNode => (
+						<SingleFundRow key={fund.fundUUID} fund={fund} />
+					))}
+				</div>
 			</div>
 		</InternalContainerLayout>
 	)
