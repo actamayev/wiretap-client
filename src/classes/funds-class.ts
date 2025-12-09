@@ -2,6 +2,7 @@
 
 import isUndefined from "lodash-es/isUndefined"
 import { action, makeAutoObservable } from "mobx"
+import tradeClass from "./trade-class"
 
 class FundsClass {
 	public isRetrievingAllFunds = false
@@ -43,9 +44,8 @@ class FundsClass {
 
 		// Set the primary fund as selected
 		const primaryFund = funds.find((fund: SingleFund): boolean => fund.isPrimaryFund)
-		if (primaryFund) {
-			this.setSelectedFundUuid(primaryFund.fundUUID)
-		}
+		if (!primaryFund) return
+		this.setSelectedFundUuid(primaryFund.fundUUID)
 	})
 
 	public addFund = action((fund: SingleFund): void => {
@@ -89,22 +89,19 @@ class FundsClass {
 
 	public addContractsToPosition = action((
 		fundUUID: FundsUUID,
-		positionData: {
-			outcome: OutcomeString
-			marketQuestion: string | null
-			clobToken: ClobTokenId
-			contractsToAdd: number
-		}
+		buyResponse: SuccessBuyOrderResponse
 	): void => {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
 		// Always add a new position
 		fund.positions.push({
-			outcome: positionData.outcome,
-			marketQuestion: positionData.marketQuestion,
-			clobToken: positionData.clobToken,
-			numberOfContractsHeld: positionData.contractsToAdd
+			outcome: tradeClass.selectedMarket,
+			marketQuestion: tradeClass.marketQuestion,
+			clobToken: tradeClass.selectedClobToken as ClobTokenId,
+			numberOfContractsHeld: buyResponse.contractsPurchased,
+			costBasisPerContractUsd: buyResponse.pricePerContract,
+			currentMarketPricePerContractUsd: buyResponse.pricePerContract,
 		})
 	})
 

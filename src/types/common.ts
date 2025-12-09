@@ -54,6 +54,7 @@ declare global {
 		clobToken: ClobTokenId
 		costBasisPerContractUsd: number
 		currentMarketPricePerContractUsd: number
+		positionCreatedAt: Date
 	}
 
 	interface SingleFund {

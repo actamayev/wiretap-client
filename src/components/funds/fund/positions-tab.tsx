@@ -67,8 +67,8 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 	} => {
 		return {
 			marketName: position.marketQuestion || position.outcome,
-			averageCostBasis: 0, // TODO: Calculate from transaction history
-			currentValue: 0 // TODO: Calculate current market value
+			averageCostBasis: position.costBasisPerContractUsd,
+			currentValue: position.currentMarketPricePerContractUsd * position.numberOfContractsHeld,
 		}
 	})
 
@@ -107,7 +107,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 				<table className="w-full">
 					<thead className="bg-off-sidebar-blue">
 						<tr>
-							<th className="text-left p-4 font-semibold">Market Name</th>
+							<th className="text-left p-4 font-semibold">Market</th>
 							<th className="text-left p-4 font-semibold">Average Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Value</th>
 						</tr>

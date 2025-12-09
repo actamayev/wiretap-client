@@ -114,7 +114,9 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 				<table className="w-full">
 					<thead className="bg-off-sidebar-blue">
 						<tr>
+							<th className="text-left p-4 font-semibold">Activity</th>
 							<th className="text-left p-4 font-semibold">Market</th>
+							<th className="text-left p-4 font-semibold">Position</th>
 							<th className="text-left p-4 font-semibold">Shares</th>
 							<th className="text-left p-4 font-semibold">Value</th>
 						</tr>
@@ -122,7 +124,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 					<tbody>
 						{filteredAndSortedTransactions.length === 0 ? (
 							<tr>
-								<td colSpan={3} className="p-4 text-center text-muted-foreground">
+								<td colSpan={5} className="p-4 text-center text-muted-foreground">
 									No transactions found
 								</td>
 							</tr>
@@ -132,14 +134,23 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 									? transaction.numberContractsPurchased
 									: transaction.numberContractsSold
 								const marketName = transaction.marketQuestion || transaction.outcome
+								const activity = transaction.transactionType === "purchase" ? "Buy" : "Sell"
+								const outcome = transaction.outcome
 								// TODO: Calculate actual value from transaction data
 								const value = 0
+								const displayValue = transaction.transactionType === "purchase" ? -value : value
+								const valueColor = transaction.transactionType === "purchase" ? "text-no-red" : "text-yes-green"
+								const valuePrefix = transaction.transactionType === "purchase" ? "" : "+"
 
 								return (
 									<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
+										<td className="p-4">{activity}</td>
 										<td className="p-4">{marketName}</td>
+										<td className="p-4">{outcome}</td>
 										<td className="p-4">{shares}</td>
-										<td className="p-4">${formatCurrency(value)}</td>
+										<td className={cn("p-4", valueColor)}>
+											{valuePrefix}${formatCurrency(Math.abs(displayValue))}
+										</td>
 									</tr>
 								)
 							})
