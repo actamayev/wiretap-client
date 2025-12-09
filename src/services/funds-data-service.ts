@@ -19,12 +19,6 @@ export default class FundsDataService extends BaseDataService {
 		)
 	}
 
-	async renameFund(wiretapFundUUID: FundsUUID, newFundName: string): Promise<AxiosResponse<AllCommonResponses>> {
-		return await this.httpClient.http.post<AllCommonResponses>(
-			this.buildUrl(`/rename-fund/${wiretapFundUUID}`), { newFundName }
-		)
-	}
-
 	async setPrimaryFund(wiretapFundUUID: FundsUUID): Promise<AxiosResponse<AllCommonResponses>> {
 		return await this.httpClient.http.post<AllCommonResponses>(
 			this.buildUrl(`/set-primary-fund/${wiretapFundUUID}`)

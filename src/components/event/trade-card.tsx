@@ -1,10 +1,11 @@
 "use client"
 
 import { observer } from "mobx-react"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
+import { Spinner } from "../ui/spinner"
 import tradeClass from "../../classes/trade-class"
 import eventsClass from "../../classes/events-class"
 import fundsClass from "../../classes/funds-class"
@@ -40,6 +41,8 @@ const parseAmountValue = (value: string): string => {
 
 // eslint-disable-next-line max-lines-per-function
 function TradeCard(): React.ReactNode {
+	const [isLoading, setIsLoading] = useState(false)
+
 	const updateClobToken = (outcome: OutcomeString): void => {
 		if (isUndefined(tradeClass.marketId)) return
 
@@ -58,11 +61,16 @@ function TradeCard(): React.ReactNode {
 	const sharesOwned = fundsClass.getSharesOwnedForClobToken(tradeClass.selectedClobToken)
 
 	const handleTrade = useCallback(async (): Promise<void> => {
-		if (tradeClass.tradeTab === "Buy") {
-			await buyContracts()
-			return
+		setIsLoading(true)
+		try {
+			if (tradeClass.tradeTab === "Buy") {
+				await buyContracts()
+			} else {
+				await sellContracts()
+			}
+		} finally {
+			setIsLoading(false)
 		}
-		await sellContracts()
 	}, [])
 
 	return (
@@ -160,8 +168,12 @@ function TradeCard(): React.ReactNode {
 				variant="default"
 				className="w-full bg-trade-button hover:bg-trade-button-hover text-white text-2xl h-12"
 				onClick={handleTrade}
+				disabled={isLoading}
 			>
-				{tradeClass.tradeTab} {tradeClass.selectedMarket}
+				<div className="flex items-center justify-center gap-2">
+					{isLoading && <Spinner className="size-5" />}
+					<span>{tradeClass.tradeTab} {tradeClass.selectedMarket}</span>
+				</div>
 			</Button>
 		</div>
 	)
