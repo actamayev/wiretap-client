@@ -8,7 +8,7 @@ import InternalContainerLayout from "../../layouts/internal-container-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import PortfolioValueChart from "./portfolio-value-chart"
 import PositionsTab from "./positions-tab"
-import HistoryTab from "./history-tab"
+import TransactionHistoryTab from "./transaction-history-tab"
 
 function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 	const fund = useMemo((): SingleFund | undefined => {
@@ -46,7 +46,7 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 					</TabsContent>
 					<TabsContent value="history" className="flex-1 min-h-0">
 						{fund.transactions ? (
-							<HistoryTab transactions={fund.transactions} />
+							<TransactionHistoryTab transactions={fund.transactions} />
 						) : (
 							<div className="p-4 text-center text-muted-foreground">Loading transactions...</div>
 						)}
