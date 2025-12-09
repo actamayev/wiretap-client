@@ -38,7 +38,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		const noPrice = 1 - yesPrice
 		tradeClass.setPrices(yesPrice, noPrice)
 		tradeClass.setMarketId(market.marketId)
-		tradeClass.setMarketQuestion(market.marketQuestion)
 		// Set clob token based on selected market (Yes = index 0, No = index 1)
 		const clobToken = tradeClass.selectedMarket === "Yes" ? market.clobTokens[0] : market.clobTokens[1]
 		tradeClass.setSelectedClobToken(clobToken)

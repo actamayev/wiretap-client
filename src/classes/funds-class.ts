@@ -2,7 +2,6 @@
 
 import isUndefined from "lodash-es/isUndefined"
 import { action, makeAutoObservable } from "mobx"
-import tradeClass from "./trade-class"
 
 class FundsClass {
 	public isRetrievingAllFunds = false
@@ -95,14 +94,7 @@ class FundsClass {
 		if (isUndefined(fund)) return
 
 		// Always add a new position
-		fund.positions.push({
-			outcome: tradeClass.selectedMarket,
-			marketQuestion: tradeClass.marketQuestion,
-			clobToken: tradeClass.selectedClobToken as ClobTokenId,
-			numberOfContractsHeld: buyResponse.contractsPurchased,
-			costBasisPerContractUsd: buyResponse.pricePerContract,
-			currentMarketPricePerContractUsd: buyResponse.pricePerContract,
-		})
+		fund.positions.push(buyResponse.position)
 	})
 
 	public getSharesOwnedForClobToken = (clobToken: ClobTokenId | undefined): number => {

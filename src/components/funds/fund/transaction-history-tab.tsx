@@ -116,15 +116,16 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 						<tr>
 							<th className="text-left p-4 font-semibold">Activity</th>
 							<th className="text-left p-4 font-semibold">Market</th>
-							<th className="text-left p-4 font-semibold">Position</th>
+							<th className="text-left p-4 font-semibold">Yes/No</th>
 							<th className="text-left p-4 font-semibold">Shares</th>
 							<th className="text-left p-4 font-semibold">Value</th>
+							<th className="text-left p-4 font-semibold">Transaction Date</th>
 						</tr>
 					</thead>
 					<tbody>
 						{filteredAndSortedTransactions.length === 0 ? (
 							<tr>
-								<td colSpan={5} className="p-4 text-center text-muted-foreground">
+								<td colSpan={6} className="p-4 text-center text-muted-foreground">
 									No transactions found
 								</td>
 							</tr>
@@ -140,7 +141,8 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 								const value = 0
 								const displayValue = transaction.transactionType === "purchase" ? -value : value
 								const valueColor = transaction.transactionType === "purchase" ? "text-no-red" : "text-yes-green"
-								const valuePrefix = transaction.transactionType === "purchase" ? "" : "+"
+								const valuePrefix = transaction.transactionType === "purchase" ? "-" : "+"
+								const date = new Date(transaction.transactionDate).toLocaleDateString()
 
 								return (
 									<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
@@ -151,6 +153,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 										<td className={cn("p-4", valueColor)}>
 											{valuePrefix}${formatCurrency(Math.abs(displayValue))}
 										</td>
+										<td className="p-4">{date}</td>
 									</tr>
 								)
 							})

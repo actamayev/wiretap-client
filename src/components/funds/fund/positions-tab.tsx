@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useMemo, useState } from "react"
 import { ArrowDownWideNarrow } from "lucide-react"
 import { Input } from "../../ui/input"
@@ -12,8 +13,9 @@ import {
 } from "../../ui/select"
 import { cn } from "../../../lib/utils"
 import { formatCurrency } from "../../../utils/format"
+import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
 
-type PositionsSortOption = "alphabetical" | "current-value" | "number-of-shares"
+type PositionsSortOption = "alphabetical" | "current-value" | "number-of-shares" | "purchase-date"
 
 interface PositionsTabProps {
 	positions: SinglePosition[]
@@ -21,6 +23,7 @@ interface PositionsTabProps {
 
 // eslint-disable-next-line max-lines-per-function
 export default function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
+	const navigate = useTypedNavigate()
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [sortOption, setSortOption] = useState<PositionsSortOption>("alphabetical")
 
@@ -50,6 +53,9 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 				case "number-of-shares":
 					return b.numberOfContractsHeld - a.numberOfContractsHeld
 
+				case "purchase-date":
+					return new Date(b.positionCreatedAt).getTime() - new Date(a.positionCreatedAt).getTime()
+
 				default:
 					return 0
 			}
@@ -58,17 +64,27 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 		return filtered
 	}, [positions, searchQuery, sortOption])
 
-	// Group positions by market/clobToken to calculate average cost basis
-	// For now, we'll show placeholder data since we don't have cost basis info
 	const positionRows = filteredAndSortedPositions.map((position: SinglePosition): {
 		marketName: string
+		outcome: string
 		averageCostBasis: number
+		currentSharePrice: number
+		costBasis: number
 		currentValue: number
+		purchaseDate: Date
+		polymarketSlug: EventSlug
+		polymarketImageUrl: string
 	} => {
 		return {
 			marketName: position.marketQuestion || position.outcome,
+			outcome: position.outcome,
 			averageCostBasis: position.costBasisPerContractUsd,
+			currentSharePrice: position.currentMarketPricePerContractUsd,
+			costBasis: position.costBasisPerContractUsd * position.numberOfContractsHeld,
 			currentValue: position.currentMarketPricePerContractUsd * position.numberOfContractsHeld,
+			purchaseDate: position.positionCreatedAt,
+			polymarketSlug: position.polymarketSlug,
+			polymarketImageUrl: position.polymarketImageUrl,
 		}
 	})
 
@@ -99,6 +115,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 						<SelectItem value="alphabetical" className="cursor-pointer">Alphabetically</SelectItem>
 						<SelectItem value="current-value" className="cursor-pointer">Current Value</SelectItem>
 						<SelectItem value="number-of-shares" className="cursor-pointer">Number of Shares</SelectItem>
+						<SelectItem value="purchase-date" className="cursor-pointer">Purchase Date</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
@@ -108,23 +125,45 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 					<thead className="bg-off-sidebar-blue">
 						<tr>
 							<th className="text-left p-4 font-semibold">Market</th>
+							<th className="text-left p-4 font-semibold">Yes/No</th>
 							<th className="text-left p-4 font-semibold">Average Cost Basis</th>
+							<th className="text-left p-4 font-semibold">Current Share Price</th>
+							<th className="text-left p-4 font-semibold">Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Value</th>
+							<th className="text-left p-4 font-semibold">Purchase Date</th>
 						</tr>
 					</thead>
 					<tbody>
 						{positionRows.length === 0 ? (
 							<tr>
-								<td colSpan={3} className="p-4 text-center text-muted-foreground">
+								<td colSpan={7} className="p-4 text-center text-muted-foreground">
 									No positions found
 								</td>
 							</tr>
 						) : (
 							positionRows.map((row, index): React.ReactNode => (
 								<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
-									<td className="p-4">{row.marketName}</td>
+									<td className="p-4">
+										<div
+											onClick={(): void => navigate(`/events/${row.polymarketSlug}`)}
+											className="flex items-center gap-3 cursor-pointer group"
+										>
+											<Image
+												src={row.polymarketImageUrl}
+												alt={row.marketName}
+												width={40}
+												height={40}
+												className="shrink-0 rounded-md"
+											/>
+											<span className="group-hover:underline">{row.marketName}</span>
+										</div>
+									</td>
+									<td className="p-4">{row.outcome}</td>
 									<td className="p-4">${formatCurrency(row.averageCostBasis)}</td>
+									<td className="p-4">${formatCurrency(row.currentSharePrice)}</td>
+									<td className="p-4">${formatCurrency(row.costBasis)}</td>
 									<td className="p-4">${formatCurrency(row.currentValue)}</td>
+									<td className="p-4">{new Date(row.purchaseDate).toLocaleDateString()}</td>
 								</tr>
 							))
 						)}

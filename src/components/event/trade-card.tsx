@@ -49,7 +49,6 @@ function TradeCard(): React.ReactNode {
 			if (market) {
 				const clobToken = outcome === "Yes" ? market.clobTokens[0] : market.clobTokens[1]
 				tradeClass.setSelectedClobToken(clobToken)
-				tradeClass.setMarketQuestion(market.marketQuestion)
 				break
 			}
 		}
@@ -61,9 +60,9 @@ function TradeCard(): React.ReactNode {
 	const handleTrade = useCallback(async (): Promise<void> => {
 		if (tradeClass.tradeTab === "Buy") {
 			await buyContracts()
-		} else {
-			await sellContracts()
+			return
 		}
+		await sellContracts()
 	}, [])
 
 	return (
