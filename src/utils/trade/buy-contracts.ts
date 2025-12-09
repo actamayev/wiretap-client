@@ -49,7 +49,10 @@ export default async function buyContracts(): Promise<boolean> {
 		// Add contracts to the position
 		fundsClass.addContractsToPosition(selectedFundUuid, buyResponse)
 
-		fundsClass.incrementPositionsValue(selectedFundUuid, buyResponse.totalCost)
+		fundsClass.incrementPositionsValue(
+			selectedFundUuid,
+			buyResponse.position.numberOfContractsHeld * buyResponse.position.costBasisPerContractUsd
+		)
 		tradeClass.setAmount("")
 		return true
 	} catch (error) {
