@@ -55,6 +55,8 @@ export default async function sellContracts(): Promise<boolean> {
 			sellResponse.remainingPositions
 		)
 
+		fundsClass.decrementPositionsValue(selectedFundUuid, sellResponse.totalProceeds)
+
 		// Reset amount after successful sale
 		tradeClass.setAmount("")
 		return true

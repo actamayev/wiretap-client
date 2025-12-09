@@ -82,6 +82,20 @@ class FundsClass {
 		fund.currentAccountCashBalanceUsd = newCashBalance
 	})
 
+	public incrementPositionsValue = action((fundUUID: FundsUUID, increment: number): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		fund.positionsValueUsd += increment
+	})
+
+	public decrementPositionsValue = action((fundUUID: FundsUUID, decrement: number): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		fund.positionsValueUsd -= decrement
+	})
+
 	public addContractsToPosition = action((
 		fundUUID: FundsUUID,
 		positionData: {
