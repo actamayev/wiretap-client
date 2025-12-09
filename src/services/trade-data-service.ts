@@ -10,10 +10,10 @@ export default class TradeDataService extends BaseDataService {
 	async buy(
 		wiretapFundUuid: FundsUUID,
 		clobToken: ClobTokenId,
-		numberOfContractsPurchasing: number
+		valueOfContractsPurchasing: number
 	): Promise<AxiosResponse<SuccessBuyOrderResponse | NonSuccessResponse>> {
 		return await this.httpClient.http.post<SuccessBuyOrderResponse | NonSuccessResponse>(
-			this.buildUrl(`/buy/${wiretapFundUuid}`), { clobToken, numberOfContractsPurchasing }
+			this.buildUrl(`/buy/${wiretapFundUuid}`), { clobToken, valueOfContractsPurchasing }
 		)
 	}
 

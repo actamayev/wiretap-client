@@ -12,6 +12,7 @@ class TradeClass {
 	public yesPrice: number = 0
 	public noPrice: number = 0
 	public marketId: MarketId | undefined = undefined
+	public marketQuestion: string | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -50,6 +51,10 @@ class TradeClass {
 		this.marketId = marketId
 	})
 
+	public setMarketQuestion = action((marketQuestion: string | null): void => {
+		this.marketQuestion = marketQuestion
+	})
+
 	public reset(): void {
 		this.tradeTab = "Buy"
 		this.selectedMarket = "Yes" as OutcomeString
@@ -58,6 +63,7 @@ class TradeClass {
 		this.yesPrice = 0
 		this.noPrice = 0
 		this.marketId = undefined
+		this.marketQuestion = null
 	}
 
 	public logout(): void {
