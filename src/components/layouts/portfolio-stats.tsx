@@ -3,6 +3,7 @@
 import { observer } from "mobx-react"
 import { cn } from "../../lib/utils"
 import fundsClass from "../../classes/funds-class"
+import { formatCurrency } from "../../utils/format"
 
 interface PortfolioStats {
 	totalPortfolioValue: number
@@ -16,9 +17,11 @@ function PortfolioStats(): React.ReactNode {
 		? fundsClass.funds.get(fundsClass.selectedFundUuid)
 		: undefined
 
-	const allFunds = Array.from(fundsClass.funds.values())
-
-	let portfolioStats: PortfolioStats
+	let portfolioStats: PortfolioStats = {
+		totalPortfolioValue: 0,
+		positionsValue: 0,
+		cashBalance: 0
+	}
 
 	if (selectedFund) {
 		// Show data for selected fund only
@@ -27,26 +30,6 @@ function PortfolioStats(): React.ReactNode {
 			positionsValue: selectedFund.positionsValueUsd,
 			cashBalance: selectedFund.currentAccountCashBalanceUsd
 		}
-	} else {
-		// Show data for all funds combined
-		const totalPortfolioValue = allFunds.reduce((sum: number, fund: SingleFund): number =>
-			sum + fund.positionsValueUsd + fund.currentAccountCashBalanceUsd, 0)
-		const positionsValue = allFunds.reduce((sum: number, fund: SingleFund): number =>
-			sum + fund.positionsValueUsd, 0)
-		const cashBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
-			sum + fund.currentAccountCashBalanceUsd, 0)
-		portfolioStats = {
-			totalPortfolioValue,
-			positionsValue,
-			cashBalance
-		}
-	}
-
-	const formatCurrency = (value: number): string => {
-		return value.toLocaleString("en-US", {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		})
 	}
 
 	return (
