@@ -70,6 +70,7 @@ function TradeCard(): React.ReactNode {
 						variant={tradeClass.tradeTab === "Buy" ? "default" : "ghost"}
 						size="sm"
 						onClick={(): void => tradeClass.setTradeTab("Buy")}
+						className="text-xl"
 					>
 						Buy
 					</Button>
@@ -77,12 +78,13 @@ function TradeCard(): React.ReactNode {
 						variant={tradeClass.tradeTab === "Sell" ? "default" : "ghost"}
 						size="sm"
 						onClick={(): void => tradeClass.setTradeTab("Sell")}
+						className="text-xl"
 					>
 						Sell
 					</Button>
 				</div>
-				<div className="text-sm text-muted-foreground">
-					You own: 0 shares
+				<div className="text-xl text-muted-foreground">
+					You own 0 shares
 				</div>
 			</div>
 
@@ -100,8 +102,8 @@ function TradeCard(): React.ReactNode {
 					}}
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
-						<span className="font-semibold text-base opacity-90">Yes</span>
-						<span className="text-xl font-bold">{formatPrice(tradeClass.yesPrice)}</span>
+						<span className="font-semibold text-xl opacity-90">Yes</span>
+						<span className="text-2xl font-bold">{formatPrice(tradeClass.yesPrice)}</span>
 					</div>
 				</Button>
 				<Button
@@ -116,8 +118,8 @@ function TradeCard(): React.ReactNode {
 					}}
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
-						<span className="font-semibold text-base opacity-90">No</span>
-						<span className="text-xl font-bold">{formatPrice(tradeClass.noPrice)}</span>
+						<span className="font-semibold text-xl opacity-90">No</span>
+						<span className="text-2xl font-bold">{formatPrice(tradeClass.noPrice)}</span>
 					</div>
 				</Button>
 			</div>
@@ -125,7 +127,10 @@ function TradeCard(): React.ReactNode {
 			{/* Amount Input */}
 			<div className="mb-4">
 				<div className="relative">
-					<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+					<span className={cn(
+						"absolute left-3 top-1/2 transform -translate-y-1/2 text-3xl",
+						"text-muted-foreground pointer-events-none"
+					)}>
 						{tradeClass.tradeTab === "Buy" ? "Amount" : "Shares"}
 					</span>
 					<Input
@@ -138,9 +143,9 @@ function TradeCard(): React.ReactNode {
 							tradeClass.setAmount(parsedValue)
 						}}
 						className={cn(
-							"w-full focus-visible:ring-0 focus-visible:ring-offset-0 text-right pl-20",
+							"w-full text-lg focus-visible:ring-0 focus-visible:ring-offset-0 text-right pl-20",
 							"[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none",
-							"[&::-webkit-inner-spin-button]:appearance-none"
+							"[&::-webkit-inner-spin-button]:appearance-none h-14 text-3xl!"
 						)}
 					/>
 				</div>
