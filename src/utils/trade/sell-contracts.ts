@@ -46,7 +46,7 @@ export default async function sellContracts(): Promise<boolean> {
 		const sellResponse = response.data as SuccessSellOrderResponse
 
 		// Update fund balance with the new cash balance from the server
-		fundsClass.updateFundBalance(selectedFundUuid, sellResponse.newAccountBalance)
+		fundsClass.updateFundCashBalance(selectedFundUuid, sellResponse.newAccountCashBalance)
 
 		// Set positions for this clob token to the remaining positions from the backend
 		fundsClass.setPositionsForClobToken(

@@ -25,16 +25,16 @@ function PortfolioStats(): React.ReactNode {
 		// Show data for selected fund only
 		portfolioStats = {
 			totalFunds: 1,
-			totalBalance: selectedFund.currentAccountBalanceUsd,
-			totalStartingBalance: selectedFund.startingAccountBalanceUsd,
-			totalPnL: selectedFund.currentAccountBalanceUsd - selectedFund.startingAccountBalanceUsd
+			totalBalance: selectedFund.currentAccountCashBalanceUsd,
+			totalStartingBalance: selectedFund.startingAccountCashBalanceUsd,
+			totalPnL: selectedFund.currentAccountCashBalanceUsd - selectedFund.startingAccountCashBalanceUsd
 		}
 	} else {
 		// Show data for all funds combined
 		const totalBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
-			sum + fund.currentAccountBalanceUsd, 0)
+			sum + fund.currentAccountCashBalanceUsd, 0)
 		const totalStartingBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
-			sum + fund.startingAccountBalanceUsd, 0)
+			sum + fund.startingAccountCashBalanceUsd, 0)
 		portfolioStats = {
 			totalFunds: allFunds.length,
 			totalBalance,

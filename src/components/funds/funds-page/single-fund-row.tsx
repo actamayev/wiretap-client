@@ -12,10 +12,10 @@ function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 		>
 			<h1 className="text-2xl font-bold">{fund.fundName}</h1>
 			<p className="text-sm text-gray-500">
-				Starting balance: ${fund.startingAccountBalanceUsd}
+				Starting balance: ${fund.startingAccountCashBalanceUsd}
 			</p>
 			<p className="text-sm text-gray-500">
-				Current balance: ${fund.currentAccountBalanceUsd}
+				Current balance: ${fund.currentAccountCashBalanceUsd}
 			</p>
 		</div>
 	)
