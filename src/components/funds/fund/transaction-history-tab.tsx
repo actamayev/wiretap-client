@@ -15,12 +15,12 @@ import { formatCurrency } from "../../../utils/format"
 
 type HistorySortOption = "newest" | "oldest" | "value" | "number-of-shares"
 
-interface HistoryTabProps {
+interface TransactionHistoryTabProps {
 	transactions: TransactionResponse
 }
 
 // eslint-disable-next-line max-lines-per-function
-function HistoryTab({ transactions }: HistoryTabProps): React.ReactNode {
+export default function TransactionHistoryTab({ transactions }: TransactionHistoryTabProps): React.ReactNode {
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [sortOption, setSortOption] = useState<HistorySortOption>("newest")
 
@@ -150,5 +150,3 @@ function HistoryTab({ transactions }: HistoryTabProps): React.ReactNode {
 		</div>
 	)
 }
-
-export default HistoryTab

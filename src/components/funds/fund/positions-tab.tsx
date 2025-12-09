@@ -1,6 +1,5 @@
 "use client"
 
-import { observer } from "mobx-react"
 import { useMemo, useState } from "react"
 import { ArrowDownWideNarrow } from "lucide-react"
 import { Input } from "../../ui/input"
@@ -21,7 +20,7 @@ interface PositionsTabProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
+export default function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [sortOption, setSortOption] = useState<PositionsSortOption>("alphabetical")
 
@@ -135,5 +134,3 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 		</div>
 	)
 }
-
-export default observer(PositionsTab)
