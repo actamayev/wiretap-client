@@ -5,10 +5,9 @@ import { cn } from "../../lib/utils"
 import fundsClass from "../../classes/funds-class"
 
 interface PortfolioStats {
-	totalFunds: number
-	totalBalance: number
-	totalStartingBalance: number
-	totalPnL: number
+	totalPortfolioValue: number
+	positionsValue: number
+	cashBalance: number
 }
 
 function PortfolioStats(): React.ReactNode {
@@ -24,29 +23,24 @@ function PortfolioStats(): React.ReactNode {
 	if (selectedFund) {
 		// Show data for selected fund only
 		portfolioStats = {
-			totalFunds: 1,
-			totalBalance: selectedFund.currentAccountCashBalanceUsd,
-			totalStartingBalance: selectedFund.startingAccountCashBalanceUsd,
-			totalPnL: selectedFund.currentAccountCashBalanceUsd - selectedFund.startingAccountCashBalanceUsd
+			totalPortfolioValue: selectedFund.positionsValueUsd + selectedFund.currentAccountCashBalanceUsd,
+			positionsValue: selectedFund.positionsValueUsd,
+			cashBalance: selectedFund.currentAccountCashBalanceUsd
 		}
 	} else {
 		// Show data for all funds combined
-		const totalBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
+		const totalPortfolioValue = allFunds.reduce((sum: number, fund: SingleFund): number =>
+			sum + fund.positionsValueUsd + fund.currentAccountCashBalanceUsd, 0)
+		const positionsValue = allFunds.reduce((sum: number, fund: SingleFund): number =>
+			sum + fund.positionsValueUsd, 0)
+		const cashBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
 			sum + fund.currentAccountCashBalanceUsd, 0)
-		const totalStartingBalance = allFunds.reduce((sum: number, fund: SingleFund): number =>
-			sum + fund.startingAccountCashBalanceUsd, 0)
 		portfolioStats = {
-			totalFunds: allFunds.length,
-			totalBalance,
-			totalStartingBalance,
-			totalPnL: totalBalance - totalStartingBalance
+			totalPortfolioValue,
+			positionsValue,
+			cashBalance
 		}
 	}
-
-	// TODO: Calculate positions value from actual positions data
-	// For now, using placeholder - positions would need to be fetched for each fund
-	const positionsValue = 0
-	const cashValue = portfolioStats.totalBalance - positionsValue
 
 	const formatCurrency = (value: number): string => {
 		return value.toLocaleString("en-US", {
@@ -59,21 +53,21 @@ function PortfolioStats(): React.ReactNode {
 		<div className="shrink-0 flex flex-col text-left">
 			<div className="text-3xl font-semibold text-start">
 				Portfolio:{" "}
-				<span className={cn(portfolioStats.totalBalance > 0 && "text-yes-green")}>
-					${formatCurrency(portfolioStats.totalBalance)}
+				<span className={cn(portfolioStats.totalPortfolioValue > 0 && "text-yes-green")}>
+					${formatCurrency(portfolioStats.totalPortfolioValue)}
 				</span>
 			</div>
 			<div className="flex items-center gap-4 text-base text-muted-foreground">
 				<span>
 					Positions: {" "}
-					<span className={cn(positionsValue > 0 && "text-yes-green")}>
-						${formatCurrency(positionsValue)}
+					<span className={cn(portfolioStats.positionsValue > 0 && "text-yes-green")}>
+						${formatCurrency(portfolioStats.positionsValue)}
 					</span>
 				</span>
 				<span>
 					Cash: {" "}
-					<span className={cn(cashValue > 0 && "text-yes-green")}>
-						${formatCurrency(cashValue)}
+					<span className={cn(portfolioStats.cashBalance > 0 && "text-yes-green")}>
+						${formatCurrency(portfolioStats.cashBalance)}
 					</span>
 				</span>
 			</div>
