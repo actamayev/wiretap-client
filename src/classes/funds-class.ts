@@ -94,11 +94,6 @@ class FundsClass {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
-		// Initialize positions array if it doesn't exist
-		if (isUndefined(fund.positions)) {
-			fund.positions = []
-		}
-
 		// Always add a new position
 		fund.positions.push({
 			outcome: positionData.outcome,
@@ -114,9 +109,7 @@ class FundsClass {
 		}
 
 		const fund = this.funds.get(this.selectedFundUuid)
-		if (isUndefined(fund) || isUndefined(fund.positions)) {
-			return 0
-		}
+		if (isUndefined(fund)) return 0
 
 		// Sum up all positions that match the clobToken
 		return fund.positions
@@ -131,9 +124,6 @@ class FundsClass {
 	): void => {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
-
-		// Initialize positions array if it doesn't exist
-		if (isUndefined(fund.positions)) fund.positions = []
 
 		// Remove all existing positions with this clobToken
 		fund.positions = fund.positions.filter(

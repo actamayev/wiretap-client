@@ -16,6 +16,7 @@ function Events(): React.ReactNode {
 
 	const events = useMemo((): SingleEvent[] => {
 		return Array.from(eventsClass.events.values())
+			.sort((a: SingleEvent, b: SingleEvent): number => b.eventTotalVolume - a.eventTotalVolume)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventsClass.events.size])
 
