@@ -28,7 +28,7 @@ function SelectItemWithTooltip({
 		<SelectPrimitive.Item
 			data-slot="select-item"
 			className={cn(
-				"focus:bg-accent focus:text-accent-foreground",
+				"bg-off-sidebar-blue focus:bg-off-sidebar-blue-hover focus:text-accent-foreground",
 				"[&_svg:not([class*='text-'])]:text-muted-foreground",
 				"relative flex w-full cursor-default items-center gap-2 rounded-sm",
 				"py-1.5 pr-8 pl-2 text-sm outline-hidden select-none",
@@ -122,7 +122,7 @@ function FundsDropdown(): React.ReactNode {
 						{selectedFund?.fundName || ""}
 					</SelectValue>
 				</SelectTrigger>
-				<SelectContent>
+				<SelectContent className="bg-off-sidebar-blue">
 					{funds.map((fund: SingleFund): React.ReactNode => (
 						<SelectItemWithTooltip
 							key={fund.fundUUID}
