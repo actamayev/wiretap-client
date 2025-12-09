@@ -68,6 +68,13 @@ class FundsClass {
 		fund.fundName = newName
 	})
 
+	public setFundPositions = action((fundUUID: FundsUUID, positions: SinglePosition[]): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		fund.positions = positions
+	})
+
 	public updatePrimaryFund = action((newPrimaryFundUUID: FundsUUID): void => {
 		// Set all funds to not primary
 		this.funds.forEach((fund: SingleFund): void => {

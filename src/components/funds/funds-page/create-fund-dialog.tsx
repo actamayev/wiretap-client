@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useRef, useEffect } from "react"
 import { Button } from "../../ui/button"
 import { observer } from "mobx-react"
 import {
@@ -23,6 +23,8 @@ const removeNonNumeric = (num: string): string => {
 }
 
 function CreateFundDialog(): React.ReactNode {
+	const fundNameInputRef = useRef<HTMLInputElement>(null)
+
 	const isValid = useMemo((): boolean => {
 		const fundName = fundsClass.createFundData.fundName.trim()
 		const balance = fundsClass.createFundData.startingAccountBalanceUsd
@@ -35,6 +37,24 @@ function CreateFundDialog(): React.ReactNode {
 		)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundsClass.createFundData.fundName, fundsClass.createFundData.startingAccountBalanceUsd])
+
+	// Focus the input when dialog opens - using requestAnimationFrame for instant feel
+	useEffect((): void => {
+		if (fundsClass.isCreateFundDialogOpen) {
+			const focusInput = (): void => {
+				if (fundNameInputRef.current) {
+					fundNameInputRef.current.focus()
+					fundNameInputRef.current.select()
+				}
+			}
+
+			// Use double requestAnimationFrame for maximum speed
+			requestAnimationFrame((): void => {
+				requestAnimationFrame(focusInput)
+			})
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [fundsClass.isCreateFundDialogOpen])
 
 	const handleCreateFund = async (): Promise<void> => {
 		const fundUUID = await createFund()
@@ -51,12 +71,14 @@ function CreateFundDialog(): React.ReactNode {
 					<DialogClose />
 				</DialogHeader>
 				<Input
+					ref={fundNameInputRef}
 					id="fundName"
 					value={fundsClass.createFundData.fundName}
 					onChange={(e): void => fundsClass.setCreateFundKey("fundName", e.target.value)}
 					placeholder="Fund name"
 					className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0"
 					maxLength={100}
+					autoFocus
 				/>
 				<div className="relative">
 					<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-xl text-muted-foreground">$</span>
@@ -87,14 +109,14 @@ function CreateFundDialog(): React.ReactNode {
 						onClick={(): void => fundsClass.setIsCreateFundDialogOpen(false)}
 						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan"
 					>
-						CANCEL
+						Cancel
 					</Button>
 					<Button
 						onClick={handleCreateFund}
 						disabled={!isValid}
 						// eslint-disable-next-line max-len
 						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan disabled:opacity-50 disabled:cursor-not-allowed">
-						CREATE
+						Create
 					</Button>
 				</DialogFooter>
 			</DialogContent>
