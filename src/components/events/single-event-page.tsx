@@ -30,12 +30,17 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, eventsClass.events.size])
 
-	// Update trade class with prices when event is available
+	// Update trade class with prices, market id, and clob token when event is available
 	useEffect((): void => {
 		if (!event) return
-		const yesPrice = event.eventMarkets[0].lastTradePrice ?? 0
+		const market = event.eventMarkets[0]
+		const yesPrice = market.lastTradePrice ?? 0
 		const noPrice = 1 - yesPrice
 		tradeClass.setPrices(yesPrice, noPrice)
+		tradeClass.setMarketId(market.marketId)
+		// Set clob token based on selected market (Yes = index 0, No = index 1)
+		const clobToken = tradeClass.selectedMarket === "Yes" ? market.clobTokens[0] : market.clobTokens[1]
+		tradeClass.setSelectedClobToken(clobToken)
 	}, [event])
 
 	useEffect((): void => {

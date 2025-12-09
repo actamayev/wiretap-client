@@ -3,6 +3,7 @@ declare global {
 
 	type EndpointHeaders =
 		| "/auth"
+		| "/trade"
 		| "/events"
 		| "/misc"
 		| "/personal-info"

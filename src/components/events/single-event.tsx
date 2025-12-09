@@ -1,10 +1,12 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useCallback } from "react"
 import { Button } from "../ui/button"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import Image from "next/image"
 import formatVolume from "../../utils/events/format-volume"
+import tradeClass from "../../classes/trade-class"
+import { observer } from "mobx-react"
 
 interface SingleEventProps {
 	event: SingleEvent
@@ -57,8 +59,28 @@ function SimpleChart({ seed }: { seed: string }): React.ReactNode {
 	)
 }
 
-export default function SingleEvent({ event }: SingleEventProps): React.ReactNode {
+function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 	const navigate = useTypedNavigate()
+
+	const handleTitleClick = useCallback((): void => {
+		navigate(`/events/${event.eventSlug}`)
+	}, [navigate, event.eventSlug])
+
+	const handleYesClick = useCallback((): void => {
+		const market = event.eventMarkets[0]
+		tradeClass.setSelectedMarket("Yes" as OutcomeString)
+		tradeClass.setMarketId(market.marketId)
+		tradeClass.setSelectedClobToken(market.clobTokens[0])
+		navigate(`/events/${event.eventSlug}`)
+	}, [navigate, event.eventSlug, event.eventMarkets])
+
+	const handleNoClick = useCallback((): void => {
+		const market = event.eventMarkets[0]
+		tradeClass.setSelectedMarket("No" as OutcomeString)
+		tradeClass.setMarketId(market.marketId)
+		tradeClass.setSelectedClobToken(market.clobTokens[1])
+		navigate(`/events/${event.eventSlug}`)
+	}, [navigate, event.eventSlug, event.eventMarkets])
 
 	return (
 		<div className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue aspect-615/175 flex flex-col">
@@ -78,7 +100,7 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 						</div>
 						<div className="flex-1 min-w-0">
 							<h3
-								onClick={(): void => navigate(`/events/${event.eventSlug}`)}
+								onClick={handleTitleClick}
 								className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
 							>
 								{event.eventTitle}
@@ -95,9 +117,7 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 							variant="default"
 							size="sm"
 							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
-							onClick={(): void => {
-								navigate(`/events/${event.eventSlug}`)
-							}}
+							onClick={handleYesClick}
 						>
 							Yes
 						</Button>
@@ -105,9 +125,7 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 							variant="default"
 							size="sm"
 							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
-							onClick={(): void => {
-								navigate(`/events/${event.eventSlug}`)
-							}}
+							onClick={handleNoClick}
 						>
 							No
 						</Button>
@@ -129,3 +147,5 @@ export default function SingleEvent({ event }: SingleEventProps): React.ReactNod
 		</div>
 	)
 }
+
+export default observer(SingleEvent)
