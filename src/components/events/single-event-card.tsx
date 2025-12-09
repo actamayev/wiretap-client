@@ -1,14 +1,14 @@
 "use client"
 
+import Image from "next/image"
+import { observer } from "mobx-react"
 import { useMemo, useCallback } from "react"
 import { Button } from "../ui/button"
-import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
-import Image from "next/image"
 import { formatVolume } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
-import { observer } from "mobx-react"
+import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 
-interface SingleEventProps {
+interface SingleEventCardProps {
 	event: SingleEvent
 }
 
@@ -59,7 +59,7 @@ function SimpleChart({ seed }: { seed: string }): React.ReactNode {
 	)
 }
 
-function SingleEvent({ event }: SingleEventProps): React.ReactNode {
+function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 	const navigate = useTypedNavigate()
 
 	const handleTitleClick = useCallback((): void => {
@@ -150,4 +150,4 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 	)
 }
 
-export default observer(SingleEvent)
+export default observer(SingleEventCard)

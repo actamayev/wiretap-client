@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo } from "react"
 import { observer } from "mobx-react"
-import SingleEvent from "./single-event"
 import eventsClass from "../../classes/events-class"
 import InternalContainerLayout from "../layouts/internal-container-layout"
 import retrieveAllEvents from "../../utils/events/retrieve-all-events"
 import authClass from "../../classes/auth-class"
+import SingleEventCard from "./single-event-card"
 
 function Events(): React.ReactNode {
 	useEffect((): void => {
@@ -24,7 +24,7 @@ function Events(): React.ReactNode {
 			<div className="flex flex-col h-full w-full p-6">
 				<div className="grid grid-cols-2 gap-6 w-full">
 					{events.map((event): React.ReactNode => {
-						return <SingleEvent key={event.eventId} event={event} />
+						return <SingleEventCard key={event.eventId} event={event} />
 					})}
 				</div>
 			</div>
