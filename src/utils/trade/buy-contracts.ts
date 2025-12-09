@@ -47,12 +47,7 @@ export default async function buyContracts(): Promise<boolean> {
 		fundsClass.updateFundCashBalance(selectedFundUuid, buyResponse.newAccountCashBalance)
 
 		// Add contracts to the position
-		fundsClass.addContractsToPosition(selectedFundUuid, {
-			outcome: tradeClass.selectedMarket,
-			marketQuestion: tradeClass.marketQuestion,
-			clobToken: tradeClass.selectedClobToken as ClobTokenId,
-			contractsToAdd: buyResponse.contractsPurchased
-		})
+		fundsClass.addContractsToPosition(selectedFundUuid, buyResponse)
 
 		fundsClass.incrementPositionsValue(selectedFundUuid, buyResponse.totalCost)
 		tradeClass.setAmount("")
