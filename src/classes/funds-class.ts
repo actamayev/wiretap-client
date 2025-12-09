@@ -86,6 +86,37 @@ class FundsClass {
 		fund.positionsValueUsd -= decrement
 	})
 
+	public addBuyTransaction = action((fundUUID: FundsUUID, buyTransaction: SuccessBuyOrderResponse): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		fund.transactions.purchaseOrders.push({
+			outcome: buyTransaction.position.outcome,
+			numberContractsPurchased: buyTransaction.position.numberOfContractsHeld,
+			marketQuestion: buyTransaction.position.marketQuestion,
+			totalCost: buyTransaction.position.numberOfContractsHeld * buyTransaction.position.costBasisPerContractUsd,
+			transactionDate: new Date(),
+			polymarketSlug: buyTransaction.position.polymarketSlug,
+			polymarketImageUrl: buyTransaction.position.polymarketImageUrl,
+		})
+	})
+
+	public addSellTransaction = action((fundUUID: FundsUUID, sellTransaction: SuccessSellOrderResponse): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		// TODO: Add the remaining positions to the transaction
+		fund.transactions.saleOrders.push({
+			outcome: sellTransaction.outcomeData.outcome,
+			numberContractsSold: sellTransaction.contractsSold,
+			marketQuestion: sellTransaction.outcomeData.marketQuestion,
+			totalProceeds: sellTransaction.totalProceeds,
+			transactionDate: new Date(),
+			polymarketSlug: sellTransaction.outcomeData.polymarketSlug,
+			polymarketImageUrl: sellTransaction.outcomeData.polymarketImageUrl,
+		})
+	})
+
 	public addContractsToPosition = action((
 		fundUUID: FundsUUID,
 		buyResponse: SuccessBuyOrderResponse
