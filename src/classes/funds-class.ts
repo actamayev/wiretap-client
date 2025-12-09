@@ -75,6 +75,55 @@ class FundsClass {
 		fund.positions = positions
 	})
 
+	public updateFundBalance = action((fundUUID: FundsUUID, newBalance: number): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		fund.currentAccountBalanceUsd = newBalance
+	})
+
+	public addContractsToPosition = action((
+		fundUUID: FundsUUID,
+		positionData: {
+			outcome: OutcomeString
+			marketQuestion: string | null
+			clobToken: ClobTokenId
+			contractsToAdd: number
+		}
+	): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		// Initialize positions array if it doesn't exist
+		if (isUndefined(fund.positions)) {
+			fund.positions = []
+		}
+
+		// Always add a new position
+		fund.positions.push({
+			outcome: positionData.outcome,
+			marketQuestion: positionData.marketQuestion,
+			clobToken: positionData.clobToken,
+			numberOfContractsHeld: positionData.contractsToAdd
+		})
+	})
+
+	public getSharesOwnedForClobToken = (clobToken: ClobTokenId | undefined): number => {
+		if (!clobToken || !this.selectedFundUuid) {
+			return 0
+		}
+
+		const fund = this.funds.get(this.selectedFundUuid)
+		if (isUndefined(fund) || isUndefined(fund.positions)) {
+			return 0
+		}
+
+		// Sum up all positions that match the clobToken
+		return fund.positions
+			.filter((position): boolean => position.clobToken === clobToken)
+			.reduce((total: number, position: SinglePosition): number => total + position.numberOfContractsHeld, 0)
+	}
+
 	public updatePrimaryFund = action((newPrimaryFundUUID: FundsUUID): void => {
 		// Set all funds to not primary
 		this.funds.forEach((fund: SingleFund): void => {

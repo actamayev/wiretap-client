@@ -70,6 +70,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 		const market = event.eventMarkets[0]
 		tradeClass.setSelectedMarket("Yes" as OutcomeString)
 		tradeClass.setMarketId(market.marketId)
+		tradeClass.setMarketQuestion(market.marketQuestion)
 		tradeClass.setSelectedClobToken(market.clobTokens[0])
 		navigate(`/events/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])
@@ -78,6 +79,7 @@ function SingleEvent({ event }: SingleEventProps): React.ReactNode {
 		const market = event.eventMarkets[0]
 		tradeClass.setSelectedMarket("No" as OutcomeString)
 		tradeClass.setMarketId(market.marketId)
+		tradeClass.setMarketQuestion(market.marketQuestion)
 		tradeClass.setSelectedClobToken(market.clobTokens[1])
 		navigate(`/events/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])

@@ -1,5 +1,4 @@
 import { useMemo, useRef, useEffect } from "react"
-import { Button } from "../../ui/button"
 import { observer } from "mobx-react"
 import {
 	Dialog,
@@ -9,8 +8,9 @@ import {
 	DialogFooter,
 	DialogClose
 } from "../../ui/dialog"
-import fundsClass from "../../../classes/funds-class"
 import { Input } from "../../ui/input"
+import { Button } from "../../ui/button"
+import fundsClass from "../../../classes/funds-class"
 import createFund from "../../../utils/funds/create-fund"
 
 const addCommas = (num: string | number): string => {

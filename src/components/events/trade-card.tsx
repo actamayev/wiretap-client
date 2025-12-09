@@ -1,12 +1,13 @@
 "use client"
 
 import { observer } from "mobx-react"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import tradeClass from "../../classes/trade-class"
 import eventsClass from "../../classes/events-class"
+import fundsClass from "../../classes/funds-class"
 import isUndefined from "lodash-es/isUndefined"
 import buyContracts from "../../utils/trade/buy-contracts"
 import sellContracts from "../../utils/trade/sell-contracts"
@@ -48,10 +49,14 @@ function TradeCard(): React.ReactNode {
 			if (market) {
 				const clobToken = outcome === "Yes" ? market.clobTokens[0] : market.clobTokens[1]
 				tradeClass.setSelectedClobToken(clobToken)
+				tradeClass.setMarketQuestion(market.marketQuestion)
 				break
 			}
 		}
 	}
+
+	// Calculate shares owned - MobX observer will track observable changes
+	const sharesOwned = fundsClass.getSharesOwnedForClobToken(tradeClass.selectedClobToken)
 
 	const handleTrade = useCallback(async (): Promise<void> => {
 		if (tradeClass.tradeTab === "Buy") {
@@ -84,7 +89,7 @@ function TradeCard(): React.ReactNode {
 					</Button>
 				</div>
 				<div className="text-xl text-muted-foreground">
-					You own 0 shares
+					You own {addCommas(sharesOwned)} shares
 				</div>
 			</div>
 
@@ -157,7 +162,7 @@ function TradeCard(): React.ReactNode {
 				className="w-full bg-trade-button hover:bg-trade-button-hover text-white"
 				onClick={handleTrade}
 			>
-				Trade
+				{tradeClass.tradeTab} {tradeClass.selectedMarket}
 			</Button>
 		</div>
 	)
