@@ -116,7 +116,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 					<SelectContent className="bg-off-sidebar-blue cursor-pointer">
 						<SelectItem value="alphabetical" className="cursor-pointer">Alphabetically</SelectItem>
 						<SelectItem value="current-value" className="cursor-pointer">Current Value</SelectItem>
-						<SelectItem value="number-of-shares" className="cursor-pointer">Number of Shares</SelectItem>
+						<SelectItem value="number-of-shares" className="cursor-pointer">Shares</SelectItem>
 						<SelectItem value="purchase-date" className="cursor-pointer">Purchase Date</SelectItem>
 					</SelectContent>
 				</Select>
