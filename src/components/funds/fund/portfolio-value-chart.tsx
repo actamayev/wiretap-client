@@ -8,7 +8,7 @@ interface PortfolioValueChartProps {
 
 export default function PortfolioValueChart({ fundUUID }: PortfolioValueChartProps): React.ReactNode {
 	return (
-		<div className="w-full h-64 rounded-lg overflow-hidden bg-card p-4">
+		<div className="w-full h-64 rounded-lg overflow-hidden bg-sidebar-blue p-4">
 			<div className="w-full h-full rounded-[5px] overflow-hidden">
 				<SimpleChart seed={fundUUID} />
 			</div>
