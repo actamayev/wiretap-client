@@ -3,9 +3,7 @@
 import { observer } from "mobx-react"
 import { useEffect, useMemo } from "react"
 import isUndefined from "lodash-es/isUndefined"
-import authClass from "../../../classes/auth-class"
 import fundsClass from "../../../classes/funds-class"
-import retrieveSingleFund from "../../../utils/funds/retrieve-single-fund"
 import InternalContainerLayout from "../../layouts/internal-container-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import PortfolioValueChart from "./portfolio-value-chart"
@@ -13,12 +11,6 @@ import PositionsTab from "./positions-tab"
 import HistoryTab from "./history-tab"
 
 function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
-	useEffect((): void => {
-		void retrieveSingleFund(fundId)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fundId, authClass.isFinishedWithSignup])
-
-	const isLoading = fundsClass.isRetrievingSingleFund(fundId)
 	const fund = useMemo((): SingleFund | undefined => {
 		return fundsClass.funds.get(fundId)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,12 +19,6 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 	useEffect((): void => {
 		document.title = `${fund?.fundName} | Wiretap`
 	}, [fund?.fundName])
-
-	if (isLoading) return (
-		<InternalContainerLayout>
-			<div>Loading...</div>
-		</InternalContainerLayout>
-	)
 
 	if (isUndefined(fund)) return (
 		<InternalContainerLayout>
@@ -43,6 +29,9 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
 			<div className="flex flex-col h-full w-full p-6 gap-6">
+				{/* Fund Name */}
+				<h1 className="text-3xl font-bold">{fund.fundName}</h1>
+
 				{/* Portfolio Value Chart */}
 				<PortfolioValueChart fundUUID={fundId} />
 

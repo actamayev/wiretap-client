@@ -6,7 +6,6 @@ import { action, makeAutoObservable } from "mobx"
 class FundsClass {
 	public isRetrievingAllFunds = false
 	public hasRetrievedAllFunds = false
-	public retrievingSingleFunds: Map<FundsUUID, boolean> = new Map()
 	public funds: Map<FundsUUID, SingleFund> = new Map()
 	public isCreateFundDialogOpen = false
 	public selectedFundUuid: FundsUUID | "" = ""
@@ -52,14 +51,6 @@ class FundsClass {
 	public addFund = action((fund: SingleFund): void => {
 		this.funds.set(fund.fundUUID, fund)
 	})
-
-	public setIsRetrievingSingleFund = action((fundUUID: FundsUUID, isRetrieving: boolean): void => {
-		this.retrievingSingleFunds.set(fundUUID, isRetrieving)
-	})
-
-	public isRetrievingSingleFund = (fundUUID: FundsUUID): boolean => {
-		return this.retrievingSingleFunds.get(fundUUID) || false
-	}
 
 	public updateFundName = action((fundUUID: FundsUUID, newName: string): void => {
 		const fund = this.funds.get(fundUUID)
@@ -178,7 +169,6 @@ class FundsClass {
 		this.setIsRetrievingAllFunds(false)
 		this.setHasRetrievedAllFunds(false)
 		this.funds = new Map()
-		this.retrievingSingleFunds = new Map()
 		this.setIsCreateFundDialogOpen(false)
 		this.setSelectedFundUuid("")
 		this.setCreateFundData({
