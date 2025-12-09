@@ -69,6 +69,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 		outcome: string
 		averageCostBasis: number
 		currentSharePrice: number
+		numberOfShares: number
 		costBasis: number
 		currentValue: number
 		purchaseDate: Date
@@ -80,6 +81,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 			outcome: position.outcome,
 			averageCostBasis: position.costBasisPerContractUsd,
 			currentSharePrice: position.currentMarketPricePerContractUsd,
+			numberOfShares: position.numberOfContractsHeld,
 			costBasis: position.costBasisPerContractUsd * position.numberOfContractsHeld,
 			currentValue: position.currentMarketPricePerContractUsd * position.numberOfContractsHeld,
 			purchaseDate: position.positionCreatedAt,
@@ -128,6 +130,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 							<th className="text-left p-4 font-semibold">Yes/No</th>
 							<th className="text-left p-4 font-semibold">Average Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Share Price</th>
+							<th className="text-left p-4 font-semibold">Number of Shares</th>
 							<th className="text-left p-4 font-semibold">Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Value</th>
 							<th className="text-left p-4 font-semibold">Purchase Date</th>
@@ -136,7 +139,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 					<tbody>
 						{positionRows.length === 0 ? (
 							<tr>
-								<td colSpan={7} className="p-4 text-center text-muted-foreground">
+								<td colSpan={8} className="p-4 text-center text-muted-foreground">
 									No positions found
 								</td>
 							</tr>
@@ -161,6 +164,7 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 									<td className="p-4">{row.outcome}</td>
 									<td className="p-4">${formatCurrency(row.averageCostBasis)}</td>
 									<td className="p-4">${formatCurrency(row.currentSharePrice)}</td>
+									<td className="p-4">{row.numberOfShares}</td>
 									<td className="p-4">${formatCurrency(row.costBasis)}</td>
 									<td className="p-4">${formatCurrency(row.currentValue)}</td>
 									<td className="p-4">{new Date(row.purchaseDate).toLocaleDateString()}</td>
