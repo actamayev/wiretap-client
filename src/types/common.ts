@@ -69,10 +69,6 @@ declare global {
 		funds: SingleFund[]
 	}
 
-	interface SingleFundResponse {
-		singleFund: SingleFund | null
-	}
-
 	interface CreateFundResponse {
 		fundUUID: FundsUUID
 	}

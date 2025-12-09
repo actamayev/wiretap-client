@@ -13,12 +13,6 @@ export default class FundsDataService extends BaseDataService {
 		)
 	}
 
-	async retrieveSingleFund(wiretapFundUUID: FundsUUID): Promise<AxiosResponse<SingleFundResponse | ErrorResponse>> {
-		return await this.httpClient.http.get<SingleFundResponse | ErrorResponse>(
-			this.buildUrl(`/my-funds/${wiretapFundUUID}`)
-		)
-	}
-
 	async createFund(fundInformation: IncomingCreateFundRequest): Promise<AxiosResponse<CreateFundResponse | ErrorResponse>> {
 		return await this.httpClient.http.post<CreateFundResponse | ErrorResponse>(
 			this.buildUrl("/create-fund"), { fundInformation }

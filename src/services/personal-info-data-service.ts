@@ -9,7 +9,7 @@ export default class PersonalInfoDataService extends BaseDataService {
 
 	async retrievePersonalInfo(): Promise<AxiosResponse<BasicPersonalInfoResponse | ErrorResponse>> {
 		return await this.httpClient.http.get<BasicPersonalInfoResponse | ErrorResponse>(
-			this.buildUrl("/get-personal-info")
+			this.buildUrl("/personal-info")
 		)
 	}
 
