@@ -12,7 +12,7 @@ class FundsClass {
 	public selectedFundUuid: FundsUUID | "" = ""
 	public createFundData: IncomingCreateFundRequest = {
 		fundName: "",
-		startingAccountBalanceUsd: 0
+		startingAccountCashBalanceUsd: 0
 	}
 
 	constructor() {
@@ -25,7 +25,7 @@ class FundsClass {
 		// Reset createFundData when closing the dialog
 		this.setCreateFundData({
 			fundName: "",
-			startingAccountBalanceUsd: 0
+			startingAccountCashBalanceUsd: 0
 		})
 	})
 
@@ -75,11 +75,11 @@ class FundsClass {
 		fund.positions = positions
 	})
 
-	public updateFundBalance = action((fundUUID: FundsUUID, newBalance: number): void => {
+	public updateFundCashBalance = action((fundUUID: FundsUUID, newCashBalance: number): void => {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
-		fund.currentAccountBalanceUsd = newBalance
+		fund.currentAccountCashBalanceUsd = newCashBalance
 	})
 
 	public addContractsToPosition = action((
@@ -179,7 +179,7 @@ class FundsClass {
 		this.setSelectedFundUuid("")
 		this.setCreateFundData({
 			fundName: "",
-			startingAccountBalanceUsd: 0
+			startingAccountCashBalanceUsd: 0
 		})
 	}
 }

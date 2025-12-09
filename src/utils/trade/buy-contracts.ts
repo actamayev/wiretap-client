@@ -44,7 +44,7 @@ export default async function buyContracts(): Promise<boolean> {
 		}
 
 		const buyResponse = response.data as SuccessBuyOrderResponse
-		fundsClass.updateFundBalance(selectedFundUuid, buyResponse.newAccountBalance)
+		fundsClass.updateFundCashBalance(selectedFundUuid, buyResponse.newAccountCashBalance)
 
 		// Add contracts to the position
 		fundsClass.addContractsToPosition(selectedFundUuid, {

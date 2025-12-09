@@ -95,7 +95,7 @@ function FundsDropdown(): React.ReactNode {
 							className="cursor-pointer"
 						>
 							<div className="flex items-center justify-between w-full gap-2">
-								<span>{fund.fundName} - ${formatCurrency(fund.currentAccountBalanceUsd)}</span>
+								<span>{fund.fundName} - ${formatCurrency(fund.currentAccountCashBalanceUsd)}</span>
 								<Button
 									variant="ghost"
 									size="sm"

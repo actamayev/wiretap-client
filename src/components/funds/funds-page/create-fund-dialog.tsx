@@ -27,7 +27,7 @@ function CreateFundDialog(): React.ReactNode {
 
 	const isValid = useMemo((): boolean => {
 		const fundName = fundsClass.createFundData.fundName.trim()
-		const balance = fundsClass.createFundData.startingAccountBalanceUsd
+		const balance = fundsClass.createFundData.startingAccountCashBalanceUsd
 
 		return (
 			fundName.length >= 3 &&
@@ -36,7 +36,7 @@ function CreateFundDialog(): React.ReactNode {
 			balance <= 1_000_000
 		)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [fundsClass.createFundData.fundName, fundsClass.createFundData.startingAccountBalanceUsd])
+	}, [fundsClass.createFundData.fundName, fundsClass.createFundData.startingAccountCashBalanceUsd])
 
 	// Focus the input when dialog opens - using requestAnimationFrame for instant feel
 	useEffect((): void => {
@@ -87,9 +87,9 @@ function CreateFundDialog(): React.ReactNode {
 						inputMode="numeric"
 						placeholder="Starting account balance (USD)"
 						value={
-							fundsClass.createFundData.startingAccountBalanceUsd === 0
+							fundsClass.createFundData.startingAccountCashBalanceUsd === 0
 								? ""
-								: addCommas(fundsClass.createFundData.startingAccountBalanceUsd)
+								: addCommas(fundsClass.createFundData.startingAccountCashBalanceUsd)
 						}
 						onChange={(e): void => {
 							const numericValue = removeNonNumeric(e.target.value)
@@ -99,7 +99,7 @@ function CreateFundDialog(): React.ReactNode {
 							if (numValue > 1_000_000) {
 								numValue = 1_000_000
 							}
-							fundsClass.setCreateFundKey("startingAccountBalanceUsd", numValue)
+							fundsClass.setCreateFundKey("startingAccountCashBalanceUsd", numValue)
 						}}
 						className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0 pl-8"
 					/>
