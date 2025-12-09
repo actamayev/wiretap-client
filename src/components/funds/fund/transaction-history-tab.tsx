@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState, useMemo } from "react"
 import { ArrowDownWideNarrow } from "lucide-react"
 import { Input } from "../../ui/input"
@@ -12,6 +13,7 @@ import {
 } from "../../ui/select"
 import { cn } from "../../../lib/utils"
 import { formatCurrency } from "../../../utils/format"
+import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
 
 type HistorySortOption = "newest" | "oldest" | "value" | "number-of-shares"
 
@@ -21,6 +23,7 @@ interface TransactionHistoryTabProps {
 
 // eslint-disable-next-line max-lines-per-function
 export default function TransactionHistoryTab({ transactions }: TransactionHistoryTabProps): React.ReactNode {
+	const navigate = useTypedNavigate()
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [sortOption, setSortOption] = useState<HistorySortOption>("newest")
 
@@ -147,7 +150,21 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 								return (
 									<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
 										<td className="p-4">{activity}</td>
-										<td className="p-4">{marketName}</td>
+										<td className="p-4">
+											<div
+												onClick={(): void => navigate(`/events/${transaction.polymarketSlug}`)}
+												className="flex items-center gap-3 cursor-pointer group"
+											>
+												<Image
+													src={transaction.polymarketImageUrl}
+													alt={marketName}
+													width={40}
+													height={40}
+													className="shrink-0 rounded-md"
+												/>
+												<span className="group-hover:underline">{marketName}</span>
+											</div>
+										</td>
 										<td className="p-4">{outcome}</td>
 										<td className="p-4">{shares}</td>
 										<td className={cn("p-4", valueColor)}>
