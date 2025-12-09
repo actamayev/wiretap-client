@@ -1,17 +1,35 @@
 "use client"
 
 import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { useMemo } from "react"
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar"
 import CustomTooltip from "../custom-tooltip"
 
 export default function PolymarketLink(): React.ReactNode {
+	const pathname = usePathname()
+
+	const polymarketUrl = useMemo((): string => {
+		const baseUrl = "https://polymarket.com"
+		const affiliateParam = "?via=levi-sheridan"
+
+		// Check if we're on an event page: /events/{eventSlug}
+		const eventMatch = pathname.match(/^\/events\/([^/]+)$/)
+		if (eventMatch) {
+			const eventSlug = eventMatch[1]
+			return `${baseUrl}/event/${eventSlug}${affiliateParam}`
+		}
+
+		return `${baseUrl}${affiliateParam}`
+	}, [pathname])
+
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem className="flex justify-start">
 				<CustomTooltip
 					tooltipTrigger={
 						<a
-							href="https://polymarket.com?via=levi-sheridan"
+							href={polymarketUrl}
 							target="_blank"
 							rel="noopener noreferrer"
 							className="flex items-start gap-3 w-full p-2 hover:bg-off-sidebar-blue duration-0 rounded-xl"
