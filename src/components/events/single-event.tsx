@@ -4,7 +4,7 @@ import { useMemo, useCallback } from "react"
 import { Button } from "../ui/button"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import Image from "next/image"
-import formatVolume from "../../utils/events/format-volume"
+import { formatVolume } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import { observer } from "mobx-react"
 

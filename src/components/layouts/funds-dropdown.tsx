@@ -15,6 +15,7 @@ import {
 import fundsClass from "../../classes/funds-class"
 import setPrimaryFund from "../../utils/funds/set-primary-fund"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
+import { formatCurrency } from "../../utils/format"
 
 // eslint-disable-next-line max-lines-per-function
 function FundsDropdown(): React.ReactNode {
@@ -58,13 +59,6 @@ function FundsDropdown(): React.ReactNode {
 		fundsClass.setSelectedFundUuid(fundUUID)
 		// Set the new fund as primary
 		setPrimaryFund(fundUUID)
-	}
-
-	const formatCurrency = (value: number): string => {
-		return value.toLocaleString("en-US", {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		})
 	}
 
 	const selectedFund = funds.find((fund: SingleFund): boolean => fund.fundUUID === fundsClass.selectedFundUuid) || funds[0]
