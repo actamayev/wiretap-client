@@ -108,7 +108,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 						<SelectItem value="newest" className="cursor-pointer">Newest</SelectItem>
 						<SelectItem value="oldest" className="cursor-pointer">Oldest</SelectItem>
 						<SelectItem value="value" className="cursor-pointer">Value</SelectItem>
-						<SelectItem value="number-of-shares" className="cursor-pointer">Number of Shares</SelectItem>
+						<SelectItem value="number-of-shares" className="cursor-pointer">Shares</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
