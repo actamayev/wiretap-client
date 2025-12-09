@@ -20,7 +20,3 @@ export function isNonSuccessResponse(data: any): data is NonSuccessResponse {
 export function isErrorResponses(data: any): data is ErrorResponses {
 	return isErrorResponse(data) || isValidationErrorResponse(data)
 }
-
-export function isSuccessResponse(data: any): data is SuccessResponse {
-	return data && typeof data.success === "string"
-}
