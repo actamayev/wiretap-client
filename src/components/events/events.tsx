@@ -15,19 +15,48 @@ function Events(): React.ReactNode {
 	}, [authClass.isFinishedWithSignup])
 
 	const events = useMemo((): SingleEvent[] => {
-		return Array.from(eventsClass.events.values())
-			.sort((a: SingleEvent, b: SingleEvent): number => b.eventTotalVolume - a.eventTotalVolume)
+		const allEvents = Array.from(eventsClass.events.values())
+		const searchTerm = eventsClass.searchTerm.toLowerCase().trim()
+
+		if (!searchTerm) {
+			return allEvents.sort((a: SingleEvent, b: SingleEvent): number => b.eventTotalVolume - a.eventTotalVolume)
+		}
+
+		const filteredEvents = allEvents.filter((event: SingleEvent): boolean => {
+			const titleMatch = event.eventTitle.toLowerCase().includes(searchTerm)
+			const descriptionMatch = event.eventDescription.toLowerCase().includes(searchTerm)
+			const slugMatch = event.eventSlug.toLowerCase().includes(searchTerm)
+			const marketMatch = event.eventMarkets.some((market: SingleMarket): boolean =>
+				market.marketQuestion?.toLowerCase().includes(searchTerm) ?? false
+			)
+
+			return titleMatch || descriptionMatch || slugMatch || marketMatch
+		})
+
+		return filteredEvents.sort((a: SingleEvent, b: SingleEvent): number => b.eventTotalVolume - a.eventTotalVolume)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [eventsClass.events.size])
+	}, [eventsClass.events.size, eventsClass.searchTerm])
+
+	const hasSearchTerm = eventsClass.searchTerm.trim().length > 0
 
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
 			<div className="flex flex-col h-full w-full p-6">
-				<div className="grid grid-cols-2 gap-6 w-full">
-					{events.map((event): React.ReactNode => {
-						return <SingleEventCard key={event.eventId} event={event} />
-					})}
-				</div>
+				{events.length === 0 ? (
+					<div className="flex items-center justify-center h-full">
+						<p className="text-button-text text-lg">
+							{hasSearchTerm
+								? `No events found matching "${eventsClass.searchTerm}"`
+								: "No events available"}
+						</p>
+					</div>
+				) : (
+					<div className="grid grid-cols-2 gap-6 w-full">
+						{events.map((event): React.ReactNode => {
+							return <SingleEventCard key={event.eventId} event={event} />
+						})}
+					</div>
+				)}
 			</div>
 		</InternalContainerLayout>
 	)

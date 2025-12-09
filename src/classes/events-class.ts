@@ -5,6 +5,7 @@ class EventsClass {
 	public hasRetrievedAllEvents = false
 	public retrievingSingleEvent: Map<EventSlug, boolean> = new Map()
 	public events: Map<EventSlug, SingleEvent> = new Map()
+	public searchTerm = ""
 
 	constructor() {
 		makeAutoObservable(this)
@@ -36,11 +37,16 @@ class EventsClass {
 		return this.retrievingSingleEvent.get(eventSlug) || false
 	}
 
+	public setSearchTerm = action((newSearchTerm: string): void => {
+		this.searchTerm = newSearchTerm
+	})
+
 	logout(): void {
 		this.isRetrievingAllEvents = false
 		this.hasRetrievedAllEvents = false
 		this.retrievingSingleEvent = new Map()
 		this.events = new Map()
+		this.searchTerm = ""
 	}
 }
 
