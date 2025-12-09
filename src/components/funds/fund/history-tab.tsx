@@ -110,7 +110,7 @@ function HistoryTab({ transactions }: HistoryTabProps): React.ReactNode {
 				</Select>
 			</div>
 
-			<div className="rounded-lg border border-swan overflow-hidden">
+			<div className="rounded-lg border border-swan overflow-hidden mb-6">
 				<table className="w-full">
 					<thead className="bg-off-sidebar-blue">
 						<tr>
