@@ -2,7 +2,8 @@
 
 import { useMemo, useEffect } from "react"
 import { observer } from "mobx-react"
-import { Plus } from "lucide-react"
+import { Plus, CheckIcon } from "lucide-react"
+import * as SelectPrimitive from "@radix-ui/react-select"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import {
@@ -16,6 +17,46 @@ import fundsClass from "../../classes/funds-class"
 import setPrimaryFund from "../../utils/funds/set-primary-fund"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import { formatCurrency } from "../../utils/format"
+import CustomTooltip from "../custom-tooltip"
+
+function SelectItemWithTooltip({
+	className,
+	children,
+	...props
+}: React.ComponentProps<typeof SelectPrimitive.Item>): React.ReactNode {
+	return (
+		<SelectPrimitive.Item
+			data-slot="select-item"
+			className={cn(
+				"focus:bg-accent focus:text-accent-foreground",
+				"[&_svg:not([class*='text-'])]:text-muted-foreground",
+				"relative flex w-full cursor-default items-center gap-2 rounded-sm",
+				"py-1.5 pr-8 pl-2 text-sm outline-hidden select-none",
+				"data-disabled:pointer-events-none data-disabled:opacity-50",
+				"[&_svg]:pointer-events-none [&_svg]:shrink-0",
+				"[&_svg:not([class*='size-'])]:size-4",
+				"*:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+				"[&_span[class*='pointer-events-auto']_svg]:pointer-events-auto",
+				className
+			)}
+			{...props}
+		>
+			<span className="absolute right-2 flex size-3.5 items-center justify-center pointer-events-auto [&_svg]:pointer-events-auto">
+				<SelectPrimitive.ItemIndicator>
+					<CustomTooltip
+						tooltipTrigger={
+							<div className="cursor-pointer">
+								<CheckIcon className="size-4" />
+							</div>
+						}
+						tooltipContent="This is your currently selected fund"
+					/>
+				</SelectPrimitive.ItemIndicator>
+			</span>
+			<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+		</SelectPrimitive.Item>
+	)
+}
 
 // eslint-disable-next-line max-lines-per-function
 function FundsDropdown(): React.ReactNode {
@@ -83,7 +124,7 @@ function FundsDropdown(): React.ReactNode {
 				</SelectTrigger>
 				<SelectContent>
 					{funds.map((fund: SingleFund): React.ReactNode => (
-						<SelectItem
+						<SelectItemWithTooltip
 							key={fund.fundUUID}
 							value={fund.fundUUID}
 							className="cursor-pointer"
@@ -106,7 +147,7 @@ function FundsDropdown(): React.ReactNode {
 									Go to fund
 								</Button>
 							</div>
-						</SelectItem>
+						</SelectItemWithTooltip>
 					))}
 					<SelectItem
 						value="create-fund"
