@@ -23,7 +23,11 @@ export default async function createFund(): Promise<FundsUUID | undefined> {
 			currentAccountCashBalanceUsd: fundInformation.startingAccountCashBalanceUsd,
 			isPrimaryFund: false,
 			positionsValueUsd: 0,
-			positions: []
+			positions: [],
+			transactions: {
+				purchaseOrders: [],
+				saleOrders: []
+			}
 		})
 		return createFundResponse.data.fundUUID
 	} catch (error) {

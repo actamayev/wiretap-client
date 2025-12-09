@@ -1,0 +1,154 @@
+"use client"
+
+import { useState, useMemo } from "react"
+import { ArrowDownWideNarrow } from "lucide-react"
+import { Input } from "../../ui/input"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../../ui/select"
+import { cn } from "../../../lib/utils"
+import { formatCurrency } from "../../../utils/format"
+
+type HistorySortOption = "newest" | "oldest" | "value" | "number-of-shares"
+
+interface HistoryTabProps {
+	transactions: TransactionResponse
+}
+
+// eslint-disable-next-line max-lines-per-function
+function HistoryTab({ transactions }: HistoryTabProps): React.ReactNode {
+	const [searchQuery, setSearchQuery] = useState<string>("")
+	const [sortOption, setSortOption] = useState<HistorySortOption>("newest")
+
+	// Combine purchase and sale orders into a single list with type indicator
+	type TransactionWithType = (PurchaseOrder & { transactionType: "purchase" }) | (SaleOrder & { transactionType: "sale" })
+
+	const allTransactions = useMemo((): TransactionWithType[] => {
+		return [
+			...transactions.purchaseOrders.map((order): TransactionWithType => ({
+				...order,
+				transactionType: "purchase" as const
+			})),
+			...transactions.saleOrders.map((order): TransactionWithType => ({
+				...order,
+				transactionType: "sale" as const
+			}))
+		]
+	}, [transactions])
+
+	const filteredAndSortedTransactions = useMemo((): TransactionWithType[] => {
+		// Filter by search query
+		let filtered = allTransactions.filter((transaction): boolean => {
+			if (!searchQuery.trim()) return true
+			const searchLower = searchQuery.toLowerCase()
+			return (
+				transaction.marketQuestion?.toLowerCase().includes(searchLower) ||
+				transaction.outcome.toLowerCase().includes(searchLower)
+			)
+		})
+
+		// Sort based on selected option
+		filtered = [...filtered].sort((a, b): number => {
+			switch (sortOption) {
+				case "newest":
+					return new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
+
+				case "oldest":
+					return new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime()
+
+				case "value":
+					const aValue = a.transactionType === "purchase" ? a.numberContractsPurchased : a.numberContractsSold
+					const bValue = b.transactionType === "purchase" ? b.numberContractsPurchased : b.numberContractsSold
+					return bValue - aValue
+
+				case "number-of-shares":
+					const aShares = a.transactionType === "purchase" ? a.numberContractsPurchased : a.numberContractsSold
+					const bShares = b.transactionType === "purchase" ? b.numberContractsPurchased : b.numberContractsSold
+					return bShares - aShares
+
+				default:
+					return 0
+			}
+		})
+
+		return filtered
+	}, [allTransactions, searchQuery, sortOption])
+
+	return (
+		<div className="flex flex-col gap-4">
+			<div className="flex gap-2 items-center">
+				<Input
+					type="text"
+					placeholder="Search history..."
+					value={searchQuery}
+					onChange={(e): void => setSearchQuery(e.target.value)}
+					className="flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0"
+				/>
+				<Select
+					value={sortOption}
+					onValueChange={(value): void => setSortOption(value as HistorySortOption)}
+				>
+					<SelectTrigger
+						className={cn(
+							"h-10 rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
+							"focus-visible:ring-offset-0 cursor-pointer"
+						)}
+					>
+						<ArrowDownWideNarrow className="h-4 w-4 shrink-0" />
+						<SelectValue placeholder="Sort by" />
+					</SelectTrigger>
+					<SelectContent className="bg-off-sidebar-blue cursor-pointer">
+						<SelectItem value="newest" className="cursor-pointer">Newest</SelectItem>
+						<SelectItem value="oldest" className="cursor-pointer">Oldest</SelectItem>
+						<SelectItem value="value" className="cursor-pointer">Value</SelectItem>
+						<SelectItem value="number-of-shares" className="cursor-pointer">Number of Shares</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
+
+			<div className="rounded-lg border border-swan overflow-hidden">
+				<table className="w-full">
+					<thead className="bg-off-sidebar-blue">
+						<tr>
+							<th className="text-left p-4 font-semibold">Market</th>
+							<th className="text-left p-4 font-semibold">Shares</th>
+							<th className="text-left p-4 font-semibold">Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						{filteredAndSortedTransactions.length === 0 ? (
+							<tr>
+								<td colSpan={3} className="p-4 text-center text-muted-foreground">
+									No transactions found
+								</td>
+							</tr>
+						) : (
+							filteredAndSortedTransactions.map((transaction, index): React.ReactNode => {
+								const shares = transaction.transactionType === "purchase"
+									? transaction.numberContractsPurchased
+									: transaction.numberContractsSold
+								const marketName = transaction.marketQuestion || transaction.outcome
+								// TODO: Calculate actual value from transaction data
+								const value = 0
+
+								return (
+									<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
+										<td className="p-4">{marketName}</td>
+										<td className="p-4">{shares}</td>
+										<td className="p-4">${formatCurrency(value)}</td>
+									</tr>
+								)
+							})
+						)}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	)
+}
+
+export default HistoryTab

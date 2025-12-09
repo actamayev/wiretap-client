@@ -62,10 +62,7 @@ declare global {
 		isPrimaryFund: boolean
 		positionsValueUsd: number
 		positions: SinglePosition[]
-	}
-
-	interface PositionsResponse {
-		positions: SinglePosition[]
+		transactions: TransactionResponse
 	}
 
 	interface AllMyFundsResponse {
