@@ -140,8 +140,9 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 								const marketName = transaction.marketQuestion || transaction.outcome
 								const activity = transaction.transactionType === "purchase" ? "Buy" : "Sell"
 								const outcome = transaction.outcome
-								// TODO: Calculate actual value from transaction data
-								const value = 0
+								const value = transaction.transactionType === "purchase"
+									? transaction.totalCost
+									: transaction.totalProceeds
 								const displayValue = transaction.transactionType === "purchase" ? -value : value
 								const valueColor = transaction.transactionType === "purchase" ? "text-no-red" : "text-yes-green"
 								const valuePrefix = transaction.transactionType === "purchase" ? "-" : "+"
