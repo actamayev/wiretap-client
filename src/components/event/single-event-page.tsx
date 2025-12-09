@@ -104,7 +104,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					{/* Left Section - Chart */}
 					<div className="flex-2 flex flex-col gap-4 min-h-0">
 						<div className="flex-1 min-h-0">
-							<div className="bg-card rounded-lg p-4 h-full">
+							<div className="bg-sidebar-blue rounded-lg p-4 h-full">
 								<PriceChart seed={eventSlug} timeframe={timeframe} />
 							</div>
 						</div>
@@ -116,6 +116,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 									variant={timeframe === tf ? "default" : "outline"}
 									size="sm"
 									onClick={(): void => setTimeframe(tf)}
+									className="border-none"
 								>
 									{tf}
 								</Button>
@@ -136,4 +137,3 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 }
 
 export default observer(SingleEventPage)
-
