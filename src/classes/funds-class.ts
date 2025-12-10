@@ -92,9 +92,9 @@ class FundsClass {
 
 		fund.transactions.purchaseOrders.push({
 			outcome: buyTransaction.position.outcome,
-			numberContractsPurchased: buyTransaction.position.numberOfContractsHeld,
+			numberOfSharesPurchased: buyTransaction.position.numberOfSharesHeld,
 			marketQuestion: buyTransaction.position.marketQuestion,
-			totalCost: buyTransaction.position.numberOfContractsHeld * buyTransaction.position.costBasisPerContractUsd,
+			totalCost: buyTransaction.position.numberOfSharesHeld * buyTransaction.position.costBasisPerShareUsd,
 			transactionDate: new Date(),
 			polymarketSlug: buyTransaction.position.polymarketSlug,
 			polymarketImageUrl: buyTransaction.position.polymarketImageUrl,
@@ -105,10 +105,9 @@ class FundsClass {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
-		// TODO: Add the remaining positions to the transaction
 		fund.transactions.saleOrders.push({
 			outcome: sellTransaction.outcomeData.outcome,
-			numberContractsSold: sellTransaction.contractsSold,
+			numberOfSharesSold: sellTransaction.numberOfSharesSold,
 			marketQuestion: sellTransaction.outcomeData.marketQuestion,
 			totalProceeds: sellTransaction.totalProceeds,
 			transactionDate: new Date(),
@@ -117,7 +116,7 @@ class FundsClass {
 		})
 	})
 
-	public addContractsToPosition = action((
+	public addSharesToPosition = action((
 		fundUUID: FundsUUID,
 		buyResponse: SuccessBuyOrderResponse
 	): void => {
@@ -139,7 +138,7 @@ class FundsClass {
 		// Sum up all positions that match the clobToken
 		return fund.positions
 			.filter((position): boolean => position.clobToken === clobToken)
-			.reduce((total: number, position: SinglePosition): number => total + position.numberOfContractsHeld, 0)
+			.reduce((total: number, position: SinglePosition): number => total + position.numberOfSharesHeld, 0)
 	}
 
 	public setPositionsForClobToken = action((
