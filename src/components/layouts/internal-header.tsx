@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import PortfolioStats from "./portfolio-stats"
@@ -10,25 +10,6 @@ import SearchBar from "./search-bar"
 
 export default function HeaderContent(): React.ReactNode {
 	const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false)
-
-	useEffect((): (() => void) => {
-		const handleKeyDown = (e: KeyboardEvent): void => {
-			// Open feedback dialog with "f" key
-			const target = e.target as HTMLElement
-			const isInputElement = ["INPUT", "TEXTAREA", "SELECT"].includes(target?.tagName)
-			const isSelectTrigger = target?.closest("[data-slot=\"select-trigger\"]")
-
-			if (e.key === "f" && !isInputElement && !isSelectTrigger) {
-				e.preventDefault()
-				setIsFeedbackDialogOpen(true)
-			}
-		}
-
-		window.addEventListener("keydown", handleKeyDown)
-		return (): void => {
-			window.removeEventListener("keydown", handleKeyDown)
-		}
-	}, [])
 
 	return (
 		<div className="flex items-center justify-between w-full">
