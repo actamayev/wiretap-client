@@ -60,7 +60,6 @@
     "node_modules",
     "eslint.config.mjs",
     "postcss.config.js",
-    "next.config.js",
-    "keepalive-worker.js"
+    "next.config.js"
   ]
 }

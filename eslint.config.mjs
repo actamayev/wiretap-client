@@ -15,15 +15,11 @@ export default [
 			"src/components/ui/**/*",
 			"src/lib/**/*",
 			"src/hooks/shadcn/**/*",
-			"src/components/magicui/**/*",
 			"add-use-client.js",
 			"eslint.config.mjs",
 			"next.config.js",
 			"postcss.config.js",
-			"public/keepalive-worker.js",
-			"test/**/*",
 			"src/classes/__tests__/**/*",
-			"coverage/**/*",
 		],
 	},
 
@@ -103,22 +99,6 @@ export default [
 			],
 			"@typescript-eslint/naming-convention": [
 				"error",
-				{
-					"selector": "variable",
-					"format": ["camelCase", "PascalCase"],
-					"filter": {
-						"regex": "^SLIDE_COOLDOWN$",
-						"match": false
-					}
-				},
-				{
-					"selector": "variable",
-					"format": null,
-					"filter": {
-						"regex": "^SLIDE_COOLDOWN$",
-						"match": true
-					}
-				},
 				{
 					"selector": "function",
 					"format": ["camelCase", "PascalCase"]
@@ -204,7 +184,7 @@ export default [
 
 	// Override for additional icon components paths
 	{
-		files: ["src/components/icons/**/*", "src/utils/career-quest/career-quest-right-content/**/*"],
+		files: ["src/components/icons/**/*"],
 		rules: {
 			"@typescript-eslint/explicit-function-return-type": "off",
 		},
