@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import isEmailValid from "../utils/auth/is-email-valid"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { cn } from "../lib/utils"
 
 export default function SubscribeForUpdatesForm(): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
@@ -56,6 +57,9 @@ export default function SubscribeForUpdatesForm(): React.ReactNode {
 					type="email"
 					placeholder="Enter your email"
 					disabled={isLoading}
+					className={cn(
+						"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text placeholder:text-button-text"
+					)}
 				/>
 				<Button
 					type="submit"
