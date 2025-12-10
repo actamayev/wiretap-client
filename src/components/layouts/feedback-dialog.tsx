@@ -53,7 +53,12 @@ export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogPro
 				<DialogFooter className="flex justify-end gap-2">
 					<Button
 						onClick={handleCancel}
-						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan"
+						className={cn(
+							"flex-1 h-10 rounded-xl text-lg",
+							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
+							"border shadow-xs transition-[color,box-shadow]",
+							"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text"
+						)}
 					>
 						Cancel
 					</Button>
@@ -61,7 +66,10 @@ export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogPro
 						onClick={handleSend}
 						disabled={isLoading || !feedbackText.trim()}
 						className={cn(
-							"flex-1 h-10 rounded-xl text-lg text-white bg-eel",
+							"flex-1 h-10 rounded-xl text-lg",
+							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
+							"border shadow-xs transition-[color,box-shadow]",
+							"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text",
 							"dark:bg-swan disabled:opacity-50 disabled:cursor-not-allowed"
 						)}
 					>

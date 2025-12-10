@@ -12,6 +12,7 @@ import { Input } from "../../ui/input"
 import { Button } from "../../ui/button"
 import fundsClass from "../../../classes/funds-class"
 import createFund from "../../../utils/funds/create-fund"
+import { cn } from "../../../lib/utils"
 
 const addCommas = (num: string | number): string => {
 	const numStr = num.toString()
@@ -22,6 +23,7 @@ const removeNonNumeric = (num: string): string => {
 	return num.toString().replace(/[^0-9]/g, "")
 }
 
+// eslint-disable-next-line max-lines-per-function
 function CreateFundDialog(): React.ReactNode {
 	const fundNameInputRef = useRef<HTMLInputElement>(null)
 
@@ -107,15 +109,27 @@ function CreateFundDialog(): React.ReactNode {
 				<DialogFooter className="flex justify-end gap-2">
 					<Button
 						onClick={(): void => fundsClass.setIsCreateFundDialogOpen(false)}
-						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan"
+						className={cn(
+							"flex-1 h-10 rounded-xl text-lg",
+							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
+							"border shadow-xs transition-[color,box-shadow]",
+							"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text"
+						)}
 					>
 						Cancel
 					</Button>
 					<Button
 						onClick={handleCreateFund}
 						disabled={!isValid}
-						// eslint-disable-next-line max-len
-						className="flex-1 h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan disabled:opacity-50 disabled:cursor-not-allowed">
+
+						className={cn(
+							"flex-1 h-10 rounded-xl text-lg",
+							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
+							"border shadow-xs transition-[color,box-shadow]",
+							"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text",
+							"disabled:opacity-50 disabled:cursor-not-allowed"
+						)}
+					>
 						Create
 					</Button>
 				</DialogFooter>
