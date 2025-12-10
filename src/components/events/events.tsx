@@ -41,8 +41,8 @@ function Events(): React.ReactNode {
 
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
-			<div className="flex flex-col h-full w-full p-6">
-				{events.length === 0 ? (
+			{events.length === 0 ? (
+				<div className="flex flex-col h-full w-full px-6 pt-6">
 					<div className="flex items-center justify-center h-full">
 						<p className="text-button-text text-lg">
 							{hasSearchTerm
@@ -50,14 +50,16 @@ function Events(): React.ReactNode {
 								: "No events available"}
 						</p>
 					</div>
-				) : (
+				</div>
+			) : (
+				<div className="flex flex-col w-full p-6">
 					<div className="grid grid-cols-2 gap-6 w-full">
 						{events.map((event): React.ReactNode => {
 							return <SingleEventCard key={event.eventId} event={event} />
 						})}
 					</div>
-				)}
-			</div>
+				</div>
+			)}
 		</InternalContainerLayout>
 	)
 }
