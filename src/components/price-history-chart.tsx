@@ -89,7 +89,22 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 				visible: false,
 			},
 			rightPriceScale: {
-				visible: false,
+				visible: true,
+			},
+			crosshair: {
+				mode: 1, // Normal crosshair mode
+				vertLine: {
+					visible: true,
+					width: 1,
+					color: mutedForegroundColor,
+					style: 0, // Solid line
+				},
+				horzLine: {
+					visible: true,
+					width: 1,
+					color: mutedForegroundColor,
+					style: 0, // Solid line
+				},
 			},
 			handleScroll: {
 				mouseWheel: false,

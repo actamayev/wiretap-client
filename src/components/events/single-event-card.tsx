@@ -94,9 +94,12 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 				{/* Right Section - 2/5 width */}
 				<div className="w-2/5 flex flex-col h-full min-h-0">
 					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
-						{event.eventMarkets[0]?.outcomes[0]?.priceHistory && (
-							<PriceHistoryChart priceHistory={event.eventMarkets[0].outcomes[0].priceHistory} />
-						)}
+						{(() => {
+							const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+							return yesOutcome?.priceHistory && (
+								<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
+							)
+						})()}
 					</div>
 				</div>
 			</div>
