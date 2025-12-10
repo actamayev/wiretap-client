@@ -83,7 +83,7 @@ function TheFundsPage(): React.ReactNode {
 
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
-			<div className="flex flex-col h-full w-full p-6">
+			<div className="flex flex-col w-full p-6">
 				<div className="mb-4 flex gap-2 items-center">
 					<Input
 						type="text"
