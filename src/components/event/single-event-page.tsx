@@ -34,12 +34,24 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	useEffect((): void => {
 		if (!event) return
 		const market = event.eventMarkets[0]
-		const yesPrice = market.lastTradePrice ?? 0
-		const noPrice = 1 - yesPrice
-		tradeClass.setPrices(yesPrice, noPrice)
+		// First outcome is Yes, second is No
+		const yesOutcome = market.outcomes[0]
+		const noOutcome = market.outcomes[1]
+
+		// Single order book: bestBid and bestAsk are at market level
+		// Buy yes: best ask, Buy no: 1 - best bid
+		// Sell yes: best bid, Sell no: 1 - best ask
+		const bestBid = market.bestBid ?? 0
+		const bestAsk = market.bestAsk ?? 0
+		const buyYesPrice = bestAsk
+		const buyNoPrice = 1 - bestBid
+		const sellYesPrice = bestBid
+		const sellNoPrice = 1 - bestAsk
+
+		tradeClass.setPrices(buyYesPrice, buyNoPrice, sellYesPrice, sellNoPrice)
 		tradeClass.setMarketId(market.marketId)
 		// Set clob token based on selected market (Yes = index 0, No = index 1)
-		const clobToken = tradeClass.selectedMarket === "Yes" ? market.clobTokens[0] : market.clobTokens[1]
+		const clobToken = tradeClass.selectedMarket === "Yes" ? yesOutcome.clobTokenId : noOutcome.clobTokenId
 		tradeClass.setSelectedClobToken(clobToken)
 	}, [event])
 
