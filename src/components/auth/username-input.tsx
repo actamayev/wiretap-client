@@ -5,6 +5,7 @@ import { Input } from "../ui/input"
 import CharacterCounter from "../character-counter"
 import { FormControl, FormField, FormItem, FormMessage } from "../ui/form"
 import { handleTypeUsername } from "../../utils/handle-type-validation/handle-type-fields"
+import { cn } from "../../lib/utils"
 
 // Base interface for any form that has a username field
 interface FormWithUsername {
@@ -34,8 +35,9 @@ export default function UsernameInput<T extends FormWithUsername>({
 									const sanitizedValue = handleTypeUsername(event)
 									field.onChange(sanitizedValue)
 								}}
-								className="w-full pr-16 truncate h-12 rounded-xl text-xl! \
-								font-light border-2 bg-gray-50 shadow-none border-gray-700 focus-visible:ring-0 focus-visible:ring-offset-0"
+								className={cn("w-full pr-16 truncate h-12 rounded-xl text-xl!",
+									"font-light border-2 bg-gray-50 shadow-none border-gray-700 focus-visible:ring-0",
+									"focus-visible:ring-offset-0 text-button-text placeholder:text-button-text")}
 								maxLength={100}
 							/>
 							<CharacterCounter

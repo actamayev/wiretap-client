@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 "use client"
 
 import Link from "next/link"
@@ -70,9 +71,10 @@ function RegisterComponent(): React.ReactNode {
 												{...field}
 												maxLength={100}
 												required
-												// eslint-disable-next-line max-len
-												className={cn("w-full h-12 rounded-xl text-xl! font-light border-2 bg-gray-50 shadow-none border-gray-700",
-													"focus-visible:ring-0 focus-visible:ring-offset-0")}
+												className={cn(
+													"w-full h-12 rounded-xl text-xl! font-light border-2 bg-gray-50 shadow-none border-gray-700",
+													"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text placeholder:text-button-text"
+												)}
 											/>
 										</FormControl>
 										<FormMessage />
