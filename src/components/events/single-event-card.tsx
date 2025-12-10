@@ -24,7 +24,7 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 		const market = event.eventMarkets[0]
 		tradeClass.setSelectedMarket("Yes" as OutcomeString)
 		tradeClass.setMarketId(market.marketId)
-		tradeClass.setSelectedClobToken(market.clobTokens[0])
+		tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
 		navigate(`/events/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])
 
@@ -32,7 +32,7 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 		const market = event.eventMarkets[0]
 		tradeClass.setSelectedMarket("No" as OutcomeString)
 		tradeClass.setMarketId(market.marketId)
-		tradeClass.setSelectedClobToken(market.clobTokens[1])
+		tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
 		navigate(`/events/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])
 
@@ -61,7 +61,7 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 							</h3>
 						</div>
 						<div className="shrink-0 text-xl font-bold text-yes-green">
-							{Math.round((event.eventMarkets[0].lastTradePrice ?? 0) * 100)}%
+							{Math.round((event.eventMarkets[0].bestAsk ?? 0) * 100)}%
 						</div>
 					</div>
 

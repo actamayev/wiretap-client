@@ -68,6 +68,7 @@ function LoginComponent(): React.ReactNode {
 											className={cn(
 												"w-full h-12 rounded-xl text-xl! font-light",
 												"border-2 bg-gray-50 shadow-none border-gray-700",
+												// eslint-disable-next-line max-len
 												"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text placeholder:text-button-text"
 											)}
 										/>

@@ -50,7 +50,7 @@ function TradeCard(): React.ReactNode {
 		for (const event of eventsClass.events.values()) {
 			const market = event.eventMarkets.find((m): boolean => m.marketId === tradeClass.marketId)
 			if (market) {
-				const clobToken = outcome === "Yes" ? market.clobTokens[0] : market.clobTokens[1]
+				const clobToken = outcome === "Yes" ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
 				tradeClass.setSelectedClobToken(clobToken)
 				break
 			}
@@ -59,6 +59,15 @@ function TradeCard(): React.ReactNode {
 
 	// Calculate shares owned - MobX observer will track observable changes
 	const sharesOwned = fundsClass.getSharesOwnedForClobToken(tradeClass.selectedClobToken)
+
+	// Get the correct price based on Buy/Sell tab and Yes/No selection
+	const getYesPrice = (): number => {
+		return tradeClass.tradeTab === "Buy" ? tradeClass.buyYesPrice : tradeClass.sellYesPrice
+	}
+
+	const getNoPrice = (): number => {
+		return tradeClass.tradeTab === "Buy" ? tradeClass.buyNoPrice : tradeClass.sellNoPrice
+	}
 
 	const handleTrade = useCallback(async (): Promise<void> => {
 		setIsLoading(true)
@@ -115,7 +124,7 @@ function TradeCard(): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
 						<span className="font-semibold text-xl opacity-90">Yes</span>
-						<span className="text-2xl font-bold">{formatPrice(tradeClass.yesPrice)}</span>
+						<span className="text-2xl font-bold">{formatPrice(getYesPrice())}</span>
 					</div>
 				</Button>
 				<Button
@@ -131,7 +140,7 @@ function TradeCard(): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
 						<span className="font-semibold text-xl opacity-90">No</span>
-						<span className="text-2xl font-bold">{formatPrice(tradeClass.noPrice)}</span>
+						<span className="text-2xl font-bold">{formatPrice(getNoPrice())}</span>
 					</div>
 				</Button>
 			</div>
