@@ -10,8 +10,8 @@ import tradeClass from "../../classes/trade-class"
 import eventsClass from "../../classes/events-class"
 import fundsClass from "../../classes/funds-class"
 import isUndefined from "lodash-es/isUndefined"
-import buyContracts from "../../utils/trade/buy-contracts"
-import sellContracts from "../../utils/trade/sell-contracts"
+import buyShares from "../../utils/trade/buy-shares"
+import sellShares from "../../utils/trade/sell-shares"
 
 const formatPrice = (price: number): string => {
 	return `${(price * 100).toFixed(1)}¢`
@@ -64,9 +64,9 @@ function TradeCard(): React.ReactNode {
 		setIsLoading(true)
 		try {
 			if (tradeClass.tradeTab === "Buy") {
-				await buyContracts()
+				await buyShares()
 			} else {
-				await sellContracts()
+				await sellShares()
 			}
 		} finally {
 			setIsLoading(false)

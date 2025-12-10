@@ -29,7 +29,7 @@ function validateSellInputs(): { selectedFundUuid: FundsUUID; numberOfContracts:
 	return { selectedFundUuid, numberOfContracts }
 }
 
-export default async function sellContracts(): Promise<boolean> {
+export default async function sellShares(): Promise<boolean> {
 	try {
 		const { selectedFundUuid, numberOfContracts } = validateSellInputs()
 

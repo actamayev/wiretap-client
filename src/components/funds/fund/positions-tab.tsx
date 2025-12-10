@@ -48,10 +48,10 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 
 				case "current-value":
 					// Note: We don't have current value per position, so we'll sort by shares as proxy
-					return b.numberOfContractsHeld - a.numberOfContractsHeld
+					return b.numberOfSharesHeld - a.numberOfSharesHeld
 
 				case "number-of-shares":
-					return b.numberOfContractsHeld - a.numberOfContractsHeld
+					return b.numberOfSharesHeld - a.numberOfSharesHeld
 
 				case "purchase-date":
 					return new Date(b.positionCreatedAt).getTime() - new Date(a.positionCreatedAt).getTime()
@@ -79,11 +79,11 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 		return {
 			marketName: position.marketQuestion || position.outcome,
 			outcome: position.outcome,
-			averageCostBasis: position.costBasisPerContractUsd,
-			currentSharePrice: position.currentMarketPricePerContractUsd,
-			numberOfShares: position.numberOfContractsHeld,
-			costBasis: position.costBasisPerContractUsd * position.numberOfContractsHeld,
-			currentValue: position.currentMarketPricePerContractUsd * position.numberOfContractsHeld,
+			averageCostBasis: position.costBasisPerShareUsd,
+			currentSharePrice: position.currentMarketPricePerShareUsd,
+			numberOfShares: position.numberOfSharesHeld,
+			costBasis: position.costBasisPerShareUsd * position.numberOfSharesHeld,
+			currentValue: position.currentMarketPricePerShareUsd * position.numberOfSharesHeld,
 			purchaseDate: position.positionCreatedAt,
 			polymarketSlug: position.polymarketSlug,
 			polymarketImageUrl: position.polymarketImageUrl,

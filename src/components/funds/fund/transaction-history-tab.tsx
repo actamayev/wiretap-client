@@ -69,8 +69,8 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 					return Math.abs(bCostProceeds) - Math.abs(aCostProceeds)
 
 				case "number-of-shares":
-					const aShares = a.transactionType === "purchase" ? a.numberContractsPurchased : a.numberContractsSold
-					const bShares = b.transactionType === "purchase" ? b.numberContractsPurchased : b.numberContractsSold
+					const aShares = a.transactionType === "purchase" ? a.numberOfSharesPurchased : a.numberOfSharesSold
+					const bShares = b.transactionType === "purchase" ? b.numberOfSharesPurchased : b.numberOfSharesSold
 					return bShares - aShares
 
 				default:
@@ -135,8 +135,8 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 						) : (
 							filteredAndSortedTransactions.map((transaction, index): React.ReactNode => {
 								const shares = transaction.transactionType === "purchase"
-									? transaction.numberContractsPurchased
-									: transaction.numberContractsSold
+									? transaction.numberOfSharesPurchased
+									: transaction.numberOfSharesSold
 								const marketName = transaction.marketQuestion || transaction.outcome
 								const activity = transaction.transactionType === "purchase" ? "Buy" : "Sell"
 								const outcome = transaction.outcome

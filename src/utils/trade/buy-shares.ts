@@ -28,15 +28,15 @@ function validateBuyInputs(): FundsUUID {
 	return selectedFundUuid
 }
 
-export default async function buyContracts(): Promise<boolean> {
+export default async function buyShares(): Promise<boolean> {
 	try {
 		const selectedFundUuid = validateBuyInputs()
-		const valueOfContractsPurchasing = parseFloat(tradeClass.amount)
+		const valueOfSharesPurchasing = parseFloat(tradeClass.amount)
 
 		const response = await wiretapApiClient.tradeDataService.buy(
 			selectedFundUuid,
 			tradeClass.selectedClobToken as ClobTokenId,
-			valueOfContractsPurchasing
+			valueOfSharesPurchasing
 		)
 
 		if (!isEqual(response.status, 200) || isNonSuccessResponse(response.data)) {
@@ -46,12 +46,12 @@ export default async function buyContracts(): Promise<boolean> {
 		const buyResponse = response.data as SuccessBuyOrderResponse
 		fundsClass.updateFundCashBalance(selectedFundUuid, buyResponse.newAccountCashBalance)
 
-		// Add contracts to the position
-		fundsClass.addContractsToPosition(selectedFundUuid, buyResponse)
+		// Add shares to the position
+		fundsClass.addSharesToPosition(selectedFundUuid, buyResponse)
 
 		fundsClass.incrementPositionsValue(
 			selectedFundUuid,
-			buyResponse.position.numberOfContractsHeld * buyResponse.position.costBasisPerContractUsd
+			buyResponse.position.numberOfSharesHeld * buyResponse.position.costBasisPerShareUsd
 		)
 		fundsClass.addBuyTransaction(selectedFundUuid, buyResponse)
 		tradeClass.setAmount("")
