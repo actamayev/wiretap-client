@@ -90,11 +90,19 @@ function TheFundsPage(): React.ReactNode {
 						placeholder="Search funds..."
 						value={searchQuery}
 						onChange={(e): void => setSearchQuery(e.target.value)}
-						className="flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0"
+						className={cn(
+							"flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
+							"focus-visible:border-input text-button-text placeholder:text-button-text"
+						)}
 					/>
 					<Button
 						onClick={(): void => fundsClass.setIsCreateFundDialogOpen(true)}
-						className="h-10 rounded-xl text-lg text-white bg-eel dark:bg-swan shrink-0 flex items-center gap-2"
+						className={cn(
+							"h-10 rounded-xl shrink-0 flex items-center gap-2 text-lg",
+							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
+							"border shadow-xs transition-[color,box-shadow]",
+							"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text"
+						)}
 					>
 						<Plus className="h-4 w-4 shrink-0" />
 						Create Fund
@@ -105,11 +113,12 @@ function TheFundsPage(): React.ReactNode {
 					>
 						<SelectTrigger
 							className={cn(
-								"h-10 rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
-								"focus-visible:ring-offset-0 cursor-pointer"
+								"h-10! rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
+								"focus-visible:ring-offset-0 cursor-pointer text-button-text",
+								"focus-visible:border-input"
 							)}
 						>
-							<ArrowDownWideNarrow className="h-4 w-4 shrink-0" />
+							<ArrowDownWideNarrow className="h-4 w-4 shrink-0 text-button-text" />
 							<SelectValue placeholder="Sort by" />
 						</SelectTrigger>
 						<SelectContent className="bg-off-sidebar-blue cursor-pointer" >

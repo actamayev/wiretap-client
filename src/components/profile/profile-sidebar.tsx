@@ -15,7 +15,7 @@ interface SidebarSectionProps {
 
 const SidebarSection = ({ title, children }: SidebarSectionProps): React.ReactNode => {
 	return (
-		<Card className="mb-8 pb-6 shadow-none border-2">
+		<Card className="mb-8 pb-6 shadow-none border-none">
 			<CardTitle className="text-wolf text-xl pl-10">
 				{title}
 			</CardTitle>
@@ -35,7 +35,7 @@ const SidebarLink = ({ href, children }: SidebarLinkProps): React.ReactNode => {
 	return (
 		<Link
 			href={href}
-			className="block text-lg hover:bg-swan rounded-lg py-1 px-6 mx-4 font-semibold text-eel"
+			className="block text-lg hover:bg-off-sidebar-blue-hover rounded-lg py-1 px-6 mx-4 font-semibold text-eel"
 		>
 			{children}
 		</Link>
@@ -74,7 +74,7 @@ export default function ProfileSidebar(): React.ReactNode {
 
 			<Button
 				onClick={completeLogout}
-				className="w-full py-3 flex justify-center items-center font-medium rounded-lg h-10 border-2 border-swan"
+				className="w-full py-3 flex justify-center items-center font-medium rounded-lg h-10"
 			>
 				<LogOut className="mr-2 h-4 w-4" />
 				LOG OUT

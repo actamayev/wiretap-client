@@ -21,7 +21,7 @@ function ContactItemInCard({ email }: { email: string }): React.ReactNode {
 					<Button
 						variant="ghost"
 						onClick={copyToClipboard}
-						className="w-full flex items-center py-2 rounded-lg hover:bg-polar"
+						className="w-full flex items-center py-2 rounded-lg hover:bg-off-sidebar-blue-hover"
 					>
 						<span className="text-right font-semibold">{email}</span>
 					</Button>
