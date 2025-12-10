@@ -1,7 +1,7 @@
 "use client"
 
 import { observer } from "mobx-react"
-import { useCallback, useState } from "react"
+import { useCallback, useState, useMemo } from "react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -39,7 +39,7 @@ const parseAmountValue = (value: string): string => {
 	return removeNonNumeric(value)
 }
 
-// eslint-disable-next-line max-lines-per-function
+// eslint-disable-next-line max-lines-per-function, complexity
 function TradeCard(): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -60,6 +60,11 @@ function TradeCard(): React.ReactNode {
 	// Calculate shares owned - MobX observer will track observable changes
 	const sharesOwned = fundsClass.getSharesOwnedForClobToken(tradeClass.selectedClobToken)
 
+	// Get selected fund for validation
+	const selectedFund = fundsClass.selectedFundUuid
+		? fundsClass.funds.get(fundsClass.selectedFundUuid)
+		: undefined
+
 	// Get the correct price based on Buy/Sell tab and Yes/No selection
 	const getYesPrice = (): number => {
 		return tradeClass.tradeTab === "Buy" ? tradeClass.buyYesPrice : tradeClass.sellYesPrice
@@ -68,6 +73,24 @@ function TradeCard(): React.ReactNode {
 	const getNoPrice = (): number => {
 		return tradeClass.tradeTab === "Buy" ? tradeClass.buyNoPrice : tradeClass.sellNoPrice
 	}
+
+	// Compute if button should be disabled based on validation
+	const isDisabled = useMemo((): boolean => {
+		if (!tradeClass.amount || parseFloat(tradeClass.amount) <= 0) {
+			return false
+		}
+
+		const amountValue = parseFloat(tradeClass.amount)
+
+		if (tradeClass.tradeTab === "Buy") {
+			// Validate buy: check if user has sufficient funds
+			return selectedFund ? amountValue > selectedFund.currentAccountCashBalanceUsd : false
+		} else {
+			// Validate sell: check if user has sufficient shares
+			return amountValue > sharesOwned
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [tradeClass.tradeTab, tradeClass.amount, selectedFund?.currentAccountCashBalanceUsd, sharesOwned])
 
 	const handleTrade = useCallback(async (): Promise<void> => {
 		setIsLoading(true)
@@ -173,17 +196,19 @@ function TradeCard(): React.ReactNode {
 			</div>
 
 			{/* Action Button */}
-			<Button
-				variant="default"
-				className="w-full bg-trade-button hover:bg-trade-button-hover text-white text-2xl h-12"
-				onClick={handleTrade}
-				disabled={isLoading}
-			>
-				<div className="flex items-center justify-center gap-2">
-					{isLoading && <Spinner className="size-5" />}
-					<span>{tradeClass.tradeTab} {tradeClass.selectedMarket}</span>
-				</div>
-			</Button>
+			<div className="flex flex-col gap-2">
+				<Button
+					variant="default"
+					className="w-full bg-trade-button hover:bg-trade-button-hover text-white text-2xl h-12"
+					onClick={handleTrade}
+					disabled={isLoading || isDisabled}
+				>
+					<div className="flex items-center justify-center gap-2">
+						{isLoading && <Spinner className="size-5" />}
+						<span>{tradeClass.tradeTab} {tradeClass.selectedMarket}</span>
+					</div>
+				</Button>
+			</div>
 		</div>
 	)
 }
