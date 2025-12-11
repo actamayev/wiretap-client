@@ -68,8 +68,8 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 				{/* Tabs Section */}
 				<Tabs defaultValue="positions" className="flex-1 flex flex-col min-h-0">
 					<TabsList>
-						<TabsTrigger value="positions">Positions</TabsTrigger>
-						<TabsTrigger value="history">History</TabsTrigger>
+						<TabsTrigger value="positions" className="cursor-pointer">Positions</TabsTrigger>
+						<TabsTrigger value="history" className="cursor-pointer">History</TabsTrigger>
 					</TabsList>
 					<TabsContent value="positions" className="flex-1 min-h-0">
 						<PositionsTab positions={fund.positions} />
