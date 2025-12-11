@@ -33,7 +33,7 @@ import PasswordField from "@/components/auth/password-input"
 import authClass from "@/classes/auth-class"
 
 // eslint-disable-next-line max-lines-per-function
-export function SignupForm({
+function SignupForm({
 	className,
 	...props
 }: React.ComponentProps<"div">): React.ReactNode {

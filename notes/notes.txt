@@ -7,7 +7,3 @@ To kill process running on port 3000:
 
 To scan the whole repo for unused exports:
 	pnpm run check-unused
-
-TODO:
-- Add back proxy.ts
-- Button: https://reactbits.dev/animations/star-border

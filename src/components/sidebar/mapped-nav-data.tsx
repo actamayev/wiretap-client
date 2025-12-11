@@ -1,7 +1,6 @@
 "use client"
 
 import { observer } from "mobx-react"
-import toUpper from "lodash-es/toUpper"
 import { useCallback } from "react"
 import { usePathname } from "next/navigation"
 import {
@@ -10,7 +9,6 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { cn } from "../../lib/utils"
 import CustomSidebarButton from "./custom-sidebar-button"
 
 const baseNavData: SidebarNavData[] = [
