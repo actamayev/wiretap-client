@@ -67,7 +67,7 @@ function CreateFundDialog(): React.ReactNode {
 
 	return (
 		<Dialog open={fundsClass.isCreateFundDialogOpen} onOpenChange={fundsClass.setIsCreateFundDialogOpen}>
-			<DialogContent className="max-w-2xl border-none" onClick={(e): void => e.stopPropagation()}>
+			<DialogContent className="max-w-2xl border-none bg-sidebar-blue border-2! border-white!" onClick={(e): void => e.stopPropagation()}>
 				<DialogHeader>
 					<DialogTitle className="text-2xl">Create Fund</DialogTitle>
 					<DialogClose />
