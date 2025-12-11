@@ -47,7 +47,7 @@ export default function CustomSidebarButton({
 			>
 				<div className="flex items-center justify-start space-x-4 w-full pl-2.5"> {/* Added w-full */}
 					<div className={cn(
-						"text-base font-medium",
+						"text-2xl font-medium",
 						isActive ? "text-macaw" : "text-wolf"
 					)}>
 						{text}
