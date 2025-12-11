@@ -15,11 +15,11 @@ import tradeClass from "@/classes/trade-class"
 interface RegisterDialogProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
-	pendingNavigation: {
+	pendingNavigation?: {
 		eventSlug: EventSlug
 		market: "Yes" | "No"
 	} | null
-	event: SingleEvent
+	event?: SingleEvent
 }
 
 function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: RegisterDialogProps): React.ReactNode {
@@ -41,25 +41,32 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 
 	useEffect((): void => {
 		// Check auth state directly to ensure MobX tracks the changes
-		if (open && authClass.isLoggedIn && authClass.isFinishedWithSignup && pendingNavigation && !hasNavigatedRef.current) {
+		if (open && authClass.isLoggedIn && authClass.isFinishedWithSignup && !hasNavigatedRef.current) {
 			hasNavigatedRef.current = true
-			// Set trade state based on what the user clicked
-			const market = event.eventMarkets[0]
-			if (pendingNavigation.market === "Yes") {
-				tradeClass.setSelectedMarket("Yes" as OutcomeString)
-				tradeClass.setMarketId(market.marketId)
-				tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
+
+			// If there's pending navigation (event interaction), handle it
+			if (pendingNavigation && event?.eventMarkets?.[0]) {
+				// Set trade state based on what the user clicked
+				const market = event.eventMarkets[0]
+				if (pendingNavigation.market === "Yes") {
+					tradeClass.setSelectedMarket("Yes" as OutcomeString)
+					tradeClass.setMarketId(market.marketId)
+					tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
+				} else {
+					tradeClass.setSelectedMarket("No" as OutcomeString)
+					tradeClass.setMarketId(market.marketId)
+					tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
+				}
+				// Close the dialog first
+				onOpenChange(false)
+				// Then navigate to the event page after a brief delay to ensure dialog closes
+				setTimeout((): void => {
+					navigate(`/event/${pendingNavigation.eventSlug}`)
+				}, 100)
 			} else {
-				tradeClass.setSelectedMarket("No" as OutcomeString)
-				tradeClass.setMarketId(market.marketId)
-				tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
+				// No pending navigation - just close the dialog
+				onOpenChange(false)
 			}
-			// Close the dialog first
-			onOpenChange(false)
-			// Then navigate to the event page after a brief delay to ensure dialog closes
-			setTimeout((): void => {
-				navigate(`/event/${pendingNavigation.eventSlug}`)
-			}, 100)
 		}
 
 	}, [open, onOpenChange, navigate, pendingNavigation, event, isLoggedIn, isFinishedWithSignup])
