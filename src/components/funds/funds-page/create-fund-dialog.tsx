@@ -122,7 +122,6 @@ function CreateFundDialog(): React.ReactNode {
 					<Button
 						onClick={handleCreateFund}
 						disabled={!isValid}
-
 						className={cn(
 							"flex-1 h-10 rounded-xl text-lg",
 							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
