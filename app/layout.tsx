@@ -1,6 +1,5 @@
 import { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import "../src/styles/globals.css"
 import Providers from "./providers"
 import { youngSerif } from "../src/utils/fonts"
@@ -42,12 +41,7 @@ export default function RootLayout({
 					{children}
 				</Providers>
 				<TailwindIndicator />
-				{process.env.VERCEL_ENV === "production" && (
-					<>
-						<Analytics />
-						<SpeedInsights />
-					</>
-				)}
+				{process.env.VERCEL_ENV === "production" && <Analytics />}
 			</body>
 		</html>
 	)
