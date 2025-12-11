@@ -90,7 +90,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 					value={searchQuery}
 					onChange={(e): void => setSearchQuery(e.target.value)}
 					className={cn(
-						"flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
+						"flex-1 h-10! rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
 						"focus-visible:border-input text-button-text placeholder:text-button-text"
 					)}
 				/>
@@ -100,7 +100,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 				>
 					<SelectTrigger
 						className={cn(
-							"h-10 rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
+							"h-10! rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
 							"focus-visible:ring-offset-0 cursor-pointer"
 						)}
 					>
