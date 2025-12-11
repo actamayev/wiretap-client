@@ -50,7 +50,7 @@ function renderRegisterLink(pathname: string): React.ReactNode {
 	)
 }
 
-export function LoginForm({
+function LoginForm({
 	className,
 	...props
 }: React.ComponentProps<"div">): React.ReactNode {

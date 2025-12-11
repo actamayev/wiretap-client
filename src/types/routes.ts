@@ -1,6 +1,13 @@
-import { staticPages } from "../utils/constants/page-constants"
-
 declare global {
+	type StaticPageNames =
+		| "/"
+		| "/profile"
+		| "/funds"
+		| "/contact"
+		| "/terms"
+		| "/privacy"
+		| "/404"
+
 	type EventsPages =
 		| `/event/${EventSlug}`
 
@@ -8,9 +15,7 @@ declare global {
 		| "/funds"
 		| `/funds/${FundsUUID}`
 
-	type StaticPageNames = (typeof staticPages)[number];
-
-	type PageNames = (typeof staticPages)[number] | EventsPages | FundsPages
+	type PageNames = StaticPageNames | EventsPages | FundsPages
 }
 
 export {}

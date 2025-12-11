@@ -3,8 +3,8 @@ import { observer } from "mobx-react"
 import { usePathname } from "next/navigation"
 import authClass from "@/classes/auth-class"
 import { AuthState } from "@/lib/auth-server"
-import { LoginForm } from "@/components/login-form"
-import { SignupForm } from "@/components/signup-form"
+import LoginForm from "@/components/login-form"
+import SignupForm from "@/components/signup-form"
 import { GoogleUsernameForm } from "@/components/google-username-form"
 
 interface AuthenticatedLayoutClientProps {

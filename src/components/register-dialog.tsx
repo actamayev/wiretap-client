@@ -6,8 +6,8 @@ import {
 	Dialog,
 	DialogContent,
 } from "@/components/ui/dialog"
-import { SignupForm } from "@/components/signup-form"
-import { LoginForm } from "@/components/login-form"
+import SignupForm from "@/components/signup-form"
+import LoginForm from "@/components/login-form"
 import authClass from "@/classes/auth-class"
 import useTypedNavigate from "@/hooks/navigate/use-typed-navigate"
 import tradeClass from "@/classes/trade-class"

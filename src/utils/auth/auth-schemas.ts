@@ -20,15 +20,6 @@ export const registerUsernameSchema = z.object({
 		.max(100, "Could you pick a shorter username?"),
 })
 
-export const emailUpdatesSchema = z.object({
-	email: z.string()
-		.min(3, "Please enter your email to stay updated")
-		.max(100, "That's a bit long for an email - could you check it?")
-		.refine((val): boolean => emailRegex.test(val), {
-			message: "Hmm, that email format doesn't look quite right",
-		}),
-})
-
 export const registerSchema = z.object({
 	email: z.string()
 		.min(3, "Please enter your email to create your account")
