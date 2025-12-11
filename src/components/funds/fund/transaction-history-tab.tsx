@@ -156,7 +156,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 										<td className="p-4">{activity}</td>
 										<td className="p-4">
 											<div
-												onClick={(): void => navigate(`/events/${transaction.polymarketSlug}`)}
+												onClick={(): void => navigate(`/event/${transaction.polymarketSlug}`)}
 												className="flex items-center gap-3 cursor-pointer group"
 											>
 												<Image

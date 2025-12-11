@@ -2,27 +2,17 @@
 
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google"
 import useGoogleAuthCallback from "../../../hooks/google-auth/use-google-auth-callback"
-import { isNull, isUndefined } from "lodash-es"
 import { useCallback } from "react"
-import { PageToNavigateAfterLogin } from "../../../utils/constants/page-constants"
-import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
-import { usePathname } from "next/navigation"
 
 export default function GoogleSignIn(): React.ReactNode {
 	const googleAuthCallback = useGoogleAuthCallback()
-	const navigate = useTypedNavigate()
-	const pathname = usePathname()
 
 	const onSuccess = useCallback(async (successResponse: CredentialResponse): Promise<void> => {
-		const response = await googleAuthCallback(successResponse)
-		if (isNull(response)) return
-		if (response.isNewUser === true || isUndefined(response.personalInfo)) {
-			navigate("/register-google")
-			return
-		}
-		if (pathname !== "/login" && pathname !== "/register") return
-		navigate(PageToNavigateAfterLogin)
-	}, [googleAuthCallback, navigate, pathname])
+		await googleAuthCallback(successResponse)
+		// User stays on current page after Google sign-in
+		// If incomplete signup (new user), GoogleUsernameForm will be shown automatically
+		// via authenticated-layout-client.tsx
+	}, [googleAuthCallback])
 
 	return (
 		<div className="flex justify-center">

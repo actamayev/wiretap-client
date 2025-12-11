@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 	return createMetadata({
 		title: "Event",
 		description: "View and trade on this event",
-		path: `/events/${eventSlug}`,
+		path: `/event/${eventSlug}`,
 		keywords: ["events", "prediction", "markets"]
 	})
 }

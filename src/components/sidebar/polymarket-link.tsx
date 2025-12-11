@@ -14,7 +14,7 @@ export default function PolymarketLink(): React.ReactNode {
 		const affiliateParam = "?via=levi-sheridan"
 
 		// Check if we're on an event page: /events/{eventSlug}
-		const eventMatch = pathname.match(/^\/events\/([^/]+)$/)
+		const eventMatch = pathname.match(/^\/event\/([^/]+)$/)
 		if (eventMatch) {
 			const eventSlug = eventMatch[1]
 			return `${baseUrl}/event/${eventSlug}${affiliateParam}`

@@ -16,7 +16,7 @@ import CustomSidebarButton from "./custom-sidebar-button"
 const baseNavData: SidebarNavData[] = [
 	{
 		title: "Events",
-		url: "/events",
+		url: "/",
 		textColor: "text-white"
 	},
 	{
@@ -30,6 +30,11 @@ function MappedNavData(): React.ReactNode {
 	const pathname = usePathname()
 
 	const isActive = useCallback((itemUrl: PageNames): boolean => {
+		// Special case for Events: active on "/" or pages starting with "/event"
+		if (itemUrl === "/") {
+			return pathname === "/" || pathname.startsWith("/event")
+		}
+		// For other items, use startsWith logic
 		return pathname.startsWith(itemUrl)
 	}, [pathname])
 

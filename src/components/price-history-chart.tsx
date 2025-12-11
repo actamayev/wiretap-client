@@ -71,6 +71,7 @@ function PriceHistoryChart({ priceHistory, multiplyBy100 = true }: PriceHistoryC
 	const priceHistoryLength = priceHistory?.length ?? 0
 
 	// Initialize and update chart
+	// eslint-disable-next-line max-lines-per-function
 	useEffect((): (() => void) => {
 		if (!chartContainerRef.current || !priceHistory || priceHistory.length === 0) {
 			return (): void => {}
