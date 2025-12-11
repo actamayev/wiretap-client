@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { useMemo, useRef, useEffect } from "react"
 import { observer } from "mobx-react"
 import {
@@ -67,7 +68,7 @@ function CreateFundDialog(): React.ReactNode {
 
 	return (
 		<Dialog open={fundsClass.isCreateFundDialogOpen} onOpenChange={fundsClass.setIsCreateFundDialogOpen}>
-			<DialogContent className="max-w-2xl border-none bg-sidebar-blue border-2! border-white!" onClick={(e): void => e.stopPropagation()}>
+			<DialogContent className="max-w-2xl border border-white/30 bg-sidebar-blue " onClick={(e): void => e.stopPropagation()}>
 				<DialogHeader>
 					<DialogTitle className="text-2xl">Create Fund</DialogTitle>
 					<DialogClose />
@@ -78,7 +79,7 @@ function CreateFundDialog(): React.ReactNode {
 					value={fundsClass.createFundData.fundName}
 					onChange={(e): void => fundsClass.setCreateFundKey("fundName", e.target.value)}
 					placeholder="Fund name"
-					className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0"
+					className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0 border-white/30 focus:border-white/30 focus-visible:border-white/30 active:border-white/30"
 					maxLength={100}
 					autoFocus
 				/>
@@ -103,7 +104,7 @@ function CreateFundDialog(): React.ReactNode {
 							}
 							fundsClass.setCreateFundKey("startingAccountCashBalanceUsd", numValue)
 						}}
-						className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0 pl-8"
+						className="w-full text-xl! h-10 focus-visible:ring-0 focus-visible:ring-offset-0 pl-8 border-white/30 focus:border-white/30 focus-visible:border-white/30 active:border-white/30"
 					/>
 				</div>
 				<DialogFooter className="flex justify-end gap-2">

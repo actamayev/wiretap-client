@@ -38,7 +38,7 @@ export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogPro
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl border-none" onClick={(e): void => e.stopPropagation()}>
+			<DialogContent className="max-w-2xl border border-white/30 bg-sidebar-blue" onClick={(e): void => e.stopPropagation()}>
 				<DialogHeader>
 					<DialogTitle className="text-2xl">Feedback</DialogTitle>
 					<DialogClose />
@@ -47,7 +47,8 @@ export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogPro
 					value={feedbackText}
 					onChange={(e): void => setFeedbackText(e.target.value)}
 					placeholder="Share your feedback..."
-					className="w-full min-h-32 active:ring-0! active:ring-offset-0! focus-visible:ring-0! focus-visible:ring-offset-0!"
+					// eslint-disable-next-line max-len
+					className="w-full min-h-32 active:ring-0! active:ring-offset-0! focus-visible:ring-0! focus-visible:ring-offset-0! border-white/30 focus:border-white/30 focus-visible:border-white/30 active:border-white/30"
 					maxLength={1000}
 				/>
 				<DialogFooter className="flex justify-end gap-2">
