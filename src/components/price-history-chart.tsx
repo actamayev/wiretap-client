@@ -62,7 +62,9 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 	const chartRef = useRef<IChartApi | null>(null)
 	const seriesRef = useRef<ISeriesApi<"Line"> | null>(null)
 	const watermarkStyleRef = useRef<HTMLStyleElement | null>(null)
+	const tooltipRef = useRef<HTMLDivElement | null>(null)
 
+	// eslint-disable-next-line max-lines-per-function
 	useEffect((): (() => void) => {
 		if (!chartContainerRef.current || !priceHistory || priceHistory.length === 0) {
 			return (): void => {}
@@ -71,6 +73,8 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 		const chartLineColor = getCSSVariableAsRGB("--chart-line", "rgb(44, 145, 205)")
 		const chartBackgroundColor = getCSSVariableAsRGB("--chart-background", "rgb(29, 42, 57)")
 		const mutedForegroundColor = getCSSVariableAsRGB("--muted-foreground", "rgb(113, 113, 122)")
+		// Grid line color
+		const gridLineColor = "rgb(44, 63, 79)"
 
 		// Create chart
 		const chart = createChart(chartContainerRef.current, {
@@ -83,13 +87,23 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 			},
 			grid: {
 				vertLines: { visible: false },
-				horzLines: { visible: false },
+				horzLines: {
+					visible: true,
+					color: gridLineColor,
+					style: 1, // Dashed line style
+				},
 			},
 			timeScale: {
 				visible: false,
 			},
 			rightPriceScale: {
 				visible: true,
+				scaleMargins: {
+					top: 0.1,
+					bottom: 0.1,
+				},
+				ticksVisible: false, // Hide tick marks to reduce visual clutter
+				borderVisible: false, // Hide the vertical border line
 			},
 			crosshair: {
 				mode: 1, // Normal crosshair mode
@@ -119,10 +133,17 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 
 		chartRef.current = chart
 
-		// Create line series
+		// Create line series with price format including %
 		const lineSeries = chart.addSeries(LineSeries, {
 			color: chartLineColor,
 			lineWidth: 2,
+			priceFormat: {
+				type: "custom",
+				minMove: 0.1,
+				formatter: (price: number): string => {
+					return `${price.toFixed(1)}%`
+				},
+			},
 		})
 
 		seriesRef.current = lineSeries
@@ -146,6 +167,82 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 
 		// Fit content
 		chart.timeScale().fitContent()
+
+		// Configure price scale to show fewer grid lines
+		// This reduces the frequency of horizontal grid lines
+		chart.priceScale("right").applyOptions({
+			ticksVisible: false,
+			autoScale: true,
+		})
+
+		// Create tooltip element positioned at crosshair
+		const tooltip = document.createElement("div")
+		tooltip.className = "chart-tooltip"
+		tooltip.style.cssText = `
+			position: absolute;
+			display: none;
+			padding: 4px 8px;
+			background: var(--chart-background, rgb(29, 42, 57));
+			border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+			border-radius: 4px;
+			color: var(--foreground, rgb(255, 255, 255));
+			font-size: 11px;
+			pointer-events: none;
+			z-index: 1000;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+			white-space: nowrap;
+			transform: translate(-50%, -100%);
+			margin-top: -8px;
+		`
+		if (chartContainerRef.current) {
+			chartContainerRef.current.appendChild(tooltip)
+			tooltipRef.current = tooltip
+		}
+
+		// Format timestamp for display
+		const formatTimestamp = (time: Time): string => {
+			const date = new Date(Number(time) * 1000)
+			return date.toLocaleString("en-US", {
+				month: "short",
+				day: "numeric",
+				year: "numeric",
+				hour: "numeric",
+				minute: "2-digit",
+				hour12: true,
+			})
+		}
+
+		// Subscribe to crosshair move events to position tooltip at crosshair
+		chart.subscribeCrosshairMove((param): void => {
+			if (!tooltipRef.current || !chartContainerRef.current || !param.point) {
+				if (tooltipRef.current) {
+					tooltipRef.current.style.display = "none"
+				}
+				return
+			}
+
+			const data = param.seriesData.get(lineSeries) as LineData<Time> | undefined
+			if (!data || typeof data.value !== "number" || !param.time) {
+				tooltipRef.current.style.display = "none"
+				return
+			}
+
+			const price = data.value
+			const timestamp = formatTimestamp(param.time)
+			tooltipRef.current.innerHTML = `
+				<div style="font-weight: 600; margin-bottom: 2px;">${price.toFixed(1)}%</div>
+				<div style="font-size: 10px; opacity: 0.8;">${timestamp}</div>
+			`
+			tooltipRef.current.style.display = "block"
+
+			// Position tooltip at crosshair point (on the line)
+			// param.point coordinates are relative to the chart container
+			// Since container has position: relative, these coordinates work directly
+			const x = param.point.x
+			const y = param.point.y
+			tooltipRef.current.style.left = `${x}px`
+			tooltipRef.current.style.top = `${y}px`
+		})
 
 		// Hide TradingView logo/watermark via CSS (fallback if attributionLogo doesn't work)
 		if (chartContainerRef.current) {
@@ -211,6 +308,9 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 			if (watermarkStyleRef.current && watermarkStyleRef.current.parentNode) {
 				watermarkStyleRef.current.parentNode.removeChild(watermarkStyleRef.current)
 			}
+			if (tooltipRef.current && tooltipRef.current.parentNode) {
+				tooltipRef.current.parentNode.removeChild(tooltipRef.current)
+			}
 			if (chart) {
 				chart.remove()
 			}
@@ -218,6 +318,6 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 	}, [priceHistory])
 
 	return (
-		<div className="w-full h-full" ref={chartContainerRef} />
+		<div className="w-full h-full relative" ref={chartContainerRef} />
 	)
 }
