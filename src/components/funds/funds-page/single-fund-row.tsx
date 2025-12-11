@@ -57,11 +57,11 @@ function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 				</div>
 
 				{/* Column 4: Performance Chart */}
-				<div className="flex-1 flex flex-col h-full min-h-0">
-					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden h-24">
+				<div className="flex-1 flex flex-col">
+					<div className="h-24 w-full rounded-[5px] overflow-hidden">
 						<PriceHistoryChart
 							priceHistory={
-								fund.portfolioHistory && fund.portfolioHistory.length > 0
+								fund.portfolioHistory?.length > 0
 									? fund.portfolioHistory.map((snapshot): SinglePriceSnapshot => ({
 										timestamp: snapshot.timestamp,
 										price: snapshot.portfolioValueUsd,

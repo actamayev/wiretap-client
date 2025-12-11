@@ -145,9 +145,11 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 					return `${price.toFixed(1)}%`
 				},
 			} : {
-				type: "price",
-				precision: 2,
+				type: "custom",
 				minMove: 0.01,
+				formatter: (price: number): string => {
+					return `$${price.toFixed(2)}`
+				},
 			},
 		})
 
