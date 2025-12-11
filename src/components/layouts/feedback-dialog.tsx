@@ -71,7 +71,7 @@ export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogPro
 							"border-input bg-transparent dark:bg-input/30 dark:hover:bg-input/50",
 							"border shadow-xs transition-[color,box-shadow]",
 							"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text",
-							"dark:bg-swan disabled:opacity-50 disabled:cursor-not-allowed"
+							"disabled:opacity-50 disabled:cursor-not-allowed"
 						)}
 					>
 						Send
