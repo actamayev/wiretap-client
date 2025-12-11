@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useMemo, useState } from "react"
+import { observer } from "mobx-react"
 import { ArrowDownWideNarrow, TrendingUp } from "lucide-react"
 import { Input } from "../../ui/input"
 import {
@@ -31,7 +32,7 @@ interface PositionsTabProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
+function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [sortOption, setSortOption] = useState<PositionsSortOption>("alphabetical")
@@ -212,3 +213,5 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 		</div>
 	)
 }
+
+export default observer(PositionsTab)
