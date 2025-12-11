@@ -1,7 +1,7 @@
 "use client"
 
-// Import your classes here when you create them
-// import marketPricesClass from "../../classes/market-prices-class"
+import eventsClass from "../../classes/events-class"
+import fundsClass from "../../classes/funds-class"
 
 type ListenerHandler<E> = (payload: E) => void
 
@@ -9,12 +9,11 @@ type ListenerHandler<E> = (payload: E) => void
 export const listenersMap: {
 	[K in ServerSocketEvents]: ListenerHandler<ServerSocketEventPayloadMap[K]>
 } = {
-	"market:prices": (payload): void => {
-		// TODO: Replace with actual handler
-		console.log("📊 Received market prices:", payload.prices.length, "updates at", new Date(payload.timestamp))
-
-		// Example of what you might do:
-		// marketPricesClass.updatePrices(payload.prices)
-		// or store in MobX store, update UI, etc.
+	"market:prices": (payload: MarketPricesUpdate): void => {
+		// Update each outcome price in the events class and positions in funds class
+		payload.prices.forEach((priceUpdate: PriceUpdate): void => {
+			eventsClass.updateOutcomePrice(priceUpdate)
+			fundsClass.updatePositionPrice(priceUpdate)
+		})
 	}
 } as const

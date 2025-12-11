@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { observer } from "mobx-react"
 import { createChart, IChartApi, ISeriesApi, LineData, LineSeries, Time } from "lightweight-charts"
 
 interface PriceHistoryChartProps {
@@ -58,14 +59,18 @@ function getCSSVariableAsRGB(variable: string, fallback: string): string {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }: PriceHistoryChartProps): React.ReactNode {
+function PriceHistoryChart({ priceHistory, multiplyBy100 = true }: PriceHistoryChartProps): React.ReactNode {
 	const chartContainerRef = useRef<HTMLDivElement>(null)
 	const chartRef = useRef<IChartApi | null>(null)
 	const seriesRef = useRef<ISeriesApi<"Line"> | null>(null)
 	const watermarkStyleRef = useRef<HTMLStyleElement | null>(null)
 	const tooltipRef = useRef<HTMLDivElement | null>(null)
 
-	// eslint-disable-next-line max-lines-per-function
+	// Track price history length to detect changes (MobX observable arrays need explicit tracking)
+	// Accessing .length ensures MobX tracks this property
+	const priceHistoryLength = priceHistory?.length ?? 0
+
+	// Initialize and update chart
 	useEffect((): (() => void) => {
 		if (!chartContainerRef.current || !priceHistory || priceHistory.length === 0) {
 			return (): void => {}
@@ -189,10 +194,16 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 			.map(([time, value]): LineData<Time> => ({ time: time as Time, value }))
 			.sort((a, b): number => Number(a.time) - Number(b.time))
 
-		lineSeries.setData(chartData)
-
-		// Fit content
-		chart.timeScale().fitContent()
+		// Update chart data
+		if (seriesRef.current) {
+			seriesRef.current.setData(chartData)
+			// Fit content
+			chart.timeScale().fitContent()
+		} else {
+			lineSeries.setData(chartData)
+			// Fit content
+			chart.timeScale().fitContent()
+		}
 
 		// Configure price scale to show fewer grid lines
 		// This reduces the frequency of horizontal grid lines
@@ -347,9 +358,11 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 				chart.remove()
 			}
 		}
-	}, [priceHistory, multiplyBy100])
+	}, [priceHistory, priceHistoryLength, multiplyBy100])
 
 	return (
 		<div className="w-full h-full relative" ref={chartContainerRef} />
 	)
 }
+
+export default observer(PriceHistoryChart)

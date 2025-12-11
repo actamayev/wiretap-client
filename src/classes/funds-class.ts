@@ -1,7 +1,7 @@
 "use client"
 
 import isUndefined from "lodash-es/isUndefined"
-import { action, makeAutoObservable } from "mobx"
+import { action, makeAutoObservable, observable } from "mobx"
 
 class FundsClass {
 	public isRetrievingAllFunds = false
@@ -48,7 +48,10 @@ class FundsClass {
 	})
 
 	public addFund = action((fund: SingleFund): void => {
-		this.funds.set(fund.fundUUID, fund)
+		// Make the fund observable so nested arrays (like positions) are tracked
+		// observable() automatically makes plain objects deeply observable
+		const observableFund = observable(fund) as SingleFund
+		this.funds.set(fund.fundUUID, observableFund)
 	})
 
 	public updateFundName = action((fundUUID: FundsUUID, newName: string): void => {
@@ -181,6 +184,49 @@ class FundsClass {
 
 	private setCreateFundData = action((createFundData: IncomingCreateFundRequest): void => {
 		this.createFundData = createFundData
+	})
+
+	public updatePositionPrice = action((priceUpdate: PriceUpdate): void => {
+		// Determine the price to use: prefer lastTradePrice, fallback to bestAsk or bestBid
+		const newPrice = priceUpdate.bestAsk ?? priceUpdate.bestBid ?? null
+
+		if (newPrice === null) return
+
+		// Find all funds that have positions with matching clobToken
+		const affectedFunds = new Set<FundsUUID>()
+
+		this.funds.forEach((fund): void => {
+			let hasUpdatedPosition = false
+
+			fund.positions.forEach((position): void => {
+				if (position.clobToken === priceUpdate.clobTokenId) {
+					position.currentMarketPricePerShareUsd = newPrice
+					hasUpdatedPosition = true
+				}
+			})
+
+			if (hasUpdatedPosition) {
+				affectedFunds.add(fund.fundUUID)
+			}
+		})
+
+		// Recalculate positionsValueUsd for all affected funds
+		affectedFunds.forEach((fundUUID): void => {
+			this.recalculatePositionsValue(fundUUID)
+		})
+	})
+
+	private recalculatePositionsValue = action((fundUUID: FundsUUID): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		// Calculate total value: sum of (numberOfSharesHeld * currentMarketPricePerShareUsd) for all positions
+		fund.positionsValueUsd = fund.positions.reduce(
+			(total: number, position: SinglePosition): number => {
+				return total + (position.numberOfSharesHeld * position.currentMarketPricePerShareUsd)
+			},
+			0
+		)
 	})
 
 	// Update logout method to clear stream IDs:

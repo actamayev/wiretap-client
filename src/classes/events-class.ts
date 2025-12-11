@@ -1,4 +1,5 @@
-import { action, makeAutoObservable } from "mobx"
+/* eslint-disable max-depth */
+import { action, makeAutoObservable, observable } from "mobx"
 
 class EventsClass {
 	public isRetrievingAllEvents = false
@@ -30,7 +31,10 @@ class EventsClass {
 	})
 
 	public addEvent = action((eventSlug: EventSlug, event: SingleEvent): void => {
-		this.events.set(eventSlug, event)
+		// Make the event observable so nested arrays (like priceHistory) are tracked
+		// observable() automatically makes plain objects deeply observable
+		const observableEvent = observable(event) as SingleEvent
+		this.events.set(eventSlug, observableEvent)
 	})
 
 	public isRetrievingSingleEvent = (eventSlug: EventSlug): boolean => {
@@ -39,6 +43,41 @@ class EventsClass {
 
 	public setSearchTerm = action((newSearchTerm: string): void => {
 		this.searchTerm = newSearchTerm
+	})
+
+	public updateOutcomePrice = action((priceUpdate: PriceUpdate): void => {
+		// Find the event and market that contains an outcome with the matching clobTokenId
+		for (const event of this.events.values()) {
+			for (const market of event.eventMarkets) {
+				const outcome = market.outcomes.find(
+					(singleOutcome): boolean => singleOutcome.clobTokenId === priceUpdate.clobTokenId
+				)
+
+				if (outcome) {
+					// Update market-level pricing
+					market.bestBid = priceUpdate.bestBid
+					market.bestAsk = priceUpdate.bestAsk
+					market.lastTradePrice = priceUpdate.lastTradePrice
+
+					// Update spread if both bid and ask are available
+					if (priceUpdate.bestBid !== null && priceUpdate.bestAsk !== null) {
+						market.spread = priceUpdate.bestAsk - priceUpdate.bestBid
+					} else {
+						market.spread = null
+					}
+
+					// Add price snapshot to outcome's price history if lastTradePrice is available
+					if (priceUpdate.bestAsk !== null) {
+						outcome.priceHistory.push({
+							timestamp: new Date(),
+							price: priceUpdate.bestAsk
+						})
+					}
+
+					return // Found and updated, exit early
+				}
+			}
+		}
 	})
 
 	logout(): void {
