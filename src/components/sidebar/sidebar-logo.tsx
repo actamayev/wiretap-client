@@ -6,14 +6,13 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { PageToNavigateAfterLogin } from "../../utils/constants/page-constants"
 
 export default function SidebarLogo(): React.ReactNode {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem className="flex justify-center">
 				<Link
-					href={PageToNavigateAfterLogin}
+					href={"/"}
 					className="flex items-center justify-center rounded-lg mt-1"
 				>
 					<div className="flex aspect-square items-center justify-center">

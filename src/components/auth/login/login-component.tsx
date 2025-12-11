@@ -13,17 +13,14 @@ import OrComponent from "../or-component"
 import ErrorMessage from "../../messages/error-message"
 import loginSubmit from "../../../utils/auth/submit/login-submit"
 import { loginSchema } from "../../../utils/auth/auth-schemas"
-import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
-import { PageToNavigateAfterLogin } from "../../../utils/constants/page-constants"
-import authClass from "../../../classes/auth-class"
 import PasswordField from "../password-input"
 import AuthTemplate from "../auth-template"
 import { Button } from "@/components/ui/button"
 import { cn } from "../../../lib/utils"
+import authClass from "../../../classes/auth-class"
 
 function LoginComponent(): React.ReactNode {
 	const [error, setError] = useState("")
-	const navigate = useTypedNavigate()
 	const pathname = usePathname()
 
 	const form = useForm<IncomingLoginRequest>({
@@ -35,10 +32,8 @@ function LoginComponent(): React.ReactNode {
 	})
 
 	const onSubmit = useCallback(async (values: IncomingLoginRequest): Promise<void> => {
-		const success = await loginSubmit(values, setError)
-		if (success === false || pathname !== "/login") return
-		navigate(PageToNavigateAfterLogin)
-	}, [navigate, pathname])
+		await loginSubmit(values, setError)
+	}, [])
 
 	return (
 		<AuthTemplate>

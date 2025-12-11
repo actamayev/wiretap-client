@@ -1,0 +1,87 @@
+"use client"
+
+import { observer } from "mobx-react"
+import { useEffect, useRef } from "react"
+import {
+	Dialog,
+	DialogContent,
+} from "@/components/ui/dialog"
+import { SignupForm } from "@/components/signup-form"
+import { LoginForm } from "@/components/login-form"
+import authClass from "@/classes/auth-class"
+import useTypedNavigate from "@/hooks/navigate/use-typed-navigate"
+import tradeClass from "@/classes/trade-class"
+
+interface RegisterDialogProps {
+	open: boolean
+	onOpenChange: (open: boolean) => void
+	pendingNavigation?: {
+		eventSlug: EventSlug
+		market: "Yes" | "No"
+	} | null
+	event?: SingleEvent
+}
+
+function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: RegisterDialogProps): React.ReactNode {
+	const navigate = useTypedNavigate()
+	const hasNavigatedRef = useRef(false)
+
+	// Reset to Register form when dialog opens
+	useEffect((): void => {
+		if (open) {
+			authClass.setShowLoginOrRegister("Register")
+			hasNavigatedRef.current = false
+		}
+	}, [open])
+
+	// Close dialog and navigate when user successfully registers or logs in
+	// Access authClass properties directly in render so MobX observer can track them
+	const isLoggedIn = authClass.isLoggedIn
+	const isFinishedWithSignup = authClass.isFinishedWithSignup
+
+	useEffect((): void => {
+		// Check auth state directly to ensure MobX tracks the changes
+		if (open && authClass.isLoggedIn && authClass.isFinishedWithSignup && !hasNavigatedRef.current) {
+			hasNavigatedRef.current = true
+
+			// If there's pending navigation (event interaction), handle it
+			if (pendingNavigation && event?.eventMarkets?.[0]) {
+				// Set trade state based on what the user clicked
+				const market = event.eventMarkets[0]
+				if (pendingNavigation.market === "Yes") {
+					tradeClass.setSelectedMarket("Yes" as OutcomeString)
+					tradeClass.setMarketId(market.marketId)
+					tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
+				} else {
+					tradeClass.setSelectedMarket("No" as OutcomeString)
+					tradeClass.setMarketId(market.marketId)
+					tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
+				}
+				// Close the dialog first
+				onOpenChange(false)
+				// Then navigate to the event page after a brief delay to ensure dialog closes
+				setTimeout((): void => {
+					navigate(`/event/${pendingNavigation.eventSlug}`)
+				}, 100)
+			} else {
+				// No pending navigation - just close the dialog
+				onOpenChange(false)
+			}
+		}
+
+	}, [open, onOpenChange, navigate, pendingNavigation, event, isLoggedIn, isFinishedWithSignup])
+
+	// Access authClass properties in render to ensure MobX observer tracks them
+	// This ensures the component re-renders when auth state changes
+	const showLoginOrRegister = authClass.showLoginOrRegister
+
+	return (
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+				{showLoginOrRegister === "Login" ? <LoginForm /> : <SignupForm />}
+			</DialogContent>
+		</Dialog>
+	)
+}
+
+export default observer(RegisterDialog)

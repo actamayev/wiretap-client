@@ -12,7 +12,6 @@ export default function robots(): MetadataRoute.Robots {
 					"/terms"
 				],
 				disallow: [
-					"/events/",
 					"/funds/",
 					"/profile/",
 					"/login",

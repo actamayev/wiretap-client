@@ -12,8 +12,6 @@ import OrComponent from "../or-component"
 import ErrorMessage from "../../messages/error-message"
 import registerSubmit from "../../../utils/auth/submit/register-submit"
 import { registerSchema } from "../../../utils/auth/auth-schemas"
-import { PageToNavigateAfterLogin } from "../../../utils/constants/page-constants"
-import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
 import { usePathname } from "next/navigation"
 import UsernameInput from "../username-input"
 import PasswordField from "../password-input"
@@ -25,7 +23,6 @@ import { cn } from "../../../lib/utils"
 
 function RegisterComponent(): React.ReactNode {
 	const [error, setError] = useState("")
-	const navigate = useTypedNavigate()
 	const pathname = usePathname()
 
 	const form = useForm<IncomingRegisterRequest>({
@@ -38,10 +35,8 @@ function RegisterComponent(): React.ReactNode {
 	})
 
 	const onSubmit = useCallback(async (values: IncomingRegisterRequest): Promise<void> => {
-		const success = await registerSubmit(values, setError)
-		if (success === false || pathname !== "/register") return
-		navigate(PageToNavigateAfterLogin)
-	}, [navigate, pathname])
+		await registerSubmit(values, setError)
+	}, [])
 
 
 	return (

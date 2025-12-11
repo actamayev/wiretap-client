@@ -7,15 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form } from "../../ui/form"
 import UsernameInput from "../username-input"
 import ErrorMessage from "../../messages/error-message"
-import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
 import { registerUsernameSchema } from "../../../utils/auth/auth-schemas"
 import registerGoogleInfo from "../../../utils/auth/google/register-google-info"
-import { PageToNavigateAfterLogin } from "../../../utils/constants/page-constants"
 import { Button } from "@/components/ui/button"
 
 export default function RegisterGoogleInfoComponent(): React.ReactNode {
 	const [error, setError] = useState("")
-	const navigate = useTypedNavigate()
 
 	const form = useForm<NewGoogleInfoFormValues>({
 		resolver: zodResolver(registerUsernameSchema),
@@ -25,10 +22,9 @@ export default function RegisterGoogleInfoComponent(): React.ReactNode {
 	})
 
 	const onSubmit = useCallback(async (values: NewGoogleInfoFormValues): Promise<void> => {
-		const success = await registerGoogleInfo(values, setError)
-		if (success === false) return
-		navigate(PageToNavigateAfterLogin)
-	}, [navigate])
+		await registerGoogleInfo(values, setError)
+		// User stays on current page after successful registration
+	}, [])
 
 	return (
 		<div className="grid min-h-svh lg:grid-cols-2">
