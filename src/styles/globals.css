@@ -92,7 +92,7 @@
   --sidebar-ring: oklch(0.708 0 0);
   --sidebar-blue: rgb(20 40 60);
   --off-sidebar-blue: rgb(60 90 120);
-  --off-sidebar-blue-hover: rgb(0 70 70);
+  --off-sidebar-blue-hover: rgb(45 75 110);
   --yes-green: rgb(75 200 75);
   --yes-green-hover: rgb(60 180 60);
   --no-red: rgb(255 100 100);
@@ -137,7 +137,7 @@
   --sidebar-ring: oklch(0.556 0 0);
   --sidebar-blue: rgb(20 40 60);
   --off-sidebar-blue: rgb(60 90 120);
-  --off-sidebar-blue-hover: rgb(0 70 70);
+  --off-sidebar-blue-hover: rgb(45 75 110);
   --yes-green: rgb(75 200 75);
   --yes-green-hover: rgb(60 180 60);
   --no-red: rgb(255 100 100);
