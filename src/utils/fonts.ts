@@ -1,8 +1,8 @@
-import { Young_Serif } from "next/font/google"
+import { DM_Sans } from "next/font/google"
 
-export const youngSerif = Young_Serif({
+export const dmSans = DM_Sans({
 	weight: ["400"],
 	subsets: ["latin"],
 	display: "swap",
-	variable: "--font-young-serif"
+	variable: "--font-dm-sans"
 })

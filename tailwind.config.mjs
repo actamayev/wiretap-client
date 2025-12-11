@@ -15,7 +15,7 @@ const config = {
 				"9xl": "1536px",
 			},
 			fontFamily: {
-				youngSerif: ["var(--font-young-serif)", "sans-serif"],
+				dmSans: ["var(--font-dm-sans)", "sans-serif"],
 			}
 		}
 	}
