@@ -8,7 +8,7 @@ export default function ProfileSidebarButton(): React.ReactNode {
 		<SidebarMenu>
 			<SidebarMenuItem className="flex justify-start">
 				<CustomSidebarButton
-					text="PROFILE"
+					text="Profile"
 					goTo="/profile"
 				/>
 			</SidebarMenuItem>
