@@ -109,7 +109,7 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 					value={searchQuery}
 					onChange={(e): void => setSearchQuery(e.target.value)}
 					className={cn(
-						"flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
+						"flex-1 h-10! rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
 						"focus-visible:border-input text-button-text placeholder:text-button-text"
 					)}
 				/>
@@ -119,7 +119,7 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 				>
 					<SelectTrigger
 						className={cn(
-							"h-10 rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
+							"h-10! rounded-xl flex items-center gap-2 shrink-0 focus-visible:ring-0",
 							"focus-visible:ring-offset-0 cursor-pointer"
 						)}
 					>
@@ -155,7 +155,7 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 								<td colSpan={8} className="p-8">
 									<Empty>
 										<EmptyHeader>
-											<EmptyMedia variant="icon">
+											<EmptyMedia variant="icon" className="bg-sidebar-blue">
 												<TrendingUp className="size-6" />
 											</EmptyMedia>
 											<EmptyTitle>No positions yet</EmptyTitle>
