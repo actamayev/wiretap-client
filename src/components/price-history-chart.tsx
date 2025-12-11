@@ -5,6 +5,7 @@ import { createChart, IChartApi, ISeriesApi, LineData, LineSeries, Time } from "
 
 interface PriceHistoryChartProps {
 	priceHistory: SinglePriceSnapshot[]
+	multiplyBy100?: boolean // Whether to multiply values by 100 (for percentages). Defaults to true.
 }
 
 // Convert CSS variable to RGB format that lightweight-charts understands
@@ -57,7 +58,7 @@ function getCSSVariableAsRGB(variable: string, fallback: string): string {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartProps): React.ReactNode {
+export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }: PriceHistoryChartProps): React.ReactNode {
 	const chartContainerRef = useRef<HTMLDivElement>(null)
 	const chartRef = useRef<IChartApi | null>(null)
 	const seriesRef = useRef<ISeriesApi<"Line"> | null>(null)
@@ -137,12 +138,16 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 		const lineSeries = chart.addSeries(LineSeries, {
 			color: chartLineColor,
 			lineWidth: 2,
-			priceFormat: {
+			priceFormat: multiplyBy100 ? {
 				type: "custom",
 				minMove: 0.1,
 				formatter: (price: number): string => {
 					return `${price.toFixed(1)}%`
 				},
+			} : {
+				type: "price",
+				precision: 2,
+				minMove: 0.01,
 			},
 		})
 
@@ -154,7 +159,7 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 
 		priceHistory.forEach((snapshot): void => {
 			const time = new Date(snapshot.timestamp).getTime() / 1000
-			const value = snapshot.price * 100 // Convert to percentage
+			const value = multiplyBy100 ? snapshot.price * 100 : snapshot.price
 			// Keep the last value for each timestamp
 			chartDataMap.set(time, value)
 		})
@@ -229,8 +234,11 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 
 			const price = data.value
 			const timestamp = formatTimestamp(param.time)
+			const formattedPrice = multiplyBy100
+				? `${price.toFixed(1)}%`
+				: `$${price.toFixed(2)}`
 			tooltipRef.current.innerHTML = `
-				<div style="font-weight: 600; margin-bottom: 2px;">${price.toFixed(1)}%</div>
+				<div style="font-weight: 600; margin-bottom: 2px;">${formattedPrice}</div>
 				<div style="font-size: 10px; opacity: 0.8;">${timestamp}</div>
 			`
 			tooltipRef.current.style.display = "block"
@@ -315,7 +323,7 @@ export default function PriceHistoryChart({ priceHistory }: PriceHistoryChartPro
 				chart.remove()
 			}
 		}
-	}, [priceHistory])
+	}, [priceHistory, multiplyBy100])
 
 	return (
 		<div className="w-full h-full relative" ref={chartContainerRef} />
