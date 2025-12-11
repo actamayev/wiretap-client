@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { useCallback, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/lib/utils"
+import useTypedNavigate from "@/hooks/navigate/use-typed-navigate"
 import { Button } from "@/components/ui/button"
 import {
 	Card,
@@ -31,6 +32,7 @@ export function GoogleUsernameForm({
 	...props
 }: React.ComponentProps<"div">): React.ReactNode {
 	const [error, setError] = useState("")
+	const navigate = useTypedNavigate()
 
 	const form = useForm<NewGoogleInfoFormValues>({
 		resolver: zodResolver(registerUsernameSchema),
@@ -42,9 +44,9 @@ export function GoogleUsernameForm({
 	const onSubmit = useCallback(async (values: NewGoogleInfoFormValues): Promise<void> => {
 		const success = await registerGoogleInfo(values, setError)
 		if (success === false) return
-		// On success, the registerGoogleInfo function updates auth state
-		// and the component will re-render automatically
-	}, [])
+		// On success, navigate to home page
+		navigate("/")
+	}, [navigate])
 
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
