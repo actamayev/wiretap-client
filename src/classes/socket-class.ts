@@ -34,13 +34,12 @@ class SocketClass {
 		if (!this._socket) return
 
 		this._socket.on("connect", (): void => {
-			console.log("✅ Socket.IO connected")
 			this.isConnected = true
 		})
 
 		this._socket.on("disconnect", (reason: Socket.DisconnectReason): void => {
-			console.log(`🔌 Socket.IO disconnected: ${reason}`)
 			this.isConnected = false
+			console.info(`🔌 Socket.IO disconnected: ${reason}`)
 		})
 
 		this._socket.on("connect_error", (error): void => {
@@ -48,11 +47,11 @@ class SocketClass {
 		})
 
 		this._socket.on("reconnect_attempt", (attempt): void => {
-			console.log(`🔄 Reconnection attempt ${attempt}`)
+			console.info(`🔄 Reconnection attempt ${attempt}`)
 		})
 
 		this._socket.on("reconnect", (attempt): void => {
-			console.log(`✅ Reconnected after ${attempt} attempts`)
+			console.info(`✅ Reconnected after ${attempt} attempts`)
 		})
 	})
 
