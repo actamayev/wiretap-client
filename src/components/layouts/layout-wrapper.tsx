@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { observer } from "mobx-react"
 import { AuthState } from "@/lib/auth-server"
 import authClass from "../../classes/auth-class"
-import InternalPagesLayout from "./internal-pages-layout"
+import SidebarLayout from "./sidebar-layout"
 
 interface LayoutWrapperProps {
 	children: React.ReactNode
@@ -32,9 +32,9 @@ function LayoutWrapper({ children, initialAuthState }: LayoutWrapperProps): Reac
 	}, [initialAuthState.isAuthenticated, initialAuthState.hasCompletedSignup, initialAuthState.isIncompleteSignup])
 
 	return (
-		<InternalPagesLayout>
+		<SidebarLayout>
 			{children}
-		</InternalPagesLayout>
+		</SidebarLayout>
 	)
 }
 

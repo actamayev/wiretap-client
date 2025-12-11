@@ -10,6 +10,7 @@ import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
 import RegisterDialog from "../register-dialog"
+import { cn } from "../../lib/utils"
 
 interface SingleEventCardProps {
 	event: SingleEvent
@@ -88,7 +89,12 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 				pendingNavigation={pendingNavigation}
 				event={event}
 			/>
-			<div className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue aspect-615/175 flex flex-col">
+			<div
+				className={cn(
+					"rounded-lg p-4 hover:shadow-md transition-shadow",
+					"bg-sidebar-blue aspect-615/175 flex flex-col border border-white/50"
+				)}
+			>
 				<div className="flex gap-8 w-full flex-1 min-h-0">
 					{/* Left Section - 3/5 width */}
 					<div className="w-3/5 flex flex-col gap-3 h-full">

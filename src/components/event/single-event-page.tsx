@@ -12,7 +12,7 @@ import authClass from "../../classes/auth-class"
 import tradeClass from "../../classes/trade-class"
 import eventsClass from "../../classes/events-class"
 import PriceHistoryChart from "../price-history-chart"
-import InternalContainerLayout from "../layouts/internal-container-layout"
+import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 
 // eslint-disable-next-line max-lines-per-function
@@ -79,7 +79,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
 
 	return (
-		<InternalContainerLayout preventElasticScroll={true}>
+		<ContainerLayout>
 			<div className="flex flex-col gap-6 h-full p-6">
 				{/* Row 1: Title with prefix, Volume and End Date */}
 				<div className="flex flex-col items-center gap-3">
@@ -131,7 +131,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					</div>
 				</div>
 			</div>
-		</InternalContainerLayout>
+		</ContainerLayout>
 	)
 }
 
