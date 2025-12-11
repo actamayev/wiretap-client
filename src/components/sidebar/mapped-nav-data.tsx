@@ -48,7 +48,7 @@ function MappedNavData(): React.ReactNode {
 						return (
 							<SidebarMenuItem key={item.title} className="flex justify-center mb-1">
 								<CustomSidebarButton
-									text={toUpper(item.title)}
+									text={item.title}
 									isActive={active}
 									goTo={item.url}
 									customStyles={cn(

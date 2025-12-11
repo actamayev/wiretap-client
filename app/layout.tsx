@@ -2,7 +2,7 @@ import { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "../src/styles/globals.css"
 import Providers from "./providers"
-import { youngSerif } from "../src/utils/fonts"
+import { dmSans } from "../src/utils/fonts"
 import TailwindIndicator from "../src/components/tailwind-indicator"
 
 export const metadata: Metadata = {
@@ -34,7 +34,7 @@ export default function RootLayout({
 		<html
 			lang="en"
 			suppressHydrationWarning
-			className={`${youngSerif.variable} dark`}
+			className={`${dmSans.variable} dark`}
 		>
 			<body className="overflow-hidden">
 				<Providers>
