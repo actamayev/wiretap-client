@@ -16,7 +16,7 @@ export default function PrimarySidebar(): React.ReactNode {
 				<SidebarLogo />
 			</SidebarHeader>
 
-			<SidebarContent>
+			<SidebarContent style={{ paddingBlock: "12px" }}>
 				<MappedNavData />
 			</SidebarContent>
 
