@@ -4,7 +4,7 @@ import { observer } from "mobx-react"
 import { useEffect, useMemo } from "react"
 import isUndefined from "lodash-es/isUndefined"
 import fundsClass from "../../../classes/funds-class"
-import InternalContainerLayout from "../../layouts/internal-container-layout"
+import ContainerLayout from "../../layouts/container-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import PriceHistoryChart from "../../price-history-chart"
 import PositionsTab from "./positions-tab"
@@ -21,13 +21,13 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 	}, [fund?.fundName])
 
 	if (isUndefined(fund)) return (
-		<InternalContainerLayout>
+		<ContainerLayout>
 			<div>Loading...</div>
-		</InternalContainerLayout>
+		</ContainerLayout>
 	)
 
 	return (
-		<InternalContainerLayout preventElasticScroll={true}>
+		<ContainerLayout>
 			<div className="flex flex-col h-full w-full px-6 pt-6 pb-[48px] gap-6">
 				{/* Fund Name */}
 				<h1 className="text-3xl font-bold">{fund.fundName}</h1>
@@ -83,7 +83,7 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 					</TabsContent>
 				</Tabs>
 			</div>
-		</InternalContainerLayout>
+		</ContainerLayout>
 	)
 }
 

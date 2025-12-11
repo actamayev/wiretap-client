@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react"
 import { observer } from "mobx-react"
 import eventsClass from "../../classes/events-class"
-import InternalContainerLayout from "../layouts/internal-container-layout"
+import ContainerLayout from "../layouts/container-layout"
 import retrieveAllEvents from "../../utils/events/retrieve-all-events"
 import authClass from "../../classes/auth-class"
 import SingleEventCard from "./single-event-card"
@@ -81,9 +81,9 @@ function Events(): React.ReactNode {
 	}
 
 	return (
-		<InternalContainerLayout preventElasticScroll={true}>
+		<ContainerLayout>
 			{renderContent()}
-		</InternalContainerLayout>
+		</ContainerLayout>
 	)
 }
 

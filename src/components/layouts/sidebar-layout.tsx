@@ -3,7 +3,7 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import PrimarySidebar from "../sidebar/primary-sidebar"
 
-export default function InternalPagesLayout({ children } : { children: React.ReactNode }): React.ReactNode {
+export default function SidebarLayout({ children } : { children: React.ReactNode }): React.ReactNode {
 	return (
 		<div className="h-screen overflow-hidden flex flex-col">
 			<SidebarProvider>

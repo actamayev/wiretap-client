@@ -14,7 +14,7 @@ import {
 } from "../../ui/select"
 import SingleFundRow from "./single-fund-row"
 import fundsClass from "../../../classes/funds-class"
-import InternalContainerLayout from "../../layouts/internal-container-layout"
+import ContainerLayout from "../../layouts/container-layout"
 import { cn } from "../../../lib/utils"
 
 type SortOption = "alphabetical" | "current-value" | "starting-balance" | "profit-loss"
@@ -82,7 +82,7 @@ function TheFundsPage(): React.ReactNode {
 	}, [allFunds, searchQuery, sortOption])
 
 	return (
-		<InternalContainerLayout preventElasticScroll={true}>
+		<ContainerLayout>
 			<div className="flex flex-col w-full p-6">
 				<div className="mb-4 flex gap-2 items-center">
 					<Input
@@ -135,7 +135,7 @@ function TheFundsPage(): React.ReactNode {
 					))}
 				</div>
 			</div>
-		</InternalContainerLayout>
+		</ContainerLayout>
 	)
 }
 
