@@ -98,7 +98,10 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 					placeholder="Search positions..."
 					value={searchQuery}
 					onChange={(e): void => setSearchQuery(e.target.value)}
-					className="flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0"
+					className={cn(
+						"flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
+						"focus-visible:border-input text-button-text placeholder:text-button-text"
+					)}
 				/>
 				<Select
 					value={sortOption}

@@ -4,7 +4,7 @@ import Image from "next/image"
 import { observer } from "mobx-react"
 import { useCallback } from "react"
 import { Button } from "../ui/button"
-import SimpleChart from "../simple-chart"
+import PriceHistoryChart from "../price-history-chart"
 import { formatVolume } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
@@ -94,7 +94,12 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 				{/* Right Section - 2/5 width */}
 				<div className="w-2/5 flex flex-col h-full min-h-0">
 					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
-						<SimpleChart seed={event.eventSlug} />
+						{((): React.ReactNode => {
+							const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+							return yesOutcome?.priceHistory && (
+								<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
+							)
+						})()}
 					</div>
 				</div>
 			</div>

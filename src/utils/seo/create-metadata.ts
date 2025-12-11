@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Metadata } from "next"
 
 const BASE_URL = "https://wiretap.pro"

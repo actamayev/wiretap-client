@@ -1,7 +1,6 @@
 import { MetadataRoute } from "next"
 
 // Base URL for the site
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const BASE_URL = "https://wiretap.pro"
 
 // Current date for lastmod

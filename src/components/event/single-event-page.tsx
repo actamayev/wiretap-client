@@ -4,21 +4,19 @@ import Image from "next/image"
 import { Clock } from "lucide-react"
 import { observer } from "mobx-react"
 import isUndefined from "lodash-es/isUndefined"
-import { useState, useMemo, useEffect } from "react"
+import { useMemo, useEffect } from "react"
 import TradeCard from "./trade-card"
-import { Button } from "../ui/button"
 import EventRules from "./event-rules"
 import CustomTooltip from "../custom-tooltip"
 import authClass from "../../classes/auth-class"
 import tradeClass from "../../classes/trade-class"
 import eventsClass from "../../classes/events-class"
-import PriceChart, { type Timeframe } from "./price-chart"
+import PriceHistoryChart from "../price-history-chart"
 import InternalContainerLayout from "../layouts/internal-container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
-	const [timeframe, setTimeframe] = useState<Timeframe>("ALL")
 
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
@@ -69,7 +67,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		)
 	}
 
-	const timeframes: Timeframe[] = ["1H", "6H", "1D", "1W", "1M", "ALL"]
 
 	const formatDate = (date: Date): string => {
 		return new Intl.DateTimeFormat("en-US", {
@@ -78,6 +75,8 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			year: "numeric"
 		}).format(new Date(date))
 	}
+
+	const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
 
 	return (
 		<InternalContainerLayout preventElasticScroll={true}>
@@ -117,22 +116,10 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					<div className="flex-2 flex flex-col gap-4 min-h-0">
 						<div className="flex-1 min-h-0">
 							<div className="bg-sidebar-blue rounded-lg p-4 h-full">
-								<PriceChart seed={eventSlug} timeframe={timeframe} />
+								{yesOutcome?.priceHistory && (
+									<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
+								)}
 							</div>
-						</div>
-						{/* Timeframe Selector */}
-						<div className="flex gap-2">
-							{timeframes.map((tf): React.ReactNode => (
-								<Button
-									key={tf}
-									variant={timeframe === tf ? "default" : "outline"}
-									size="sm"
-									onClick={(): void => setTimeframe(tf)}
-									className="border-none"
-								>
-									{tf}
-								</Button>
-							))}
 						</div>
 					</div>
 
