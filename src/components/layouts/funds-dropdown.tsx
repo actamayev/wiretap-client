@@ -96,8 +96,8 @@ function FundsDropdown(): React.ReactNode {
 							"text-base pl-5 flex items-center gap-2 text-button-text"
 						)}
 					>
-						<Plus className="h-5 w-5" />
-						<span>Create Fund</span>
+						<Plus className="size-7!" />
+						<span className="text-2xl">Create Fund</span>
 					</Button>
 				</div>
 				<RegisterDialog
