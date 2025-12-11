@@ -90,8 +90,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --sidebar-blue: rgb(60 90 120);
-  --off-sidebar-blue: rgb(0 60 60);
+  --sidebar-blue: rgb(20 40 60);
+  --off-sidebar-blue: rgb(60 90 120);
   --off-sidebar-blue-hover: rgb(0 70 70);
   --yes-green: rgb(75 200 75);
   --yes-green-hover: rgb(60 180 60);
@@ -136,7 +136,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --sidebar-blue: rgb(20 40 60);
-  --off-sidebar-blue: rgb(0 60 60);
+  --off-sidebar-blue: rgb(60 90 120);
   --off-sidebar-blue-hover: rgb(0 70 70);
   --yes-green: rgb(75 200 75);
   --yes-green-hover: rgb(60 180 60);

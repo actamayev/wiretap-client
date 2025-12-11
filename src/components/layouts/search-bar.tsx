@@ -41,7 +41,7 @@ function SearchBar(): React.ReactNode {
 				className={cn(
 					"pl-12 rounded-full bg-off-sidebar-blue! border-none text-button-text! placeholder:text-button-text!",
 					"shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 text-base!",
-					"[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+					"[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden text-xl!"
 				)}
 			/>
 		</div>

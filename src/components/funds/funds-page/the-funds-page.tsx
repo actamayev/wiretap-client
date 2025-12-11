@@ -91,7 +91,7 @@ function TheFundsPage(): React.ReactNode {
 						value={searchQuery}
 						onChange={(e): void => setSearchQuery(e.target.value)}
 						className={cn(
-							"flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0",
+							"flex-1 h-10 rounded-xl focus-visible:ring-0 focus-visible:ring-offset-0 text-xl!",
 							"focus-visible:border-input text-button-text placeholder:text-button-text"
 						)}
 					/>
