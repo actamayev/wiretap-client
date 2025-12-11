@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import { useMemo, useState } from "react"
-import { ArrowDownWideNarrow } from "lucide-react"
+import { observer } from "mobx-react"
+import { ArrowDownWideNarrow, TrendingUp } from "lucide-react"
 import { Input } from "../../ui/input"
 import {
 	Select,
@@ -11,6 +12,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../../ui/select"
+import { Button } from "../../ui/button"
+import {
+	Empty,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+	EmptyDescription,
+	EmptyContent,
+} from "../../ui/empty"
 import { cn } from "../../../lib/utils"
 import { formatCurrency } from "../../../utils/format"
 import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
@@ -22,7 +32,7 @@ interface PositionsTabProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
+function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [sortOption, setSortOption] = useState<PositionsSortOption>("alphabetical")
@@ -140,13 +150,36 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 						</tr>
 					</thead>
 					<tbody>
-						{positionRows.length === 0 ? (
+						{positions.length === 0 && (
+							<tr>
+								<td colSpan={8} className="p-8">
+									<Empty>
+										<EmptyHeader>
+											<EmptyMedia variant="icon">
+												<TrendingUp className="size-6" />
+											</EmptyMedia>
+											<EmptyTitle>No positions yet</EmptyTitle>
+											<EmptyDescription>
+												Start trading by exploring available events and markets.
+											</EmptyDescription>
+										</EmptyHeader>
+										<EmptyContent>
+											<Button onClick={(): void => navigate("/events")}>
+												Browse Events
+											</Button>
+										</EmptyContent>
+									</Empty>
+								</td>
+							</tr>
+						)}
+						{positions.length > 0 && positionRows.length === 0 && (
 							<tr>
 								<td colSpan={8} className="p-4 text-center text-muted-foreground">
 									No positions found
 								</td>
 							</tr>
-						) : (
+						)}
+						{positions.length > 0 && positionRows.length > 0 &&
 							positionRows.map((row, index): React.ReactNode => (
 								<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
 									<td className="p-4">
@@ -173,10 +206,12 @@ export default function PositionsTab({ positions }: PositionsTabProps): React.Re
 									<td className="p-4">{new Date(row.purchaseDate).toLocaleDateString()}</td>
 								</tr>
 							))
-						)}
+						}
 					</tbody>
 				</table>
 			</div>
 		</div>
 	)
 }
+
+export default observer(PositionsTab)

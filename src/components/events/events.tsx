@@ -7,6 +7,7 @@ import InternalContainerLayout from "../layouts/internal-container-layout"
 import retrieveAllEvents from "../../utils/events/retrieve-all-events"
 import authClass from "../../classes/auth-class"
 import SingleEventCard from "./single-event-card"
+import EventCardSkeleton from "./event-card-skeleton"
 
 function Events(): React.ReactNode {
 	useEffect((): void => {
@@ -38,10 +39,24 @@ function Events(): React.ReactNode {
 	}, [eventsClass.events.size, eventsClass.searchTerm])
 
 	const hasSearchTerm = eventsClass.searchTerm.trim().length > 0
+	const isLoading = eventsClass.isRetrievingAllEvents && events.length === 0
 
-	return (
-		<InternalContainerLayout preventElasticScroll={true}>
-			{events.length === 0 ? (
+	const renderContent = (): React.ReactNode => {
+		if (isLoading) {
+			return (
+				<div className="flex flex-col w-full p-6">
+					<div className="grid grid-cols-2 gap-6 w-full">
+						{/* Show 8 skeleton cards while loading */}
+						{Array.from({ length: 8 }).map((_, index): React.ReactNode => (
+							<EventCardSkeleton key={`skeleton-${index}`} />
+						))}
+					</div>
+				</div>
+			)
+		}
+
+		if (events.length === 0) {
+			return (
 				<div className="flex flex-col h-full w-full px-6 pt-6">
 					<div className="flex items-center justify-center h-full">
 						<p className="text-button-text text-lg">
@@ -51,15 +66,23 @@ function Events(): React.ReactNode {
 						</p>
 					</div>
 				</div>
-			) : (
-				<div className="flex flex-col w-full p-6">
-					<div className="grid grid-cols-2 gap-6 w-full">
-						{events.map((event): React.ReactNode => {
-							return <SingleEventCard key={event.eventId} event={event} />
-						})}
-					</div>
+			)
+		}
+
+		return (
+			<div className="flex flex-col w-full p-6">
+				<div className="grid grid-cols-2 gap-6 w-full">
+					{events.map((event): React.ReactNode => {
+						return <SingleEventCard key={event.eventId} event={event} />
+					})}
 				</div>
-			)}
+			</div>
+		)
+	}
+
+	return (
+		<InternalContainerLayout preventElasticScroll={true}>
+			{renderContent()}
 		</InternalContainerLayout>
 	)
 }
