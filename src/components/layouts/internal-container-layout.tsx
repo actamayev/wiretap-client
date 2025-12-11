@@ -33,7 +33,7 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 			{/* Main content area with hidden scrollbar */}
 			<div
 				className={cn(
-					"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue mr-6 rounded-tl-lg rounded-tr-lg",
+					"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue mr-6 rounded-tl-3xl rounded-tr-3xl",
 					extraChildrenClasses
 				)}
 				style={{

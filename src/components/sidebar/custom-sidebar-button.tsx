@@ -32,8 +32,8 @@ export default function CustomSidebarButton({
 				isActive={isActive}
 				className={cn(
 					// Base styles - ensure consistent sizing
-					"transition-none flex! items-center justify-start p-0! h-[50px]! w-full",
-					"cursor-pointer border-2 border-transparent rounded-xl",
+					"transition-none flex! items-center justify-start p-0! h-[48px]! w-full",
+					"cursor-pointer border-2 border-transparent rounded-full",
 					// Active/hover states
 					isActive
 						? "bg-off-sidebar-blue!"
@@ -45,7 +45,7 @@ export default function CustomSidebarButton({
 					customStyles
 				)}
 			>
-				<div className="flex items-center justify-start space-x-4 w-full pl-2.5"> {/* Added w-full */}
+				<div className="flex items-center justify-start space-x-4 w-full pl-3.5"> {/* Added w-full */}
 					<div className={cn(
 						"text-2xl font-medium",
 						isActive ? "text-macaw" : "text-wolf"

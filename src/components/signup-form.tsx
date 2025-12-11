@@ -32,6 +32,7 @@ import UsernameInput from "@/components/auth/username-input"
 import PasswordField from "@/components/auth/password-input"
 import authClass from "@/classes/auth-class"
 
+// eslint-disable-next-line max-lines-per-function
 export function SignupForm({
 	className,
 	...props
@@ -54,7 +55,7 @@ export function SignupForm({
 
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
-			<Card>
+			<Card className="bg-transparent">
 				<CardHeader className="text-center">
 					<CardTitle className="text-xl">Create your account</CardTitle>
 					<CardDescription>
@@ -90,7 +91,9 @@ export function SignupForm({
 														className={cn(
 															"w-full h-12 rounded-xl text-xl! font-light",
 															"border-2 bg-gray-50 shadow-none border-gray-700",
-															"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text placeholder:text-button-text"
+															"focus-visible:ring-0 focus-visible:ring-offset-0",
+															"focus:border-gray-700 focus-visible:border-gray-700 active:border-gray-700",
+															"text-button-text placeholder:text-button-text"
 														)}
 													/>
 												</FormControl>

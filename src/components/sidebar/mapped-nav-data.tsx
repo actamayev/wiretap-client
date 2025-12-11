@@ -51,9 +51,6 @@ function MappedNavData(): React.ReactNode {
 									text={item.title}
 									isActive={active}
 									goTo={item.url}
-									customStyles={cn(
-										active && "border-selected-sidebar-button-border!"
-									)}
 								/>
 							</SidebarMenuItem>
 						)

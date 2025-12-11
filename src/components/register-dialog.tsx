@@ -79,7 +79,7 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+			<DialogContent className="max-w-md max-h-[90vh] overflow-y-auto border border-white/30 bg-sidebar-blue">
 				{showLoginOrRegister === "Login" ? <LoginForm /> : <SignupForm />}
 			</DialogContent>
 		</Dialog>

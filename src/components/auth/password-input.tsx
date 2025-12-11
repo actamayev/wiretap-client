@@ -38,7 +38,9 @@ export default function PasswordField<T extends IncomingLoginRequest | IncomingR
 								maxLength={100}
 								className={cn("pr-16 truncate h-12 rounded-xl text-xl!",
 									"font-light border-2 bg-gray-50 shadow-none border-gray-700",
-									"focus-visible:ring-0 focus-visible:ring-offset-0 text-button-text placeholder:text-button-text")}
+									"focus-visible:ring-0 focus-visible:ring-offset-0",
+									"focus:border-gray-700 focus-visible:border-gray-700 active:border-gray-700",
+									"text-button-text placeholder:text-button-text")}
 							/>
 							<Button
 								type="button"
