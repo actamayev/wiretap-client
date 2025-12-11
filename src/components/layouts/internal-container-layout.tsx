@@ -31,7 +31,6 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 			<div
 				className={cn(
 					"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue mr-6 rounded-tl-lg rounded-tr-lg",
-					preventElasticScroll ? "overscroll-none" : "",
 					extraChildrenClasses
 				)}
 				style={{
@@ -39,6 +38,10 @@ function InternalContainerLayout(props: InternalContainerLayoutProps): React.Rea
 					scrollbarWidth: "none",
 					/* IE and Edge */
 					msOverflowStyle: "none",
+					/* Allow vertical scrolling but preserve horizontal swipe gestures */
+					touchAction: "pan-y",
+					overscrollBehaviorY: preventElasticScroll ? "none" : "auto",
+					overscrollBehaviorX: "auto", // Allow horizontal overscroll for swipe-back
 				}}
 			>
 				{children}
