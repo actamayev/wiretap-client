@@ -1,5 +1,4 @@
 export const PrivatePageNames: PageNames[] = [
-	"/events",
 	"/funds",
 	"/profile"
 ]
@@ -13,13 +12,9 @@ export const OpenPages: PageNames[] = [
 
 export const staticPages = [
 	"/",
-	"/login",
-	"/register",
-	"/register-google",
 
 	// Private:
 	"/profile",
-	"/events",
 	"/funds",
 	// Open:
 
@@ -28,5 +23,3 @@ export const staticPages = [
 	"/privacy",
 	"/404"
 ] as const
-
-export const PageToNavigateAfterLogin: PageNames = "/events"

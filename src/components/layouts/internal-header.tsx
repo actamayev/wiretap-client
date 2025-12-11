@@ -1,15 +1,27 @@
 "use client"
 
 import { useState } from "react"
+import { observer } from "mobx-react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import PortfolioStats from "./portfolio-stats"
 import FeedbackDialog from "./feedback-dialog"
 import FundsDropdown from "./funds-dropdown"
 import SearchBar from "./search-bar"
+import authClass from "../../classes/auth-class"
+import RegisterDialog from "../register-dialog"
 
-export default function HeaderContent(): React.ReactNode {
+function HeaderContent(): React.ReactNode {
 	const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false)
+	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
+
+	const handleFeedbackClick = (): void => {
+		if (!authClass.isLoggedIn) {
+			setShowRegisterDialog(true)
+			return
+		}
+		setIsFeedbackDialogOpen(true)
+	}
 
 	return (
 		<div className="flex items-center justify-between w-full">
@@ -22,7 +34,7 @@ export default function HeaderContent(): React.ReactNode {
 
 			{/* Feedback Button */}
 			<Button
-				onClick={(): void => setIsFeedbackDialogOpen(true)}
+				onClick={handleFeedbackClick}
 				className={cn("shrink-0 rounded-full bg-off-sidebar-blue! border-none shadow-none",
 					"h-12 px-4 hover:bg-off-sidebar-blue/80 flex items-center gap-2"
 				)}
@@ -31,6 +43,12 @@ export default function HeaderContent(): React.ReactNode {
 			</Button>
 
 			<FeedbackDialog open={isFeedbackDialogOpen} onOpenChange={setIsFeedbackDialogOpen} />
+			<RegisterDialog
+				open={showRegisterDialog}
+				onOpenChange={setShowRegisterDialog}
+			/>
 		</div>
 	)
 }
+
+export default observer(HeaderContent)

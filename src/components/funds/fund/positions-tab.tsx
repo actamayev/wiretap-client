@@ -164,7 +164,7 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 											</EmptyDescription>
 										</EmptyHeader>
 										<EmptyContent>
-											<Button onClick={(): void => navigate("/events")}>
+											<Button onClick={(): void => navigate("/")}>
 												Browse Events
 											</Button>
 										</EmptyContent>
@@ -184,7 +184,7 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 								<tr key={index} className="border-t border-swan hover:bg-off-sidebar-blue-hover">
 									<td className="p-4">
 										<div
-											onClick={(): void => navigate(`/events/${row.polymarketSlug}`)}
+											onClick={(): void => navigate(`/event/${row.polymarketSlug}`)}
 											className="flex items-center gap-3 cursor-pointer group"
 										>
 											<Image

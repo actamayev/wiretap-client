@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { observer } from "mobx-react"
 import { Plus, CheckIcon } from "lucide-react"
 import * as SelectPrimitive from "@radix-ui/react-select"
@@ -18,6 +18,8 @@ import setPrimaryFund from "../../utils/funds/set-primary-fund"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import { formatCurrency } from "../../utils/format"
 import CustomTooltip from "../custom-tooltip"
+import authClass from "../../classes/auth-class"
+import RegisterDialog from "../register-dialog"
 
 function SelectItemWithTooltip({
 	className,
@@ -61,6 +63,7 @@ function SelectItemWithTooltip({
 // eslint-disable-next-line max-lines-per-function
 function FundsDropdown(): React.ReactNode {
 	const navigate = useTypedNavigate()
+	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
 	const funds = useMemo((): SingleFund[] => {
 		return Array.from(fundsClass.funds.values())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,26 +76,44 @@ function FundsDropdown(): React.ReactNode {
 		}
 	}, [funds])
 
+	const handleCreateFundClick = (): void => {
+		if (!authClass.isLoggedIn) {
+			setShowRegisterDialog(true)
+			return
+		}
+		fundsClass.setIsCreateFundDialogOpen(true)
+	}
+
 	if (funds.length === 0) {
 		return (
-			<div className="shrink-0">
-				<Button
-					onClick={(): void => fundsClass.setIsCreateFundDialogOpen(true)}
-					className={cn(
-						"h-12! w-80 rounded-full bg-off-sidebar-blue! border-none shadow-none",
-						"focus-visible:ring-0 focus-visible:ring-offset-0",
-						"text-base pl-5 flex items-center gap-2 text-button-text"
-					)}
-				>
-					<Plus className="h-5 w-5" />
-					<span>Create Fund</span>
-				</Button>
-			</div>
+			<>
+				<div className="shrink-0">
+					<Button
+						onClick={handleCreateFundClick}
+						className={cn(
+							"h-12! w-80 rounded-full bg-off-sidebar-blue! border-none shadow-none",
+							"focus-visible:ring-0 focus-visible:ring-offset-0",
+							"text-base pl-5 flex items-center gap-2 text-button-text"
+						)}
+					>
+						<Plus className="h-5 w-5" />
+						<span>Create Fund</span>
+					</Button>
+				</div>
+				<RegisterDialog
+					open={showRegisterDialog}
+					onOpenChange={setShowRegisterDialog}
+				/>
+			</>
 		)
 	}
 
 	const handleFundChange = (value: string): void => {
 		if (value === "create-fund") {
+			if (!authClass.isLoggedIn) {
+				setShowRegisterDialog(true)
+				return
+			}
 			fundsClass.setIsCreateFundDialogOpen(true)
 			return
 		}
@@ -153,6 +174,10 @@ function FundsDropdown(): React.ReactNode {
 						value="create-fund"
 						className="cursor-pointer"
 						onSelect={(): void => {
+							if (!authClass.isLoggedIn) {
+								setShowRegisterDialog(true)
+								return
+							}
 							fundsClass.setIsCreateFundDialogOpen(true)
 						}}
 					>
@@ -163,6 +188,10 @@ function FundsDropdown(): React.ReactNode {
 					</SelectItem>
 				</SelectContent>
 			</Select>
+			<RegisterDialog
+				open={showRegisterDialog}
+				onOpenChange={setShowRegisterDialog}
+			/>
 		</div>
 	)
 }

@@ -2,12 +2,14 @@
 
 import Image from "next/image"
 import { observer } from "mobx-react"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { Button } from "../ui/button"
 import PriceHistoryChart from "../price-history-chart"
 import { formatVolume } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
+import authClass from "../../classes/auth-class"
+import RegisterDialog from "../register-dialog"
 
 interface SingleEventCardProps {
 	event: SingleEvent
@@ -15,28 +17,67 @@ interface SingleEventCardProps {
 
 function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 	const navigate = useTypedNavigate()
+	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
+	const [pendingNavigation, setPendingNavigation] = useState<{
+		eventSlug: EventSlug
+		market: "Yes" | "No"
+	} | null>(null)
 
 	const handleTitleClick = useCallback((): void => {
-		navigate(`/events/${event.eventSlug}`)
+		navigate(`/event/${event.eventSlug}`)
 	}, [navigate, event.eventSlug])
 
 	const handleYesClick = useCallback((): void => {
+		// Check if user is logged in
+		if (!authClass.isLoggedIn) {
+			setPendingNavigation({
+				eventSlug: event.eventSlug,
+				market: "Yes"
+			})
+			setShowRegisterDialog(true)
+			return
+		}
+
 		const market = event.eventMarkets[0]
 		tradeClass.setSelectedMarket("Yes" as OutcomeString)
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
-		navigate(`/events/${event.eventSlug}`)
+		navigate(`/event/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])
 
 	const handleNoClick = useCallback((): void => {
+		// Check if user is logged in
+		if (!authClass.isLoggedIn) {
+			setPendingNavigation({
+				eventSlug: event.eventSlug,
+				market: "No"
+			})
+			setShowRegisterDialog(true)
+			return
+		}
+
 		const market = event.eventMarkets[0]
 		tradeClass.setSelectedMarket("No" as OutcomeString)
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
-		navigate(`/events/${event.eventSlug}`)
+		navigate(`/event/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])
 
+	const handleDialogClose = useCallback((open: boolean): void => {
+		setShowRegisterDialog(open)
+		if (!open) {
+			setPendingNavigation(null)
+		}
+	}, [])
+
 	return (
+		<>
+			<RegisterDialog
+				open={showRegisterDialog}
+				onOpenChange={handleDialogClose}
+				pendingNavigation={pendingNavigation}
+				event={event}
+			/>
 		<div className="rounded-lg p-4 hover:shadow-md transition-shadow bg-sidebar-blue aspect-615/175 flex flex-col">
 			<div className="flex gap-8 w-full flex-1 min-h-0">
 				{/* Left Section - 3/5 width */}
@@ -104,6 +145,7 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 				</div>
 			</div>
 		</div>
+		</>
 	)
 }
 

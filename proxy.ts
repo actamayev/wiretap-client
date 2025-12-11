@@ -1,6 +1,5 @@
 import { jwtVerify } from "jose"
 import { NextRequest, NextResponse } from "next/server"
-import { OpenPages } from "./src/utils/constants/page-constants"
 
 interface JwtPayload {
 	userId: number
@@ -75,30 +74,19 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 		if (!userId && !username) {
 			// Rule #1: Unauthenticated user on /register-google → redirect to /register
 			if (pathname === "/register-google") {
-				return createRedirect(request, "/register")
+				return createRedirect(request, "/register" as PageNames)
 			}
 			// Continue normally for unauthenticated users on other pages
 			return handleUnauthenticated()
 		}
 
+		// Incomplete signup (userId but no username) - show form instead of redirecting
 		if (userId && !username) {
-			// Allow OpenPages during incomplete signup
-			const isOpenPage = OpenPages.includes(pathname as PageNames)
-
-			if (!isOpenPage && pathname !== "/register-google") {
-				return createRedirect(request, "/register-google")
-			}
-			// Continue normally for /register-google and OpenPages
 			return handleIncompleteSignup(userId)
 		}
 
-		// Rule #3: Fully authenticated (both userId and username) → redirect from auth pages to /garage
+		// Fully authenticated (both userId and username) - no redirects, continue normally
 		if (userId && username) {
-			const authPages = ["/", "/login", "/register", "/register-google"]
-			if (authPages.includes(pathname)) {
-				return createRedirect(request, "/events")
-			}
-			// User is authenticated on other pages, continue normally
 			return handleAuthenticated({ userId, username })
 		}
 

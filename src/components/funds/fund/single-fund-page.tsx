@@ -54,7 +54,7 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 											)
 											points.push({
 												timestamp,
-												price: 0,
+												price: fund.startingAccountCashBalanceUsd,
 											})
 										}
 										return points
