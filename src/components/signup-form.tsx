@@ -66,27 +66,27 @@ export function SignupForm({
 						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
 							{error && <ErrorMessage error={error} />}
 
-							<FieldGroup>
-								<Field>
+						<FieldGroup>
+							<Field>
 									<FieldLabel htmlFor="username">Username</FieldLabel>
 									<UsernameInput control={form.control} />
-								</Field>
+							</Field>
 
-								<Field>
-									<FieldLabel htmlFor="email">Email</FieldLabel>
+							<Field>
+								<FieldLabel htmlFor="email">Email</FieldLabel>
 									<FormField
 										control={form.control}
 										name="email"
 										render={({ field }): React.ReactElement => (
 											<FormItem>
 												<FormControl>
-													<Input
-														id="email"
-														type="email"
+								<Input
+									id="email"
+									type="email"
 														placeholder="Email"
 														{...field}
 														maxLength={100}
-														required
+									required
 														className={cn(
 															"w-full h-12 rounded-xl text-xl! font-light",
 															"border-2 bg-gray-50 shadow-none border-gray-700",
@@ -97,17 +97,17 @@ export function SignupForm({
 												<FormMessage />
 											</FormItem>
 										)}
-									/>
-								</Field>
+								/>
+							</Field>
 
-								<Field>
-									<FieldLabel htmlFor="password">Password</FieldLabel>
+									<Field>
+										<FieldLabel htmlFor="password">Password</FieldLabel>
 									<PasswordField control={form.control} name={"password"} />
-								</Field>
+									</Field>
 
-								<Field>
+									<Field>
 									<Button type="submit" className="w-full">Create Account</Button>
-								</Field>
+									</Field>
 
 								<Field>
 									<OrComponent />
@@ -115,10 +115,10 @@ export function SignupForm({
 
 								<Field>
 									<GoogleSignIn />
-								</Field>
+							</Field>
 
-								<Field>
-									<FieldDescription className="text-center">
+							<Field>
+								<FieldDescription className="text-center">
 										Already have an account?{" "}
 										{pathname === "/register" ? (
 											<Link href="/login" className="underline underline-offset-4 cursor-pointer">
@@ -133,10 +133,10 @@ export function SignupForm({
 												Login
 											</button>
 										)}
-									</FieldDescription>
-								</Field>
-							</FieldGroup>
-						</form>
+								</FieldDescription>
+							</Field>
+						</FieldGroup>
+					</form>
 					</Form>
 				</CardContent>
 			</Card>

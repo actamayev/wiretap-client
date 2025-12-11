@@ -25,8 +25,12 @@ function getIsAuthenticated(authState: AuthState): boolean {
 }
 
 function getIsIncompleteSignup(authState: AuthState, isAuthenticated: boolean): boolean {
-	return authState.isIncompleteSignup ||
-		(isAuthenticated && !authState.hasCompletedSignup && authState.userId !== null)
+	// Check server state first
+	if (authState.isIncompleteSignup) return true
+	// Also check client state - if authenticated but hasn't completed signup
+	if (isAuthenticated && !authClass.isFinishedWithSignup) return true
+	// Fallback to server state check
+	return isAuthenticated && !authState.hasCompletedSignup && authState.userId !== null
 }
 
 function AuthenticatedLayoutClient({
