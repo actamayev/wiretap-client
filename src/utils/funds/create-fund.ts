@@ -28,7 +28,8 @@ export default async function createFund(): Promise<FundsUUID | undefined> {
 			transactions: {
 				purchaseOrders: [],
 				saleOrders: []
-			}
+			},
+			portfolioHistory: []
 		})
 		return createFundResponse.data.fundUUID
 	} catch (error) {
