@@ -76,6 +76,8 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 		const mutedForegroundColor = getCSSVariableAsRGB("--muted-foreground", "rgb(113, 113, 122)")
 		// Grid line color
 		const gridLineColor = "rgb(44, 63, 79)"
+		// Calculate timezone offset for local time display
+		const timezoneOffset = new Date().getTimezoneOffset() * 60 // Offset in seconds
 
 		// Create chart
 		const chart = createChart(chartContainerRef.current, {
@@ -95,7 +97,20 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 				},
 			},
 			timeScale: {
-				visible: false,
+				visible: true,
+				timeVisible: true,
+				secondsVisible: false,
+				borderVisible: false,
+				tickMarkFormatter: (time: Time, _tickMarkType: unknown, locale: string): string => {
+					// Convert adjusted time back to UTC, then to local time for display
+					const utcSeconds = Number(time) + timezoneOffset
+					const date = new Date(utcSeconds * 1000)
+					return date.toLocaleString(locale || "en-US", {
+						hour: "numeric",
+						minute: "2-digit",
+						hour12: true, // Use 12-hour format with AM/PM
+					})
+				},
 			},
 			rightPriceScale: {
 				visible: true,
@@ -157,13 +172,17 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 
 		// Convert price history to chart data format
 		// Sort by timestamp and remove duplicates (keep last value for same timestamp)
+		// Adjust timestamps for local timezone (lightweight-charts uses UTC internally)
 		const chartDataMap = new Map<number, number>()
 
 		priceHistory.forEach((snapshot): void => {
-			const time = new Date(snapshot.timestamp).getTime() / 1000
+			// Convert to local time by adjusting for timezone offset
+			// The chart displays UTC, so we adjust the timestamp to make it appear as local time
+			const utcTime = new Date(snapshot.timestamp).getTime() / 1000
+			const localTime = utcTime - timezoneOffset
 			const value = multiplyBy100 ? snapshot.price * 100 : snapshot.price
 			// Keep the last value for each timestamp
-			chartDataMap.set(time, value)
+			chartDataMap.set(localTime, value)
 		})
 
 		const chartData: LineData<Time>[] = Array.from(chartDataMap.entries())
@@ -206,9 +225,12 @@ export default function PriceHistoryChart({ priceHistory, multiplyBy100 = true }
 			tooltipRef.current = tooltip
 		}
 
-		// Format timestamp for display
+		// Format timestamp for display (convert from UTC to local time)
 		const formatTimestamp = (time: Time): string => {
-			const date = new Date(Number(time) * 1000)
+			// time is in UTC seconds, but we adjusted it for local timezone display
+			// So we need to add back the offset to get the actual UTC time, then convert to local
+			const utcSeconds = Number(time) + timezoneOffset
+			const date = new Date(utcSeconds * 1000)
 			return date.toLocaleString("en-US", {
 				month: "short",
 				day: "numeric",
