@@ -17,7 +17,7 @@ interface RegisterDialogProps {
 	onOpenChange: (open: boolean) => void
 	pendingNavigation?: {
 		eventSlug: EventSlug
-		market: "Yes" | "No"
+		market?: "Yes" | "No"
 	} | null
 	event?: SingleEvent
 }
@@ -45,17 +45,19 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 			hasNavigatedRef.current = true
 
 			// If there's pending navigation (event interaction), handle it
-			if (pendingNavigation && event?.eventMarkets?.[0]) {
-				// Set trade state based on what the user clicked
-				const market = event.eventMarkets[0]
-				if (pendingNavigation.market === "Yes") {
-					tradeClass.setSelectedMarket("Yes" as OutcomeString)
-					tradeClass.setMarketId(market.marketId)
-					tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
-				} else {
-					tradeClass.setSelectedMarket("No" as OutcomeString)
-					tradeClass.setMarketId(market.marketId)
-					tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
+			if (pendingNavigation) {
+				// If market is specified (Yes/No button click), set trade state
+				if (pendingNavigation.market && event?.eventMarkets?.[0]) {
+					const market = event.eventMarkets[0]
+					if (pendingNavigation.market === "Yes") {
+						tradeClass.setSelectedMarket("Yes" as OutcomeString)
+						tradeClass.setMarketId(market.marketId)
+						tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
+					} else {
+						tradeClass.setSelectedMarket("No" as OutcomeString)
+						tradeClass.setMarketId(market.marketId)
+						tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
+					}
 				}
 				// Close the dialog first
 				onOpenChange(false)

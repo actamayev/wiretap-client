@@ -83,8 +83,8 @@ export function LoginForm({
 						<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
 							{error && <ErrorMessage error={error} />}
 
-						<FieldGroup>
-							<Field>
+							<FieldGroup>
+								<Field>
 									<FieldLabel htmlFor="contact">Email or Username</FieldLabel>
 									<FormField
 										control={form.control}
@@ -92,13 +92,13 @@ export function LoginForm({
 										render={({ field }): React.ReactElement => (
 											<FormItem>
 												<FormControl>
-								<Input
+													<Input
 														id="contact"
 														type="text"
 														placeholder="Email or Username"
 														{...field}
 														maxLength={100}
-									required
+														required
 														className={cn(
 															"w-full h-12 rounded-xl text-xl! font-light",
 															"border-2 bg-gray-50 shadow-none border-gray-700",
@@ -110,10 +110,10 @@ export function LoginForm({
 												<FormMessage />
 											</FormItem>
 										)}
-								/>
-							</Field>
+									/>
+								</Field>
 
-							<Field>
+								<Field>
 									<FieldLabel htmlFor="password">Password</FieldLabel>
 									<PasswordField control={form.control} name={"password"} />
 								</Field>
@@ -128,15 +128,15 @@ export function LoginForm({
 
 								<Field>
 									<GoogleSignIn />
-							</Field>
+								</Field>
 
-							<Field>
-								<FieldDescription className="text-center">
+								<Field>
+									<FieldDescription className="text-center">
 										Don&apos;t have an account? {renderRegisterLink(pathname)}
-								</FieldDescription>
-							</Field>
-						</FieldGroup>
-					</form>
+									</FieldDescription>
+								</Field>
+							</FieldGroup>
+						</form>
 					</Form>
 				</CardContent>
 			</Card>
