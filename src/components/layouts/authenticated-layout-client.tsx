@@ -76,7 +76,11 @@ function AuthenticatedLayoutClient({
 	return (
 		<div className="flex items-center justify-center min-h-full p-6">
 			<div className="w-full max-w-md">
-				{authClass.showLoginOrRegister === "Login" ? <LoginForm /> : <SignupForm />}
+				{authClass.showLoginOrRegister === "Login" ? (
+					<LoginForm extraClasses="bg-sidebar-blue border-2 border-white/30" />
+				) : (
+					<SignupForm extraClasses="bg-sidebar-blue border-2 border-white/30" />
+				)}
 			</div>
 		</div>
 	)

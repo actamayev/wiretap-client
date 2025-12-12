@@ -115,7 +115,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					{/* Left Section - Chart */}
 					<div className="flex-2 flex flex-col gap-4 min-h-0">
 						<div className="flex-1 min-h-0">
-							<div className="bg-sidebar-blue rounded-lg p-4 h-full">
+							<div className="bg-sidebar-blue rounded-lg p-4 h-full border-2 border-white/30">
 								{yesOutcome?.priceHistory && (
 									<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
 								)}

@@ -32,11 +32,15 @@ import UsernameInput from "@/components/auth/username-input"
 import PasswordField from "@/components/auth/password-input"
 import authClass from "@/classes/auth-class"
 
+interface SignupFormProps extends React.ComponentProps<"div"> {
+	extraClasses?: string
+}
 // eslint-disable-next-line max-lines-per-function
 function SignupForm({
 	className,
+	extraClasses,
 	...props
-}: React.ComponentProps<"div">): React.ReactNode {
+}: SignupFormProps): React.ReactNode {
 	const [error, setError] = useState("")
 	const pathname = usePathname()
 
@@ -55,7 +59,7 @@ function SignupForm({
 
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
-			<Card className="bg-transparent">
+			<Card className={cn("bg-sidebar-blue", extraClasses)}>
 				<CardHeader className="text-center">
 					<CardTitle className="text-xl">Create your account</CardTitle>
 					<CardDescription>

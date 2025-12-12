@@ -33,7 +33,7 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 				<h1 className="text-3xl font-bold">{fund.fundName}</h1>
 
 				{/* Portfolio Value Chart */}
-				<div className="w-full h-64 rounded-lg overflow-hidden bg-sidebar-blue p-4">
+				<div className="w-full h-64 rounded-lg overflow-hidden bg-sidebar-blue p-4 border-2 border-white/30">
 					<div className="w-full h-full rounded-[5px] overflow-hidden">
 						<PriceHistoryChart
 							priceHistory={

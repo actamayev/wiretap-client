@@ -50,10 +50,15 @@ function renderRegisterLink(pathname: string): React.ReactNode {
 	)
 }
 
+interface LoginFormProps extends React.ComponentProps<"div"> {
+	extraClasses?: string
+}
+
 function LoginForm({
 	className,
+	extraClasses,
 	...props
-}: React.ComponentProps<"div">): React.ReactNode {
+}: LoginFormProps): React.ReactNode {
 	const [error, setError] = useState("")
 	const pathname = usePathname()
 
@@ -71,7 +76,7 @@ function LoginForm({
 
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
-			<Card>
+			<Card className={cn("bg-sidebar-blue", extraClasses)}>
 				<CardHeader className="text-center">
 					<CardTitle className="text-xl">Welcome back</CardTitle>
 					<CardDescription>

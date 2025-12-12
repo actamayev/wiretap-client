@@ -7,7 +7,7 @@ export default function OrComponent(): React.ReactNode {
 				<span className="w-full border-t-2 border-gray-700" />
 			</div>
 			<div className="relative flex justify-center text-xs">
-				<span className="bg-background px-2 text-muted-foreground">
+				<span className="bg-sidebar-blue px-2 text-muted-foreground">
 					OR
 				</span>
 			</div>
