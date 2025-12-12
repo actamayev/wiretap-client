@@ -106,7 +106,7 @@ function TradeCard(): React.ReactNode {
 	}, [])
 
 	return (
-		<div className="bg-card rounded-lg p-4">
+		<div className="bg-sidebar-blue rounded-lg p-4 border-2 border-white/30">
 			{/* Tabs */}
 			<div className="flex items-center justify-between mb-4">
 				<div className="flex gap-2">
