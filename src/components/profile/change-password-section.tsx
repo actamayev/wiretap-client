@@ -9,6 +9,7 @@ import { Button } from "../ui/button"
 import changePassword from "../../utils/personal-info/change-password"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import personalInfoClass from "../../classes/personal-info-class"
+import { cn } from "../../lib/utils"
 
 // eslint-disable-next-line max-lines-per-function, complexity
 function ChangePasswordSection(): React.ReactNode {
@@ -53,7 +54,7 @@ function ChangePasswordSection(): React.ReactNode {
 	if (personalInfoClass.isGoogleUser) return null
 
 	return (
-		<Card className="mb-8 max-w-xl w-full border-2 shadow-none">
+		<Card className="mb-8 max-w-xl w-full border-2 border-white/30 shadow-none bg-sidebar-blue">
 			<CardHeader className="px-4 md:px-6">
 				<CardTitle className="text-xl md:text-2xl">Change Password</CardTitle>
 			</CardHeader>
@@ -71,8 +72,11 @@ function ChangePasswordSection(): React.ReactNode {
 							type={showCurrentPassword ? "text" : "password"}
 							value={currentPassword}
 							onChange={handleCurrentPasswordChange}
-							className="w-full pr-14 h-10 md:h-12 text-lg md:text-xl! shadow-none
-							bg-polar text-eel! font-light border-swan focus-visible:ring-0 focus-visible:ring-offset-0"
+							className={cn(
+								"w-full pr-14 h-10 md:h-12 text-lg md:text-xl! shadow-none",
+								"bg-sidebar-blue text-eel! font-light border-white/30 focus-visible:ring-0 focus-visible:ring-offset-0",
+								"focus:border-white/30 focus-visible:border-white/30 active:border-white/30"
+							)}
 						/>
 						<Button
 							type="button"
@@ -99,8 +103,10 @@ function ChangePasswordSection(): React.ReactNode {
 							type={showNewPassword ? "text" : "password"}
 							value={newPassword}
 							onChange={handleNewPasswordChange}
-							className="w-full pr-14 h-10 md:h-12 text-lg md:text-xl! shadow-none
-							bg-polar text-eel! font-light border-swan focus-visible:ring-0 focus-visible:ring-offset-0"
+							className={cn("w-full pr-14 h-10 md:h-12 text-lg md:text-xl! shadow-none",
+								"bg-sidebar-blue text-eel! font-light border-white/30 focus-visible:ring-0 focus-visible:ring-offset-0",
+								"focus:border-white/30 focus-visible:border-white/30 active:border-white/30"
+							)}
 						/>
 						<Button
 							type="button"
@@ -132,7 +138,7 @@ function ChangePasswordSection(): React.ReactNode {
 				<Button
 					onClick={savePassword}
 					disabled={!isPasswordChangeValid}
-					className="flex-1 h-10 rounded-xl text-lg text-white"
+					className="flex-1 h-10 rounded-xl text-lg text-white bg-off-sidebar-blue hover:bg-off-sidebar-blue-hover"
 				>
 					SAVE CHANGES
 				</Button>

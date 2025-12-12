@@ -52,7 +52,8 @@ function ChangeUsernameSection(): React.ReactNode {
 						onChange={handleUsernameChange}
 						className={cn(
 							"w-full pr-14 h-10 md:h-12 text-lg md:text-xl! text-eel! font-light shadow-none",
-							"border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-sidebar-blue!",
+							"border-white/30 focus-visible:ring-0 focus-visible:ring-offset-0 bg-sidebar-blue!",
+							"focus:border-white/30 focus-visible:border-white/30 active:border-white/30 border-2",
 							(username.length > 0 && username.length < 3) && "border-red-500 focus-visible:border-red-500!"
 						)}
 						maxLength={50}
