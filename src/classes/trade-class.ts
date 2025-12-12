@@ -35,22 +35,6 @@ class TradeClass {
 		this.amount = amount
 	})
 
-	public setBuyYesPrice = action((price: number): void => {
-		this.buyYesPrice = price
-	})
-
-	public setBuyNoPrice = action((price: number): void => {
-		this.buyNoPrice = price
-	})
-
-	public setSellYesPrice = action((price: number): void => {
-		this.sellYesPrice = price
-	})
-
-	public setSellNoPrice = action((price: number): void => {
-		this.sellNoPrice = price
-	})
-
 	public setPrices = action((
 		buyYesPrice: number,
 		buyNoPrice: number,
@@ -67,7 +51,7 @@ class TradeClass {
 		this.marketId = marketId
 	})
 
-	public reset(): void {
+	private reset(): void {
 		this.tradeTab = "Buy"
 		this.selectedMarket = "Yes" as OutcomeString
 		this.selectedClobToken = undefined

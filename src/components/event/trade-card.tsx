@@ -1,16 +1,16 @@
 "use client"
 
 import { observer } from "mobx-react"
+import isUndefined from "lodash-es/isUndefined"
 import { useCallback, useState, useMemo } from "react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Spinner } from "../ui/spinner"
 import tradeClass from "../../classes/trade-class"
-import eventsClass from "../../classes/events-class"
 import fundsClass from "../../classes/funds-class"
-import isUndefined from "lodash-es/isUndefined"
 import buyShares from "../../utils/trade/buy-shares"
+import eventsClass from "../../classes/events-class"
 import sellShares from "../../utils/trade/sell-shares"
 
 const formatPrice = (price: number): string => {
