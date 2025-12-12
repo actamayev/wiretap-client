@@ -15,7 +15,7 @@ import PriceHistoryChart from "../price-history-chart"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 
-// eslint-disable-next-line max-lines-per-function
+
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
 
 	useEffect((): void => {
@@ -23,7 +23,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, authClass.isFinishedWithSignup])
 
-	const event = useMemo((): SingleEvent | undefined => {
+	const event = useMemo((): ExtendedSingleEvent | undefined => {
 		return eventsClass.events.get(eventSlug)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, eventsClass.events.size])
@@ -36,17 +36,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		const yesOutcome = market.outcomes[0]
 		const noOutcome = market.outcomes[1]
 
-		// Single order book: bestBid and bestAsk are at market level
-		// Buy yes: best ask, Buy no: 1 - best bid
-		// Sell yes: best bid, Sell no: 1 - best ask
-		const bestBid = market.bestBid ?? 0
-		const bestAsk = market.bestAsk ?? 0
-		const buyYesPrice = bestAsk
-		const buyNoPrice = 1 - bestBid
-		const sellYesPrice = bestBid
-		const sellNoPrice = 1 - bestAsk
-
-		tradeClass.setPrices(buyYesPrice, buyNoPrice, sellYesPrice, sellNoPrice)
 		tradeClass.setMarketId(market.marketId)
 		// Set clob token based on selected market (Yes = index 0, No = index 1)
 		const clobToken = tradeClass.selectedMarket === "Yes" ? yesOutcome.clobTokenId : noOutcome.clobTokenId
@@ -125,7 +114,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 
 					{/* Right Section - Trading Interface and Rules */}
 					<div className="flex-1 flex flex-col gap-6 min-h-0">
-						<TradeCard />
+						<TradeCard event={event} />
 
 						<EventRules description={event.eventDescription} />
 					</div>
