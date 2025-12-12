@@ -55,6 +55,7 @@ class EventsClass {
 		this.searchTerm = newSearchTerm
 	})
 
+	// eslint-disable-next-line complexity
 	public updateOutcomePrice = action((priceUpdate: PriceUpdate): void => {
 		// Find the event and market that contains an outcome with the matching clobTokenId
 		for (const event of this.events.values()) {
