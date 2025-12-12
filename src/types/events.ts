@@ -4,10 +4,8 @@ declare global {
 	}
 
 	interface ExtendedSingleMarket extends SingleMarket {
-		buyYesPrice: number
-		buyNoPrice: number
-		sellYesPrice: number
-		sellNoPrice: number
+		yesPrice: number
+		noPrice: number
 	}
 }
 
