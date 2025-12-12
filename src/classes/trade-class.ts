@@ -9,10 +9,6 @@ class TradeClass {
 	public selectedMarket: OutcomeString = "Yes" as OutcomeString
 	public selectedClobToken: ClobTokenId | undefined = undefined
 	public amount: string = ""
-	public buyYesPrice: number = 0
-	public buyNoPrice: number = 0
-	public sellYesPrice: number = 0
-	public sellNoPrice: number = 0
 	public marketId: MarketId | undefined = undefined
 
 	constructor() {
@@ -35,18 +31,6 @@ class TradeClass {
 		this.amount = amount
 	})
 
-	public setPrices = action((
-		buyYesPrice: number,
-		buyNoPrice: number,
-		sellYesPrice: number,
-		sellNoPrice: number
-	): void => {
-		this.buyYesPrice = buyYesPrice
-		this.buyNoPrice = buyNoPrice
-		this.sellYesPrice = sellYesPrice
-		this.sellNoPrice = sellNoPrice
-	})
-
 	public setMarketId = action((marketId: MarketId | undefined): void => {
 		this.marketId = marketId
 	})
@@ -56,10 +40,6 @@ class TradeClass {
 		this.selectedMarket = "Yes" as OutcomeString
 		this.selectedClobToken = undefined
 		this.amount = ""
-		this.buyYesPrice = 0
-		this.buyNoPrice = 0
-		this.sellYesPrice = 0
-		this.sellNoPrice = 0
 		this.marketId = undefined
 	}
 

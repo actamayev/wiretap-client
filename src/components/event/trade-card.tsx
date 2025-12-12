@@ -10,7 +10,6 @@ import { Spinner } from "../ui/spinner"
 import tradeClass from "../../classes/trade-class"
 import fundsClass from "../../classes/funds-class"
 import buyShares from "../../utils/trade/buy-shares"
-import eventsClass from "../../classes/events-class"
 import sellShares from "../../utils/trade/sell-shares"
 
 const formatPrice = (price: number): string => {
@@ -39,21 +38,19 @@ const parseAmountValue = (value: string): string => {
 	return removeNonNumeric(value)
 }
 
+
 // eslint-disable-next-line max-lines-per-function, complexity
-function TradeCard(): React.ReactNode {
+function TradeCard({ event }: { event: ExtendedSingleEvent }): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const updateClobToken = (outcome: OutcomeString): void => {
 		if (isUndefined(tradeClass.marketId)) return
 
 		// Find the event that contains this market
-		for (const event of eventsClass.events.values()) {
-			const market = event.eventMarkets.find((m): boolean => m.marketId === tradeClass.marketId)
-			if (market) {
-				const clobToken = outcome === "Yes" ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
-				tradeClass.setSelectedClobToken(clobToken)
-				break
-			}
+		const market = event.eventMarkets.find((m): boolean => m.marketId === tradeClass.marketId)
+		if (market) {
+			const clobToken = outcome === "Yes" ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
+			tradeClass.setSelectedClobToken(clobToken)
 		}
 	}
 
@@ -67,11 +64,11 @@ function TradeCard(): React.ReactNode {
 
 	// Get the correct price based on Buy/Sell tab and Yes/No selection
 	const getYesPrice = (): number => {
-		return tradeClass.tradeTab === "Buy" ? tradeClass.buyYesPrice : tradeClass.sellYesPrice
+		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].buyYesPrice : event.eventMarkets[0].sellYesPrice
 	}
 
 	const getNoPrice = (): number => {
-		return tradeClass.tradeTab === "Buy" ? tradeClass.buyNoPrice : tradeClass.sellNoPrice
+		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].buyNoPrice : event.eventMarkets[0].sellNoPrice
 	}
 
 	// Compute if button should be disabled based on validation
