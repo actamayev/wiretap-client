@@ -62,14 +62,6 @@ function TradeCard({ event }: { event: ExtendedSingleEvent }): React.ReactNode {
 		? fundsClass.funds.get(fundsClass.selectedFundUuid)
 		: undefined
 
-	// Get the correct price based on Buy/Sell tab and Yes/No selection
-	const getYesPrice = (): number => {
-		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].yesPrice : event.eventMarkets[0].noPrice
-	}
-
-	const getNoPrice = (): number => {
-		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].noPrice : event.eventMarkets[0].yesPrice
-	}
 
 	// Compute if button should be disabled based on validation
 	const isDisabled = useMemo((): boolean => {
@@ -144,7 +136,7 @@ function TradeCard({ event }: { event: ExtendedSingleEvent }): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
 						<span className="font-semibold text-xl opacity-90">Yes</span>
-						<span className="text-2xl font-bold">{formatPrice(getYesPrice())}</span>
+						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].yesPrice)}</span>
 					</div>
 				</Button>
 				<Button
@@ -160,7 +152,7 @@ function TradeCard({ event }: { event: ExtendedSingleEvent }): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
 						<span className="font-semibold text-xl opacity-90">No</span>
-						<span className="text-2xl font-bold">{formatPrice(getNoPrice())}</span>
+						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].noPrice)}</span>
 					</div>
 				</Button>
 			</div>
