@@ -143,7 +143,7 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 						</div>
 
 						{/* Row 3: Volume */}
-						<div className="text-sm text-volume-text">
+						<div className="text-sm text-white/40">
 							{formatVolume(event.eventTotalVolume)}
 						</div>
 					</div>
