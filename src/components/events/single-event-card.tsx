@@ -118,7 +118,7 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 								</h3>
 							</div>
 							<div className="shrink-0 text-xl font-bold text-yes-green">
-								{Math.round((event.eventMarkets[0].bestAsk ?? 0) * 100)}%
+								{Math.round((event.eventMarkets[0].midpointPrice ?? 0) * 100)}%
 							</div>
 						</div>
 

@@ -64,11 +64,11 @@ function TradeCard({ event }: { event: ExtendedSingleEvent }): React.ReactNode {
 
 	// Get the correct price based on Buy/Sell tab and Yes/No selection
 	const getYesPrice = (): number => {
-		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].buyYesPrice : event.eventMarkets[0].sellYesPrice
+		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].yesPrice : event.eventMarkets[0].noPrice
 	}
 
 	const getNoPrice = (): number => {
-		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].buyNoPrice : event.eventMarkets[0].sellNoPrice
+		return tradeClass.tradeTab === "Buy" ? event.eventMarkets[0].noPrice : event.eventMarkets[0].yesPrice
 	}
 
 	// Compute if button should be disabled based on validation

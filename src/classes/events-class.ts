@@ -1,4 +1,4 @@
-/* eslint-disable max-depth */
+
 import { action, makeAutoObservable, observable } from "mobx"
 
 class EventsClass {
@@ -35,10 +35,8 @@ class EventsClass {
 			...event,
 			eventMarkets: event.eventMarkets.map((market): ExtendedSingleMarket => ({
 				...market,
-				buyYesPrice: market.bestAsk ?? 0,
-				buyNoPrice: 1 - (market.bestBid ?? 0),
-				sellYesPrice: market.bestBid ?? 0,
-				sellNoPrice: 1 - (market.bestAsk ?? 0)
+				yesPrice: ((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2,
+				noPrice: 1 - (((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2),
 			}))
 		}
 		// Make the event observable so nested arrays (like priceHistory) are tracked
@@ -73,30 +71,17 @@ class EventsClass {
 				// Only update market-level pricing if this price update is for the "Yes" outcome
 				if (yesOutcome && outcome.clobTokenId === yesOutcome.clobTokenId) {
 					// Update market-level pricing from Yes outcome's best bid
-					market.bestBid = priceUpdate.bestBid
-					market.bestAsk = priceUpdate.bestAsk
-					market.lastTradePrice = priceUpdate.lastTradePrice
-					market.buyYesPrice = priceUpdate.bestAsk ?? 0
-					market.buyNoPrice = 1 - (priceUpdate.bestBid ?? 0)
-					market.sellYesPrice = priceUpdate.bestBid ?? 0
-					market.sellNoPrice = 1 - (priceUpdate.bestAsk ?? 0)
-
-					// Update spread if both bid and ask are available
-					if (priceUpdate.bestBid !== null && priceUpdate.bestAsk !== null) {
-						market.spread = priceUpdate.bestAsk - priceUpdate.bestBid
-					} else {
-						market.spread = null
-					}
+					market.midpointPrice = priceUpdate.midpointPrice
+					market.yesPrice = ((priceUpdate.midpointPrice ?? 0) + (priceUpdate.midpointPrice ?? 0)) / 2
+					market.noPrice = 1 - (((priceUpdate.midpointPrice ?? 0) + (priceUpdate.midpointPrice ?? 0)) / 2)
 				}
-
-				const midpointPrice = ((priceUpdate.bestAsk ?? 0) + (priceUpdate.bestBid ?? 0)) / 2
 
 				// Add price snapshot to outcome's price history if bestAsk is available
 				// (This happens for both Yes and No outcomes)
-				if (priceUpdate.bestAsk !== null) {
+				if (priceUpdate.midpointPrice !== null) {
 					outcome.priceHistory.push({
 						timestamp: new Date(),
-						price: midpointPrice
+						price: priceUpdate.midpointPrice ?? 0
 					})
 				}
 
