@@ -54,19 +54,28 @@ class EventsClass {
 				)
 
 				if (outcome) {
-					// Update market-level pricing
-					market.bestBid = priceUpdate.bestBid
-					market.bestAsk = priceUpdate.bestAsk
-					market.lastTradePrice = priceUpdate.lastTradePrice
+					// Find the "Yes" outcome for this market
+					const yesOutcome = market.outcomes.find(
+						(singleOutcome): boolean => singleOutcome.outcome === "Yes"
+					)
 
-					// Update spread if both bid and ask are available
-					if (priceUpdate.bestBid !== null && priceUpdate.bestAsk !== null) {
-						market.spread = priceUpdate.bestAsk - priceUpdate.bestBid
-					} else {
-						market.spread = null
+					// Only update market-level pricing if this price update is for the "Yes" outcome
+					if (yesOutcome && outcome.clobTokenId === yesOutcome.clobTokenId) {
+						// Update market-level pricing from Yes outcome's best bid
+						market.bestBid = priceUpdate.bestBid
+						market.bestAsk = priceUpdate.bestAsk
+						market.lastTradePrice = priceUpdate.lastTradePrice
+
+						// Update spread if both bid and ask are available
+						if (priceUpdate.bestBid !== null && priceUpdate.bestAsk !== null) {
+							market.spread = priceUpdate.bestAsk - priceUpdate.bestBid
+						} else {
+							market.spread = null
+						}
 					}
 
-					// Add price snapshot to outcome's price history if lastTradePrice is available
+					// Add price snapshot to outcome's price history if bestAsk is available
+					// (This happens for both Yes and No outcomes)
 					if (priceUpdate.bestAsk !== null) {
 						outcome.priceHistory.push({
 							timestamp: new Date(),

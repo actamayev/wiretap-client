@@ -187,10 +187,9 @@ class FundsClass {
 	})
 
 	public updatePositionPrice = action((priceUpdate: PriceUpdate): void => {
-		// Determine the price to use: prefer lastTradePrice, fallback to bestAsk or bestBid
-		const newPrice = priceUpdate.bestAsk ?? priceUpdate.bestBid ?? null
+		if (priceUpdate.bestAsk === null || priceUpdate.bestBid === null) return
 
-		if (newPrice === null) return
+		const midpointPrice = (priceUpdate.bestAsk + priceUpdate.bestBid) / 2
 
 		// Find all funds that have positions with matching clobToken
 		const affectedFunds = new Set<FundsUUID>()
@@ -200,7 +199,7 @@ class FundsClass {
 
 			fund.positions.forEach((position): void => {
 				if (position.clobToken === priceUpdate.clobTokenId) {
-					position.currentMarketPricePerShareUsd = newPrice
+					position.currentMarketPricePerShareUsd = midpointPrice
 					hasUpdatedPosition = true
 				}
 			})
