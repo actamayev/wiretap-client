@@ -13,10 +13,7 @@ export default function robots(): MetadataRoute.Robots {
 				],
 				disallow: [
 					"/funds/",
-					"/profile/",
-					"/login",
-					"/register",
-					"/register-google"
+					"/profile/"
 				]
 			}
 		],
