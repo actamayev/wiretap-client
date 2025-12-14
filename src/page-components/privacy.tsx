@@ -67,17 +67,13 @@ export default function PrivacyPage(): React.ReactNode {
 						protect your data.
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						(b) Affiliate Partners: If you use our Polymarket referral link, Polymarket will know you came from
-						Wiretap but we don't share your personal account details.
+						(b) Legal Requirements: If required by law, court order, subpoena, or to protect our rights, property, or safety.
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						(c) Legal Requirements: If required by law, court order, subpoena, or to protect our rights, property, or safety.
+						(c) Business Transfers: If Wiretap is acquired or merged, your information may be transferred to the new entity.
 					</ComplianceParagraph>
 					<ComplianceParagraph>
-						(d) Business Transfers: If Wiretap is acquired or merged, your information may be transferred to the new entity.
-					</ComplianceParagraph>
-					<ComplianceParagraph>
-						(e) With Your Consent: We may share information for other purposes with your explicit consent.
+						(d) With Your Consent: We may share information for other purposes with your explicit consent.
 					</ComplianceParagraph>
 
 					<ComplianceSectionHeader>4. Data Retention</ComplianceSectionHeader>
