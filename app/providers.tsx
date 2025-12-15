@@ -33,12 +33,11 @@ export default function Providers({ children }: { children: ReactNode }): React.
 	// Connect to Polymarket WebSocket when user is logged in (without any tokens initially)
 	useEffect((): void => {
 		// Connect if not already connected
-		if (!polymarketWebSocketClient.isWebSocketConnected()) {
-			// Connect with empty array - tokens will be added as events are retrieved
-			void polymarketWebSocketClient.connect([]).catch((error): void => {
-				console.error("Failed to connect to Polymarket WebSocket:", error)
-			})
-		}
+		if (polymarketWebSocketClient.isWebSocketConnected()) return
+		// Connect with empty array - tokens will be added as events are retrieved
+		void polymarketWebSocketClient.connect([]).catch((error): void => {
+			console.error("Failed to connect to Polymarket WebSocket:", error)
+		})
 	}, [])
 
 	return (

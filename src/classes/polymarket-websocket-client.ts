@@ -4,22 +4,13 @@ import { POLYMARKET_WS_URL, PING_INTERVAL_MS } from "../utils/constants/polymark
 import eventsClass from "./events-class"
 import fundsClass from "./funds-class"
 
-interface WebSocketClientCallbacks {
-	onPriceChange?: (message: PolymarketPriceChangeMessage) => void
-	onLastTradePrice?: (message: PolymarketLastTradePriceMessage) => void
-	onError?: (error: Error) => void
-	onClose?: () => void
-}
-
 class PolymarketWebSocketClient {
 	private ws: WebSocket | null = null
 	private pingInterval: ReturnType<typeof setInterval> | null = null
 	private clobTokenIds: Set<ClobTokenId> = new Set()
-	private callbacks: WebSocketClientCallbacks
 	private isConnected = false
 
-	constructor(callbacks: WebSocketClientCallbacks = {}) {
-		this.callbacks = callbacks
+	constructor() {
 	}
 
 	/**
@@ -56,7 +47,6 @@ class PolymarketWebSocketClient {
 			this.ws.onerror = (error: Event): void => {
 				console.error("❌ WebSocket error:", error)
 				const errorObj = error instanceof Error ? error : new Error("WebSocket error occurred")
-				this.callbacks.onError?.(errorObj)
 				reject(errorObj)
 			}
 
@@ -67,7 +57,6 @@ class PolymarketWebSocketClient {
 				)
 				this.isConnected = false
 				this.stopPingInterval()
-				this.callbacks.onClose?.()
 			}
 		})
 	}
@@ -95,7 +84,7 @@ class PolymarketWebSocketClient {
 	/**
 	 * Disconnect from WebSocket
 	 */
-	public disconnect(): Promise<void> {
+	private disconnect(): Promise<void> {
 		if (!this.ws) return Promise.resolve()
 
 		console.info("🔌 Disconnecting WebSocket...")
@@ -174,12 +163,10 @@ class PolymarketWebSocketClient {
 			case "price_change":
 				console.log("price_change", message)
 				this.handlePriceChange(message)
-				this.callbacks.onPriceChange?.(message)
 				break
 
 			case "last_trade_price":
 				this.handleLastTradePrice(message)
-				this.callbacks.onLastTradePrice?.(message)
 				break
 
 			case "book":
@@ -269,32 +256,6 @@ class PolymarketWebSocketClient {
 	 */
 	public isWebSocketConnected(): boolean {
 		return this.isConnected && this.ws?.readyState === WebSocket.OPEN
-	}
-
-	/**
-	 * Update subscription with new list of clob_token_ids
-	 * Sends new subscription message without disconnecting
-	 */
-	public updateSubscription(clobTokenIds: ClobTokenId[]): void {
-		if (!this.isConnected || !this.ws || this.ws.readyState !== WebSocket.OPEN) {
-			console.error("❌ Cannot update subscription - WebSocket not connected")
-			return
-		}
-
-		this.clobTokenIds = new Set(clobTokenIds)
-		console.info(`🔄 Updating subscription to ${clobTokenIds.length} assets...`)
-
-		const subscription: MarketChannelSubscription = {
-			type: "market",
-			assets_ids: Array.from(this.clobTokenIds)
-		}
-
-		this.ws.send(JSON.stringify(subscription))
-		console.info("✅ Subscription updated")
-	}
-
-	public getCurrentSubscription(): ClobTokenId[] {
-		return Array.from(this.clobTokenIds)
 	}
 
 	/**
