@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 "use client"
 
 import { observer } from "mobx-react"
@@ -36,12 +37,9 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 
 	// Close dialog and navigate when user successfully registers or logs in
 	// Access authClass properties directly in render so MobX observer can track them
-	const isLoggedIn = authClass.isLoggedIn
-	const isFinishedWithSignup = authClass.isLoggedIn
 
 	useEffect((): void => {
-		// Check auth state directly to ensure MobX tracks the changes
-		if (open && authClass.isLoggedIn && isLoggedIn && !hasNavigatedRef.current) {
+		if (open && authClass.isLoggedIn && !hasNavigatedRef.current) {
 			hasNavigatedRef.current = true
 
 			// If there's pending navigation (event interaction), handle it
@@ -71,7 +69,8 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 			}
 		}
 
-	}, [open, onOpenChange, navigate, pendingNavigation, event, isLoggedIn, isFinishedWithSignup])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open, onOpenChange, navigate, pendingNavigation, event, authClass.isLoggedIn])
 
 	// Access authClass properties in render to ensure MobX observer tracks them
 	// This ensures the component re-renders when auth state changes
