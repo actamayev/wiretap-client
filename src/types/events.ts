@@ -1,12 +1,23 @@
 declare global {
-	interface ExtendedSingleEvent extends SingleEvent {
-		eventMarkets: ExtendedSingleMarket[]
+	interface SingleEvent extends SingleEventMetadata {
+		eventMarkets: SingleMarket[]
 	}
 
-	interface ExtendedSingleMarket extends SingleMarket {
+	interface SingleMarket extends SingleMarketMetadata {
+		outcomes: SingleOutcome[]
 		yesPrice: number
 		noPrice: number
 	}
+
+	interface SingleOutcome extends SingleOutcomeMetadata {
+		priceHistory: SinglePriceSnapshot[]
+	}
+
+	interface SinglePriceSnapshot {
+		timestamp: Date
+		price: number
+	}
+
 }
 
 export {}

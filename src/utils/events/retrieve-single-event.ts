@@ -26,7 +26,7 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 			throw Error ("Unable to retrieve event")
 		}
 
-		eventsClass.addEvent(eventSlug, eventsResponse.data.event)
+		eventsClass.addSingleEventMetadata(eventSlug, eventsResponse.data.event)
 	} catch (error) {
 		console.error(error)
 		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)

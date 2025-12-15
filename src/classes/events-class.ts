@@ -5,7 +5,7 @@ class EventsClass {
 	public isRetrievingAllEvents = false
 	public hasRetrievedAllEvents = false
 	public retrievingSingleEvent: Map<EventSlug, boolean> = new Map()
-	public events: Map<EventSlug, ExtendedSingleEvent> = new Map()
+	public events: Map<EventSlug, SingleEvent> = new Map()
 	public searchTerm = ""
 
 	constructor() {
@@ -24,19 +24,23 @@ class EventsClass {
 		this.retrievingSingleEvent.set(eventSlug, newIsRetrievingSingleEvent)
 	})
 
-	public setEvents = action((newEvents: SingleEvent[]): void => {
-		newEvents.forEach((event): void => this.addEvent(event.eventSlug, event))
+	public setEventsMetadata = action((newEvents: SingleEventMetadata[]): void => {
+		newEvents.forEach((event): void => this.addSingleEventMetadata(event.eventSlug, event))
 		this.setHasRetrievedAllEvents(true)
 		this.setIsRetrievingAllEvents(false)
 	})
 
-	public addEvent = action((eventSlug: EventSlug, event: SingleEvent): void => {
-		const extendedEvent: ExtendedSingleEvent = {
+	public addSingleEventMetadata = action((eventSlug: EventSlug, event: SingleEventMetadata): void => {
+		const extendedEvent: SingleEvent = {
 			...event,
-			eventMarkets: event.eventMarkets.map((market): ExtendedSingleMarket => ({
+			eventMarkets: event.eventMarkets.map((market): SingleMarket => ({
 				...market,
 				yesPrice: ((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2,
 				noPrice: 1 - (((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2),
+				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
+					...outcome,
+					priceHistory: []
+				}))
 			}))
 		}
 		// Make the event observable so nested arrays (like priceHistory) are tracked

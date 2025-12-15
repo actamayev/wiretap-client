@@ -22,7 +22,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, authClass.isLoggedIn])
 
-	const event = useMemo((): ExtendedSingleEvent | undefined => {
+	const event = useMemo((): SingleEvent | undefined => {
 		return eventsClass.events.get(eventSlug)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, eventsClass.events.size])

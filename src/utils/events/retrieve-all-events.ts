@@ -19,7 +19,7 @@ export default async function retrieveAllEvents(): Promise<void> {
 			throw Error ("Unable to retrieve events")
 		}
 
-		eventsClass.setEvents(eventsResponse.data.events)
+		eventsClass.setEventsMetadata(eventsResponse.data.events)
 	} catch (error) {
 		console.error(error)
 		eventsClass.setIsRetrievingAllEvents(false)
