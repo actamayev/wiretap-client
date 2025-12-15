@@ -18,6 +18,7 @@ import PriceHistoryChart from "../price-history-chart"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
+import { timeframeConfig } from "../../utils/constants/timeframe-config"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
@@ -64,15 +65,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// State for selected timeframe
 	const [selectedTimeframe, setSelectedTimeframe] = useState<keyof OutcomePriceHistories>("1d")
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
-
-	// Timeframe configuration
-	const timeframeConfig = {
-		"1h": { label: "1H", interval: "1h" as const, fidelity: 1 },
-		"1d": { label: "1D", interval: "1d" as const, fidelity: 5 },
-		"1w": { label: "1W", interval: "1w" as const, fidelity: 30 },
-		"1m": { label: "1M", interval: "1m" as const, fidelity: 180 },
-		max: { label: "ALL", interval: "max" as const, fidelity: 720 }
-	}
 
 	// Function to fetch price history for a specific timeframe
 	const fetchTimeframeData = useCallback(async (
@@ -121,7 +113,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedOutcome, event])
 
 	// Handle timeframe button click

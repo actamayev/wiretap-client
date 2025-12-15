@@ -2,22 +2,22 @@
 
 import Image from "next/image"
 import { observer } from "mobx-react"
-import { useCallback, useState } from "react"
+import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
+import { Spinner } from "../ui/spinner"
 import PriceHistoryChart from "../price-history-chart"
 import { formatVolume } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
+import eventsClass from "../../classes/events-class"
 import RegisterDialog from "../register-dialog"
+import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
+import { timeframeConfig } from "../../utils/constants/timeframe-config"
 import { cn } from "../../lib/utils"
 
-interface SingleEventCardProps {
-	event: SingleEvent
-}
-
 // eslint-disable-next-line max-lines-per-function
-function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
+function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
 	const [pendingNavigation, setPendingNavigation] = useState<{
@@ -81,6 +81,61 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 		}
 	}, [])
 
+	// State for selected timeframe (per card)
+	const [selectedTimeframe, setSelectedTimeframe] = useState<keyof OutcomePriceHistories>("1d")
+	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
+
+	// Get the Yes outcome
+	const yesOutcome = useMemo((): SingleOutcome | undefined => {
+		return event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+	}, [event])
+
+	// Function to fetch price history for a specific timeframe
+	const fetchTimeframeData = useCallback(async (timeframe: keyof OutcomePriceHistories): Promise<void> => {
+		if (!yesOutcome) return
+
+		// Check if already retrieving
+		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe)) {
+			return
+		}
+
+		// Check if data already exists
+		const existingData = yesOutcome.priceHistory[timeframe]
+		if (existingData && existingData.length > 0) {
+			setSelectedTimeframe(timeframe)
+			return
+		}
+
+		setIsLoadingTimeframe(true)
+		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe, true)
+		try {
+			const config = timeframeConfig[timeframe]
+			const priceHistoryResponse = await retrieveOutcomePriceHistory({
+				market: yesOutcome.clobTokenId as string,
+				interval: config.interval,
+				fidelity: config.fidelity
+			})
+			eventsClass.setOutcomePriceHistory(
+				event.eventSlug,
+				yesOutcome.clobTokenId,
+				timeframe,
+				priceHistoryResponse.history
+			)
+			setSelectedTimeframe(timeframe)
+		} catch (error) {
+			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
+			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe, false)
+		} finally {
+			setIsLoadingTimeframe(false)
+		}
+	}, [yesOutcome, event.eventSlug])
+
+	// Handle timeframe button click
+	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
+		if (isLoadingTimeframe) return
+		void fetchTimeframeData(timeframe)
+	}, [fetchTimeframeData, isLoadingTimeframe])
+
 	return (
 		<>
 			<RegisterDialog
@@ -142,24 +197,51 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 							</Button>
 						</div>
 
-						{/* Row 3: Volume */}
-						<div className="text-sm text-white/40">
-							{formatVolume(event.eventTotalVolume)}
+						{/* Row 3: Volume and Timeframe Selector */}
+						<div className="flex items-center justify-between">
+							<div className="text-sm text-white/40">
+								{formatVolume(event.eventTotalVolume)}
+							</div>
+							<div className="flex gap-1">
+								{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
+									(timeframe): React.ReactNode => (
+										<Button
+											key={timeframe}
+											variant={selectedTimeframe === timeframe ? "default" : "outline"}
+											size="sm"
+											onClick={(): void => handleTimeframeClick(timeframe)}
+											disabled={isLoadingTimeframe}
+											className={cn(
+												"min-w-[45px] h-7 text-xs px-2",
+												selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+											)}
+										>
+											{isLoadingTimeframe && selectedTimeframe === timeframe ? (
+												<Spinner className="size-3" />
+											) : (
+												timeframeConfig[timeframe].label
+											)}
+										</Button>
+									)
+								)}
+							</div>
 						</div>
 					</div>
 
 					{/* Right Section - 2/5 width */}
 					<div className="w-2/5 flex flex-col h-full min-h-0">
 						<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
-							{((): React.ReactNode => {
-								const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-								return yesOutcome?.priceHistory["1d"] && yesOutcome.priceHistory["1d"].length > 0 && (
-									<PriceHistoryChart priceHistory={yesOutcome.priceHistory["1d"].map((entry): SinglePriceSnapshot => ({
-										timestamp: new Date(entry.t * 1000),
-										price: entry.p
-									}))} />
-								)
-							})()}
+							{yesOutcome?.priceHistory[selectedTimeframe] &&
+								yesOutcome.priceHistory[selectedTimeframe].length > 0 && (
+								<PriceHistoryChart
+									priceHistory={yesOutcome.priceHistory[selectedTimeframe].map(
+										(entry): SinglePriceSnapshot => ({
+											timestamp: new Date(entry.t * 1000),
+											price: entry.p
+										})
+									)}
+								/>
+							)}
 						</div>
 					</div>
 				</div>
