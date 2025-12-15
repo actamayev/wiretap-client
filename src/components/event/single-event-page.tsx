@@ -52,7 +52,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event?.eventTitle])
 
-
 	// Get the selected outcome based on tradeClass.selectedMarket
 	const selectedOutcome = useMemo((): SingleOutcome | undefined => {
 		if (!event) return undefined
@@ -62,8 +61,14 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event, tradeClass.selectedMarket])
 
-	// State for selected timeframe
-	const [selectedTimeframe, setSelectedTimeframe] = useState<keyof OutcomePriceHistories>("1d")
+	// Get selected timeframe from events class
+	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
+		if (!event) return "1d"
+		const market = event.eventMarkets[0]
+		return market?.selectedTimeframe ?? "1d"
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event, event?.eventMarkets[0]?.selectedTimeframe])
+
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
 	// Function to fetch price history for a specific timeframe
@@ -83,7 +88,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		if (existingData && existingData.length > 0) {
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
-				setSelectedTimeframe(timeframe)
+				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			}
 			return
 		}
@@ -105,7 +110,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			)
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
-				setSelectedTimeframe(timeframe)
+				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			}
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)

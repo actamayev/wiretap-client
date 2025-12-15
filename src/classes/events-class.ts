@@ -37,6 +37,7 @@ class EventsClass {
 				...market,
 				yesPrice: ((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2,
 				noPrice: 1 - (((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2),
+				selectedTimeframe: "1d",
 				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
 					...outcome,
 					priceHistory: {
@@ -125,6 +126,25 @@ class EventsClass {
 		if (!outcome) return false
 		return outcome.retrievingPriceHistories.includes(interval)
 	}
+
+	public getSelectedTimeframe = (eventSlug: EventSlug): keyof OutcomePriceHistories => {
+		const event = this.events.get(eventSlug)
+		if (!event) return "1d"
+		const market = event.eventMarkets[0]
+		if (!market) return "1d"
+		return market.selectedTimeframe
+	}
+
+	public setSelectedTimeframe = action((
+		eventSlug: EventSlug,
+		timeframe: keyof OutcomePriceHistories
+	): void => {
+		const event = this.events.get(eventSlug)
+		if (!event) return
+		const market = event.eventMarkets[0]
+		if (!market) return
+		market.selectedTimeframe = timeframe
+	})
 
 	// eslint-disable-next-line complexity
 	public updateOutcomePrice = action((priceUpdate: PriceUpdate): void => {

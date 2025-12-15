@@ -81,8 +81,12 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		}
 	}, [])
 
-	// State for selected timeframe (per card)
-	const [selectedTimeframe, setSelectedTimeframe] = useState<keyof OutcomePriceHistories>("1d")
+	// Get selected timeframe from events class
+	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
+		const market = event.eventMarkets[0]
+		return market?.selectedTimeframe ?? "1d"
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event.eventSlug, event.eventMarkets[0]?.selectedTimeframe])
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
 	// Get the Yes outcome
@@ -102,7 +106,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		// Check if data already exists
 		const existingData = yesOutcome.priceHistory[timeframe]
 		if (existingData && existingData.length > 0) {
-			setSelectedTimeframe(timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			return
 		}
 
@@ -121,7 +125,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 				timeframe,
 				priceHistoryResponse.history
 			)
-			setSelectedTimeframe(timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
 			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe, false)

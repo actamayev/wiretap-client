@@ -7,6 +7,7 @@ declare global {
 		outcomes: SingleOutcome[]
 		yesPrice: number
 		noPrice: number
+		selectedTimeframe: keyof OutcomePriceHistories
 	}
 
 	interface SingleOutcome extends SingleOutcomeMetadata {
