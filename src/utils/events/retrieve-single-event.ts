@@ -10,7 +10,7 @@ import wiretapApiClient from "../../classes/wiretap-api-client-class"
 export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise<void> {
 	try {
 		if (
-			authClass.isFinishedWithSignup === false ||
+			authClass.isLoggedIn === false ||
 			eventsClass.isRetrievingSingleEvent(eventSlug) === true ||
 			eventsClass.events.get(eventSlug) !== undefined
 		) return

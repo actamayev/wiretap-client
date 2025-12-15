@@ -8,11 +8,11 @@ interface AuthenticatedLayoutProps {
 
 // Server component that gets auth state and handles both layout decision AND auth logic
 export default async function AuthenticatedLayout({ children }: AuthenticatedLayoutProps): Promise<React.ReactElement> {
-	const authState = await getAuthState()
+	const userId = await getAuthState()
 
 	return (
-		<LayoutWrapper initialAuthState={authState}>
-			<AuthenticatedLayoutClient authState={authState}>
+		<LayoutWrapper userId={userId}>
+			<AuthenticatedLayoutClient userId={userId}>
 				{children}
 			</AuthenticatedLayoutClient>
 		</LayoutWrapper>

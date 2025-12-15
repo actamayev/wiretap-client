@@ -17,11 +17,10 @@ import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 
 
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
-
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [eventSlug, authClass.isFinishedWithSignup])
+	}, [eventSlug, authClass.isLoggedIn])
 
 	const event = useMemo((): ExtendedSingleEvent | undefined => {
 		return eventsClass.events.get(eventSlug)

@@ -3,7 +3,6 @@
 import { action, makeAutoObservable } from "mobx"
 
 class PersonalInfoClass {
-	public username: string | null = null
 	public email: string | null = null
 	public isGoogleUser = false
 
@@ -23,24 +22,17 @@ class PersonalInfoClass {
 	})
 
 	public setRetrievedPersonalData = action((retrievedData: BasicPersonalInfoResponse): void => {
-		this.username = retrievedData.username
 		this.email = retrievedData.email
 		this.isGoogleUser = retrievedData.isGoogleUser
 		this.setRetrievedPersonalInfo(true)
 		this.setIsRetrievingPersonalDetails(false)
 	})
 
-	public setRegisteredValues = action((username: string, email: string): void => {
-		this.username = username
+	public setEmail = action((email: string): void => {
 		this.email = email
 	})
 
-	public setUsername = action((newUsername: string): void => {
-		this.username = newUsername
-	})
-
 	public logout(): void {
-		this.username = null
 		this.email = null
 		this.isGoogleUser = false
 		this.setIsRetrievingPersonalDetails(false)

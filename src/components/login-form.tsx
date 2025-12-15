@@ -27,7 +27,7 @@ import GoogleSignIn from "@/components/auth/google/google-sign-in"
 import OrComponent from "@/components/auth/or-component"
 import ErrorMessage from "@/components/messages/error-message"
 import loginSubmit from "@/utils/auth/submit/login-submit"
-import { loginSchema } from "@/utils/auth/auth-schemas"
+import { authSchema } from "@/utils/auth/auth-schemas"
 import PasswordField from "@/components/auth/password-input"
 import authClass from "@/classes/auth-class"
 
@@ -62,15 +62,15 @@ function LoginForm({
 	const [error, setError] = useState("")
 	const pathname = usePathname()
 
-	const form = useForm<IncomingLoginRequest>({
-		resolver: zodResolver(loginSchema),
+	const form = useForm<IncomingAuthRequest>({
+		resolver: zodResolver(authSchema),
 		defaultValues: {
-			contact: "",
+			email: "",
 			password: ""
 		}
 	})
 
-	const onSubmit = useCallback(async (values: IncomingLoginRequest): Promise<void> => {
+	const onSubmit = useCallback(async (values: IncomingAuthRequest): Promise<void> => {
 		await loginSubmit(values, setError)
 	}, [])
 
@@ -90,17 +90,17 @@ function LoginForm({
 
 							<FieldGroup>
 								<Field>
-									<FieldLabel htmlFor="contact">Email or Username</FieldLabel>
+									<FieldLabel htmlFor="contact">Email</FieldLabel>
 									<FormField
 										control={form.control}
-										name="contact"
+										name="email"
 										render={({ field }): React.ReactElement => (
 											<FormItem>
 												<FormControl>
 													<Input
 														id="contact"
 														type="text"
-														placeholder="Email or Username"
+														placeholder="Email"
 														{...field}
 														maxLength={100}
 														required

@@ -48,4 +48,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
 // Note: The following pages are intentionally EXCLUDED from the sitemap:
 // - /sandbox, /garage, /settings/* (require authentication)
 // - /career-quest, /class-manager, /whiteboard, /scoreboard (protected pages)
-// - /login, /register, /register-google (utility pages, not content)
+// - /login, /register, (utility pages, not content)

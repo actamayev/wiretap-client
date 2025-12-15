@@ -9,7 +9,7 @@ import fundsClass from "../../classes/funds-class"
 export default async function retrieveAllFunds(): Promise<void> {
 	try {
 		if (
-			authClass.isFinishedWithSignup === false ||
+			authClass.isLoggedIn === false ||
 			fundsClass.isRetrievingAllFunds === true ||
 			fundsClass.hasRetrievedAllFunds === true
 		) return

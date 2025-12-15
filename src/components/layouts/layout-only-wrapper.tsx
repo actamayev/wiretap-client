@@ -6,10 +6,10 @@ interface LayoutOnlyWrapperProps {
 }
 
 export default async function LayoutOnlyWrapper({ children }: LayoutOnlyWrapperProps): Promise<React.ReactElement> {
-	const authState = await getAuthState()
+	const userId = await getAuthState()
 
 	return (
-		<LayoutWrapper initialAuthState={authState}>
+		<LayoutWrapper userId={userId}>
 			{children}
 		</LayoutWrapper>
 	)

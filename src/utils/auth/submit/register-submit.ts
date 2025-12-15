@@ -10,7 +10,7 @@ import setErrorAxiosResponse from "../../error-handling/set-error-axios-response
 import fundsClass from "../../../classes/funds-class"
 
 export default async function registerSubmit(
-	registerCredentials: IncomingRegisterRequest,
+	registerCredentials: IncomingAuthRequest,
 	setError: (error: string) => void,
 ): Promise<boolean> {
 	try {
@@ -27,14 +27,8 @@ export default async function registerSubmit(
 			setError("Unable to register. Please reload the page and try again")
 			return false
 		}
-		authClass.setAuthState({
-			isAuthenticated: true,
-			hasCompletedSignup: true
-		})
-		personalInfoClass.setRegisteredValues(
-			registerCredentials.username,
-			registerCredentials.email,
-		)
+		authClass.setIsAuthenticated(true)
+		personalInfoClass.setEmail(registerCredentials.email)
 		fundsClass.setFunds(response.data.funds)
 		return true
 	} catch (error: unknown) {

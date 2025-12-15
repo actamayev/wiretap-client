@@ -13,7 +13,7 @@ export default async function changePassword(
 	newPassword: string
 ) : Promise<string | null> {
 	try {
-		if (authClass.isFinishedWithSignup === false) {
+		if (authClass.isLoggedIn === false) {
 			return "You must be logged in to change your password"
 		}
 

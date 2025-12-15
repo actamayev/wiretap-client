@@ -28,14 +28,7 @@ export default function useGoogleAuthCallback(): (successResponse: CredentialRes
 				throw Error("Unable to log in")
 			}
 
-			authClass.setAuthState({
-				isAuthenticated: true,
-				hasCompletedSignup: !googleCallbackResponse.data.isNewUser
-			})
-
-			if (googleCallbackResponse.data.isNewUser === true || isUndefined(googleCallbackResponse.data.personalInfo)) {
-				return googleCallbackResponse.data
-			}
+			authClass.setIsAuthenticated(true)
 
 			personalInfoClass.setRetrievedPersonalData(googleCallbackResponse.data.personalInfo)
 			fundsClass.setFunds(googleCallbackResponse.data.funds)

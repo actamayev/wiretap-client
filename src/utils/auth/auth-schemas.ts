@@ -5,32 +5,14 @@ import { z } from "zod"
 // Email regex pattern
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export const loginSchema = z.object({
-	contact: z.string()
-		.min(3, "Please enter your username or email (at least 3 characters)")
-		.max(100, "That's a bit long for a username or email - could you check it?"),
-	password: z.string()
-		.min(6, "Please enter your password (at least 6 characters)")
-		.max(100, "That's an unusually long password - could you verify it?")
-})
-
-export const registerUsernameSchema = z.object({
-	username: z.string()
-		.min(3, "Choose a username that's at least 3 characters")
-		.max(100, "Could you pick a shorter username?"),
-})
-
-export const registerSchema = z.object({
+export const authSchema = z.object({
 	email: z.string()
 		.min(3, "Please enter your email to create your account")
 		.max(100, "That's a bit long for an email - could you check it?")
 		.refine((val): boolean => emailRegex.test(val), {
 			message: "Hmm, that email format doesn't look quite right",
 		}),
-	username: z.string()
-		.min(3, "Choose a username that's at least 3 characters")
-		.max(100, "Could you pick a shorter username?"),
 	password: z.string()
-		.min(6, "For security, use at least 6 characters for your password")
-		.max(100, "That's an unusually long password - could you verify it?"),
+		.min(6, "Please enter your password (at least 6 characters)")
+		.max(100, "That's an unusually long password - could you verify it?")
 })

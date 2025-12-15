@@ -13,7 +13,7 @@ function Events(): React.ReactNode {
 	useEffect((): void => {
 		void retrieveAllEvents()
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [authClass.isFinishedWithSignup])
+	}, [authClass.isLoggedIn])
 
 	const events = useMemo((): SingleEvent[] => {
 		const allEvents = Array.from(eventsClass.events.values())
