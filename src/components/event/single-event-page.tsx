@@ -4,7 +4,10 @@ import Image from "next/image"
 import { Clock } from "lucide-react"
 import { observer } from "mobx-react"
 import isUndefined from "lodash-es/isUndefined"
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useState, useCallback } from "react"
+import { Button } from "../ui/button"
+import { Spinner } from "../ui/spinner"
+import { cn } from "../../lib/utils"
 import TradeCard from "./trade-card"
 import EventRules from "./event-rules"
 import CustomTooltip from "../custom-tooltip"
@@ -14,6 +17,7 @@ import eventsClass from "../../classes/events-class"
 import PriceHistoryChart from "../price-history-chart"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
+import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
@@ -56,6 +60,81 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		return market.outcomes.find((outcome): boolean => outcome.outcome === tradeClass.selectedMarket)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event, tradeClass.selectedMarket])
+
+	// State for selected timeframe
+	const [selectedTimeframe, setSelectedTimeframe] = useState<keyof OutcomePriceHistories>("1d")
+	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
+
+	// Timeframe configuration
+	const timeframeConfig = {
+		"1h": { label: "1H", interval: "1h" as const, fidelity: 1 },
+		"1d": { label: "1D", interval: "1d" as const, fidelity: 5 },
+		"1w": { label: "1W", interval: "1w" as const, fidelity: 30 },
+		"1m": { label: "1M", interval: "1m" as const, fidelity: 180 },
+		max: { label: "ALL", interval: "max" as const, fidelity: 720 }
+	}
+
+	// Function to fetch price history for a specific timeframe
+	const fetchTimeframeData = useCallback(async (
+		timeframe: keyof OutcomePriceHistories,
+		skipTimeframeUpdate = false
+	): Promise<void> => {
+		if (!selectedOutcome || !event) return
+
+		// Check if data already exists
+		const existingData = selectedOutcome.priceHistory[timeframe]
+		if (existingData && existingData.length > 0) {
+			// Only update timeframe state if not skipping (e.g., when called from button click)
+			if (!skipTimeframeUpdate) {
+				setSelectedTimeframe(timeframe)
+			}
+			return
+		}
+
+		setIsLoadingTimeframe(true)
+		try {
+			const config = timeframeConfig[timeframe]
+			const priceHistoryResponse = await retrieveOutcomePriceHistory({
+				market: selectedOutcome.clobTokenId as string,
+				interval: config.interval,
+				fidelity: config.fidelity
+			})
+			eventsClass.setOutcomePriceHistory(
+				event.eventSlug,
+				selectedOutcome.clobTokenId,
+				timeframe,
+				priceHistoryResponse.history
+			)
+			// Only update timeframe state if not skipping (e.g., when called from button click)
+			if (!skipTimeframeUpdate) {
+				setSelectedTimeframe(timeframe)
+			}
+		} catch (error) {
+			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
+		} finally {
+			setIsLoadingTimeframe(false)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedOutcome, event])
+
+	// Handle timeframe button click
+	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
+		if (isLoadingTimeframe) return
+		void fetchTimeframeData(timeframe)
+	}, [fetchTimeframeData, isLoadingTimeframe])
+
+	// Automatically fetch current timeframe data when outcome changes (if data doesn't exist)
+	useEffect((): void => {
+		if (!selectedOutcome || !event || isLoadingTimeframe) return
+
+		const currentTimeframeData = selectedOutcome.priceHistory[selectedTimeframe]
+		// If current timeframe doesn't have data for this outcome, fetch it automatically
+		// Skip timeframe update since we're already on this timeframe
+		if (!currentTimeframeData || currentTimeframeData.length === 0) {
+			void fetchTimeframeData(selectedTimeframe, true)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedOutcome, selectedTimeframe])
 
 	if (isUndefined(event)) {
 		return (
@@ -111,13 +190,42 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					<div className="flex-2 flex flex-col gap-4 min-h-0">
 						<div className="flex-1 min-h-0">
 							<div className="bg-sidebar-blue rounded-lg p-4 h-full border-2 border-white/30">
-								{selectedOutcome?.priceHistory["1d"] && selectedOutcome.priceHistory["1d"].length > 0 && (
-									<PriceHistoryChart priceHistory={selectedOutcome.priceHistory["1d"].map((entry): SinglePriceSnapshot => ({
-										timestamp: new Date(entry.t * 1000),
-										price: entry.p
-									}))} />
+								{selectedOutcome?.priceHistory[selectedTimeframe] &&
+									selectedOutcome.priceHistory[selectedTimeframe].length > 0 && (
+									<PriceHistoryChart
+										priceHistory={selectedOutcome.priceHistory[selectedTimeframe].map(
+											(entry): SinglePriceSnapshot => ({
+												timestamp: new Date(entry.t * 1000),
+												price: entry.p
+											})
+										)}
+									/>
 								)}
 							</div>
+						</div>
+						{/* Timeframe Selector */}
+						<div className="flex gap-2 justify-center">
+							{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
+								(timeframe): React.ReactNode => (
+									<Button
+										key={timeframe}
+										variant={selectedTimeframe === timeframe ? "default" : "outline"}
+										size="sm"
+										onClick={(): void => handleTimeframeClick(timeframe)}
+										disabled={isLoadingTimeframe}
+										className={cn(
+											"min-w-[60px]",
+											selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+										)}
+									>
+										{isLoadingTimeframe && selectedTimeframe === timeframe ? (
+											<Spinner className="size-4" />
+										) : (
+											timeframeConfig[timeframe].label
+										)}
+									</Button>
+								)
+							)}
 						</div>
 					</div>
 

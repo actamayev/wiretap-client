@@ -37,7 +37,8 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 					try {
 						const priceHistoryResponse = await retrieveOutcomePriceHistory({
 							market: outcome.clobTokenId as string,
-							interval: "1d"
+							interval: "1d",
+							fidelity: 5
 						})
 						eventsClass.setOutcomePriceHistory(
 							eventSlug,
