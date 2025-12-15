@@ -175,7 +175,16 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 								className="w-full h-full object-cover"
 							/>
 						</div>
-						<h1 className="text-4xl font-semibold">{event.eventTitle}</h1>
+						<h1 className="text-4xl font-semibold">
+							<a
+								href={`https://polymarket.com/event/${eventSlug}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:underline"
+							>
+								{event.eventTitle}
+							</a>
+						</h1>
 					</div>
 					<div className="flex items-center gap-4 text-sm text-muted-foreground">
 						<span>${Math.floor(event.eventTotalVolume).toLocaleString()} Vol.</span>
