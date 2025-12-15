@@ -30,10 +30,6 @@ export default function useGoogleAuthCallback(): (successResponse: CredentialRes
 
 			authClass.setIsAuthenticated(true)
 
-			if (googleCallbackResponse.data.isNewUser === true || isUndefined(googleCallbackResponse.data.personalInfo)) {
-				return googleCallbackResponse.data
-			}
-
 			personalInfoClass.setRetrievedPersonalData(googleCallbackResponse.data.personalInfo)
 			fundsClass.setFunds(googleCallbackResponse.data.funds)
 			return googleCallbackResponse.data
