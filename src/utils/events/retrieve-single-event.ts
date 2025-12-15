@@ -6,7 +6,7 @@ import authClass from "../../classes/auth-class"
 import eventsClass from "../../classes/events-class"
 import { isNonSuccessResponse } from "../type-checks"
 import wiretapApiClient from "../../classes/wiretap-api-client-class"
-import retrieveOutcomePriceHistory from "../polymarket/retrieve-outcome-price-history"
+import retrieveEventPriceHistory from "./retrieve-event-price-history"
 
 export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise<void> {
 	try {
@@ -30,30 +30,7 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 		eventsClass.addSingleEventMetadata(eventSlug, eventsResponse.data.event)
 
 		// Fetch price history for each outcome (1D interval)
-		const event = eventsClass.events.get(eventSlug)
-		if (event) {
-			const priceHistoryPromises = event.eventMarkets.flatMap((market): Promise<void>[] =>
-				market.outcomes.map(async (outcome): Promise<void> => {
-					try {
-						const priceHistoryResponse = await retrieveOutcomePriceHistory({
-							market: outcome.clobTokenId as string,
-							interval: "1d",
-							fidelity: 5
-						})
-						eventsClass.setOutcomePriceHistory(
-							eventSlug,
-							outcome.clobTokenId,
-							"1d",
-							priceHistoryResponse.history
-						)
-					} catch (error) {
-						console.error(`Error retrieving price history for outcome ${outcome.clobTokenId}:`, error)
-					}
-				})
-			)
-
-			await Promise.allSettled(priceHistoryPromises)
-		}
+		await retrieveEventPriceHistory(eventSlug)
 
 		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)
 	} catch (error) {
