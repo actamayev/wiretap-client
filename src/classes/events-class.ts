@@ -197,7 +197,6 @@ class EventsClass {
 		this.isRetrievingAllEvents = false
 		this.hasRetrievedAllEvents = false
 		this.retrievingSingleEvent = new Map()
-		this.events = new Map()
 		this.searchTerm = ""
 	}
 }
