@@ -32,10 +32,6 @@ class PersonalInfoClass {
 		this.email = email
 	})
 
-	public setRegisteredValues = action((email: string): void => {
-		this.email = email
-	})
-
 	public logout(): void {
 		this.email = null
 		this.isGoogleUser = false
