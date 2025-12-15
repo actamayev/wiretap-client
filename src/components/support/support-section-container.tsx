@@ -14,7 +14,7 @@ function SupportSectionContainer(props: Props): React.ReactNode {
 
 	let parentClasses = "px-8 sm:px-8 md:px-16 lg:px-72 mt-12"
 	let childClasses = ""
-	if (!isNull(personalInfoClass.username)) {
+	if (!isNull(personalInfoClass.email)) {
 		parentClasses = "px-8 sm:px-8 md:px-16 lg:px-32 mt-5"
 		childClasses = "max-w-xl"
 	}

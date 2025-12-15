@@ -37,11 +37,11 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 	// Close dialog and navigate when user successfully registers or logs in
 	// Access authClass properties directly in render so MobX observer can track them
 	const isLoggedIn = authClass.isLoggedIn
-	const isFinishedWithSignup = authClass.isFinishedWithSignup
+	const isFinishedWithSignup = authClass.isLoggedIn
 
 	useEffect((): void => {
 		// Check auth state directly to ensure MobX tracks the changes
-		if (open && authClass.isLoggedIn && authClass.isFinishedWithSignup && !hasNavigatedRef.current) {
+		if (open && authClass.isLoggedIn && isLoggedIn && !hasNavigatedRef.current) {
 			hasNavigatedRef.current = true
 
 			// If there's pending navigation (event interaction), handle it

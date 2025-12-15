@@ -1,11 +1,7 @@
 import { headers } from 'next/headers'
 
 export interface AuthState {
-	isAuthenticated: boolean
-	hasCompletedSignup: boolean
 	userId: number | null
-	username: string | null
-	isIncompleteSignup: boolean // Add this
 }
 
 export async function getAuthState(): Promise<AuthState> {
@@ -17,24 +13,10 @@ export async function getAuthState(): Promise<AuthState> {
 	if (authDataHeader) {
 		try {
 			const authData = JSON.parse(authDataHeader)
-			return {
-				isAuthenticated: authData.state === 'authenticated' || authData.state === 'authenticated-incomplete',
-				hasCompletedSignup: authData.hasCompletedSignup,
-				userId: authData.userId,
-				username: authData.username || null,
-				isIncompleteSignup: authData.state === 'authenticated-incomplete' // Add this
-			}
+			return { userId: authData.userId }
 		} catch (error) {
-			console.error('Failed to parse auth data header:', error)
+			console.error("Failed to parse auth data header:", error)
 		}
 	}
-
-	// Default to unauthenticated state if no header or parsing fails
-	return {
-		isAuthenticated: false,
-		hasCompletedSignup: false,
-		userId: null,
-		username: null,
-		isIncompleteSignup: false
-	}
+	return { userId: null }
 }

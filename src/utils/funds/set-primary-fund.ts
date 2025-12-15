@@ -9,7 +9,7 @@ import wiretapApiClient from "../../classes/wiretap-api-client-class"
 
 export default async function setPrimaryFund(fundUUID: FundsUUID): Promise<void> {
 	try {
-		if (authClass.isFinishedWithSignup === false) return
+		if (authClass.isLoggedIn === false) return
 
 		const fund = fundsClass.funds.get(fundUUID)
 		if (isUndefined(fund)) return

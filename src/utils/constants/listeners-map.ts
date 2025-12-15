@@ -10,6 +10,7 @@ export const listenersMap: {
 	[K in ServerSocketEvents]: ListenerHandler<ServerSocketEventPayloadMap[K]>
 } = {
 	"market:prices": (payload: MarketPricesUpdate): void => {
+		console.log("market:prices", payload)
 		// Update each outcome price in the events class and positions in funds class
 		payload.prices.forEach((priceUpdate: PriceUpdate): void => {
 			eventsClass.updateOutcomePrice(priceUpdate)

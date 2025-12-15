@@ -3,7 +3,6 @@
 import { observer } from "mobx-react"
 import ProfileLayout from "./profile-layout"
 import ChangePasswordSection from "./change-password-section"
-import ChangeUsernameSection from "./change-username-section"
 import personalInfoClass from "../../classes/personal-info-class"
 
 function ProfilePage(): React.ReactNode {
@@ -22,8 +21,6 @@ function ProfilePage(): React.ReactNode {
 						{personalInfoClass.email || "No email set"}
 					</div>
 				</div>
-
-				<ChangeUsernameSection />
 
 				<ChangePasswordSection />
 			</div>

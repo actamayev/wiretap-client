@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button"
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { cn } from "../../lib/utils"
 
-interface PasswordFieldProps<T extends IncomingLoginRequest | IncomingRegisterRequest> {
+interface PasswordFieldProps<T extends IncomingAuthRequest> {
 	control: Control<T>
 	name: FieldPath<T>
 	placeholder?: string
 }
 
-export default function PasswordField<T extends IncomingLoginRequest | IncomingRegisterRequest>({
+export default function PasswordField<T extends IncomingAuthRequest>({
 	control,
 	name,
 	placeholder = "Password"

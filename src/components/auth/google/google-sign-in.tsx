@@ -12,12 +12,12 @@ export default function GoogleSignIn(): React.ReactNode {
 	const onSuccess = useCallback(async (successResponse: CredentialResponse): Promise<void> => {
 		const response = await googleAuthCallback(successResponse)
 		// If new user (incomplete signup), refresh to get updated server auth state
-		// This ensures the GoogleUsernameForm is shown immediately
-		if (response?.isNewUser === true || !response?.personalInfo || response?.personalInfo?.username === null) {
+		// This ensures the GoogleEmailForm is shown immediately
+		if (response?.isNewUser === true || !response?.personalInfo) {
 			router.refresh()
 		}
 		// User stays on current page after Google sign-in
-		// If incomplete signup (new user), GoogleUsernameForm will be shown automatically
+		// If incomplete signup (new user), GoogleEmailForm will be shown automatically
 		// via authenticated-layout-client.tsx after refresh
 	}, [googleAuthCallback, router])
 
