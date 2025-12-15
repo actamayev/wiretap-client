@@ -4,7 +4,6 @@ import useInitializeGoogleAnalytics from "../src/hooks/use-initialize-google-ana
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import authClass from "../src/classes/auth-class"
 import personalInfoClass from "../src/classes/personal-info-class"
-import socketClass from "../src/classes/socket-class"
 import retrievePersonalInfo from "../src/utils/personal-info/retrieve-personal-info"
 import retrieveAllFunds from "../src/utils/funds/retrieve-all-funds"
 
@@ -24,16 +23,6 @@ const retrieveInfo = async (): Promise<void> => {
 
 export default function Providers({ children }: { children: ReactNode }): React.ReactNode {
 	useInitializeGoogleAnalytics()
-
-	// Connect to websocket for all users (authenticated or not)
-	useEffect((): () => void => {
-		socketClass.connect()
-
-		// Cleanup: disconnect on unmount
-		return (): void => {
-			socketClass.disconnect()
-		}
-	}, [])
 
 	// Smart data retrieval - only if needed
 	useEffect((): void => {

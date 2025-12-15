@@ -4,7 +4,10 @@ import Image from "next/image"
 import { Clock } from "lucide-react"
 import { observer } from "mobx-react"
 import isUndefined from "lodash-es/isUndefined"
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useState, useCallback } from "react"
+import { Button } from "../ui/button"
+import { Spinner } from "../ui/spinner"
+import { cn } from "../../lib/utils"
 import TradeCard from "./trade-card"
 import EventRules from "./event-rules"
 import CustomTooltip from "../custom-tooltip"
@@ -14,15 +17,17 @@ import eventsClass from "../../classes/events-class"
 import PriceHistoryChart from "../price-history-chart"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
+import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
+import { timeframeConfig } from "../../utils/constants/timeframe-config"
 
-
+// eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, authClass.isLoggedIn])
 
-	const event = useMemo((): ExtendedSingleEvent | undefined => {
+	const event = useMemo((): SingleEvent | undefined => {
 		return eventsClass.events.get(eventSlug)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, eventsClass.events.size])
@@ -47,6 +52,98 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event?.eventTitle])
 
+	// Get the selected outcome based on tradeClass.selectedMarket
+	const selectedOutcome = useMemo((): SingleOutcome | undefined => {
+		if (!event) return undefined
+		const market = event.eventMarkets[0]
+		if (!market) return undefined
+		return market.outcomes.find((outcome): boolean => outcome.outcome === tradeClass.selectedMarket)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event, tradeClass.selectedMarket])
+
+	// Get selected timeframe from events class
+	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
+		if (!event) return "1d"
+		const market = event.eventMarkets[0]
+		return market?.selectedTimeframe ?? "1d"
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event, event?.eventMarkets[0]?.selectedTimeframe])
+
+	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
+
+	// Function to fetch price history for a specific timeframe
+	const fetchTimeframeData = useCallback(async (
+		timeframe: keyof OutcomePriceHistories,
+		skipTimeframeUpdate = false
+	): Promise<void> => {
+		if (!selectedOutcome || !event) return
+
+		// Check if already retrieving
+		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe)) {
+			return
+		}
+
+		// Check if data already exists
+		const existingData = selectedOutcome.priceHistory[timeframe]
+		if (existingData && existingData.length > 0) {
+			// Only update timeframe state if not skipping (e.g., when called from button click)
+			if (!skipTimeframeUpdate) {
+				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
+			}
+			return
+		}
+
+		setIsLoadingTimeframe(true)
+		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe, true)
+		try {
+			const config = timeframeConfig[timeframe]
+			const priceHistoryResponse = await retrieveOutcomePriceHistory({
+				market: selectedOutcome.clobTokenId as string,
+				interval: config.interval,
+				fidelity: config.fidelity
+			})
+			eventsClass.setOutcomePriceHistory(
+				event.eventSlug,
+				selectedOutcome.clobTokenId,
+				timeframe,
+				priceHistoryResponse.history
+			)
+			// Only update timeframe state if not skipping (e.g., when called from button click)
+			if (!skipTimeframeUpdate) {
+				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
+			}
+		} catch (error) {
+			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
+			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe, false)
+		} finally {
+			setIsLoadingTimeframe(false)
+		}
+	}, [selectedOutcome, event])
+
+	// Handle timeframe button click
+	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
+		if (isLoadingTimeframe) return
+		void fetchTimeframeData(timeframe)
+	}, [fetchTimeframeData, isLoadingTimeframe])
+
+	// Automatically fetch current timeframe data when outcome changes (if data doesn't exist)
+	useEffect((): void => {
+		if (!selectedOutcome || !event || isLoadingTimeframe) return
+
+		// Don't fetch if already retrieving
+		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, selectedTimeframe)) {
+			return
+		}
+
+		const currentTimeframeData = selectedOutcome.priceHistory[selectedTimeframe]
+		// If current timeframe doesn't have data for this outcome, fetch it automatically
+		// Skip timeframe update since we're already on this timeframe
+		if (!currentTimeframeData || currentTimeframeData.length === 0) {
+			void fetchTimeframeData(selectedTimeframe, true)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedOutcome, selectedTimeframe])
+
 	if (isUndefined(event)) {
 		return (
 			<div className="flex items-center justify-center h-full">
@@ -55,7 +152,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		)
 	}
 
-
 	const formatDate = (date: Date): string => {
 		return new Intl.DateTimeFormat("en-US", {
 			month: "short",
@@ -63,8 +159,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			year: "numeric"
 		}).format(new Date(date))
 	}
-
-	const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
 
 	return (
 		<ContainerLayout>
@@ -104,10 +198,42 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					<div className="flex-2 flex flex-col gap-4 min-h-0">
 						<div className="flex-1 min-h-0">
 							<div className="bg-sidebar-blue rounded-lg p-4 h-full border-2 border-white/30">
-								{yesOutcome?.priceHistory && (
-									<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
+								{selectedOutcome?.priceHistory[selectedTimeframe] &&
+									selectedOutcome.priceHistory[selectedTimeframe].length > 0 && (
+									<PriceHistoryChart
+										priceHistory={selectedOutcome.priceHistory[selectedTimeframe].map(
+											(entry): SinglePriceSnapshot => ({
+												timestamp: new Date(entry.t * 1000),
+												price: entry.p
+											})
+										)}
+									/>
 								)}
 							</div>
+						</div>
+						{/* Timeframe Selector */}
+						<div className="flex gap-2 justify-center">
+							{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
+								(timeframe): React.ReactNode => (
+									<Button
+										key={timeframe}
+										variant={selectedTimeframe === timeframe ? "default" : "outline"}
+										size="sm"
+										onClick={(): void => handleTimeframeClick(timeframe)}
+										disabled={isLoadingTimeframe}
+										className={cn(
+											"min-w-[60px]",
+											selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+										)}
+									>
+										{isLoadingTimeframe && selectedTimeframe === timeframe ? (
+											<Spinner className="size-4" />
+										) : (
+											timeframeConfig[timeframe].label
+										)}
+									</Button>
+								)
+							)}
 						</div>
 					</div>
 
