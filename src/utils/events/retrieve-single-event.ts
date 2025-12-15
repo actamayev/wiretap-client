@@ -39,8 +39,9 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 			const market = event.eventMarkets[0]
 			if (market) {
 				const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-				if (yesOutcome && polymarketWebSocketClient.isWebSocketConnected()) {
-					polymarketWebSocketClient.addToSubscription([yesOutcome.clobTokenId])
+				if (yesOutcome) {
+					// addToSubscription handles connection state - will connect if needed
+					await polymarketWebSocketClient.addToSubscription([yesOutcome.clobTokenId])
 				}
 			}
 		}

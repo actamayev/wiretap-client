@@ -173,8 +173,12 @@ class EventsClass {
 				// (This happens for both Yes and No outcomes)
 				// Add to all intervals for real-time updates
 				if (priceUpdate.midpointPrice !== null) {
+					// Use timestamp from WebSocket message if available, otherwise use current time
+					// WebSocket timestamp is in milliseconds, but PriceHistoryEntry.t expects seconds (Unix timestamp)
+					const timestampMs = priceUpdate.timestamp ?? new Date().getTime()
+					const timestampSeconds = Math.floor(timestampMs / 1000)
 					const priceEntry: PriceHistoryEntry = {
-						t: new Date().getTime(),
+						t: timestampSeconds,
 						p: priceUpdate.midpointPrice ?? 0
 					}
 					outcome.priceHistory["1h"].push(priceEntry)

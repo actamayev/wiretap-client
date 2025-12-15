@@ -41,18 +41,12 @@ class PolymarketWebSocketClient {
 				console.info("✅ WebSocket connected")
 				this.isConnected = true
 
-				// Subscribe to market channel
-				const subscription: MarketChannelSubscription = {
-					type: "market",
-					assets_ids: Array.from(this.clobTokenIds)
-				}
-
-				this.ws?.send(JSON.stringify(subscription))
-				console.info(`📡 Subscribed to ${this.clobTokenIds.size} markets`)
-
-				// Start ping interval
-				this.startPingInterval()
-				resolve()
+				// Use setTimeout to ensure WebSocket is fully ready before sending
+				setTimeout((): void => {
+					this.sendSubscription()
+					this.startPingInterval()
+					resolve()
+				}, 0)
 			}
 
 			this.ws.onmessage = (event: MessageEvent): void => {
@@ -66,13 +60,36 @@ class PolymarketWebSocketClient {
 				reject(errorObj)
 			}
 
-			this.ws.onclose = (): void => {
-				console.info("🔌 WebSocket closed")
+			this.ws.onclose = (event: CloseEvent): void => {
+				const reason = event.reason || "No reason provided"
+				console.info(
+					`🔌 WebSocket closed - Code: ${event.code}, Reason: ${reason}, WasClean: ${event.wasClean}`
+				)
 				this.isConnected = false
 				this.stopPingInterval()
 				this.callbacks.onClose?.()
 			}
 		})
+	}
+
+	/**
+	 * Send subscription message to WebSocket
+	 * Ensures WebSocket is OPEN before sending
+	 */
+	private sendSubscription(): void {
+		if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+			console.error("❌ Cannot send subscription - WebSocket not open")
+			return
+		}
+
+		// Subscribe to market channel
+		const subscription: MarketChannelSubscription = {
+			type: "market",
+			assets_ids: Array.from(this.clobTokenIds)
+		}
+
+		this.ws.send(JSON.stringify(subscription))
+		console.info(`📡 Subscribed to ${this.clobTokenIds.size} markets`)
 	}
 
 	/**
@@ -124,13 +141,17 @@ class PolymarketWebSocketClient {
 
 	private processMessageString(messageStr: string): void {
 		// Handle PONG responses (not JSON)
-		if (messageStr === "PONG") return
+		if (messageStr === "PONG") {
+			console.debug("📥 Received PONG")
+			return
+		}
 
 		try {
 			const parsed = JSON.parse(messageStr)
 
 			// Handle array of messages (initial book snapshots)
 			if (Array.isArray(parsed)) {
+				console.debug(`📥 Received array of ${parsed.length} messages`)
 				for (const message of parsed) {
 					this.processMessage(message)
 				}
@@ -138,9 +159,10 @@ class PolymarketWebSocketClient {
 			}
 
 			// Handle single message
+			console.debug("📥 Received message:", parsed.event_type || "unknown")
 			this.processMessage(parsed)
 		} catch (error) {
-			console.error("Failed to parse WebSocket message:", error)
+			console.error("Failed to parse WebSocket message:", error, "Raw message:", messageStr)
 		}
 	}
 
@@ -177,6 +199,9 @@ class PolymarketWebSocketClient {
 	 * Handle price_change messages and update events class and funds class
 	 */
 	private handlePriceChange(message: PolymarketPriceChangeMessage): void {
+		// Parse timestamp from WebSocket message (milliseconds as string)
+		const timestamp = message.timestamp ? parseInt(message.timestamp, 10) : undefined
+
 		for (const priceChange of message.price_changes) {
 			const bestBid = parseFloat(priceChange.best_bid)
 			const bestAsk = parseFloat(priceChange.best_ask)
@@ -188,7 +213,8 @@ class PolymarketWebSocketClient {
 
 			const priceUpdate: PriceUpdate = {
 				clobTokenId: priceChange.asset_id,
-				midpointPrice
+				midpointPrice,
+				timestamp
 			}
 
 			// Update events class with price update
@@ -274,31 +300,29 @@ class PolymarketWebSocketClient {
 	/**
 	 * Add clob token IDs to the existing subscription
 	 * Merges new tokens with current subscription (Set automatically prevents duplicates)
+	 * Note: Polymarket's WebSocket requires reconnection to update subscriptions
 	 */
-	public addToSubscription(clobTokenIds: ClobTokenId[]): void {
-		if (!this.isConnected || !this.ws || this.ws.readyState !== WebSocket.OPEN) {
-			console.error("❌ Cannot add to subscription - WebSocket not connected")
-			return
-		}
-
+	public async addToSubscription(clobTokenIds: ClobTokenId[]): Promise<void> {
 		const initialSize = this.clobTokenIds.size
 		// Add all new tokens to Set (duplicates are automatically ignored)
 		for (const tokenId of clobTokenIds) {
 			this.clobTokenIds.add(tokenId)
 		}
 
-		// Only update if we have new tokens
+		// Only reconnect if we have new tokens
 		if (this.clobTokenIds.size === initialSize) return
 
 		const addedCount = this.clobTokenIds.size - initialSize
 		console.info(`➕ Adding ${addedCount} assets to subscription (total: ${this.clobTokenIds.size})...`)
 
-		const subscription: MarketChannelSubscription = {
-			type: "market",
-			assets_ids: Array.from(this.clobTokenIds)
+		// Polymarket's WebSocket doesn't support subscription updates
+		// We need to reconnect with the full list of tokens
+		if (this.isConnected) {
+			await this.disconnect()
 		}
 
-		this.ws.send(JSON.stringify(subscription))
+		// Connect (or reconnect) with updated token list
+		await this.connect(Array.from(this.clobTokenIds))
 		console.info("✅ Subscription updated with new tokens")
 	}
 }

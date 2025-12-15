@@ -32,23 +32,22 @@ export default async function retrieveAllEvents(): Promise<void> {
 		await Promise.allSettled(priceHistoryPromises)
 
 		// Add all Yes outcome clob tokens to WebSocket subscription
-		if (polymarketWebSocketClient.isWebSocketConnected()) {
-			const clobTokenIds: ClobTokenId[] = []
-			for (const eventMetadata of eventsResponse.data.events) {
-				const event = eventsClass.events.get(eventMetadata.eventSlug)
-				if (event) {
-					const market = event.eventMarkets[0]
-					if (market) {
-						const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-						if (yesOutcome) {
-							clobTokenIds.push(yesOutcome.clobTokenId)
-						}
+		const clobTokenIds: ClobTokenId[] = []
+		for (const eventMetadata of eventsResponse.data.events) {
+			const event = eventsClass.events.get(eventMetadata.eventSlug)
+			if (event) {
+				const market = event.eventMarkets[0]
+				if (market) {
+					const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+					if (yesOutcome) {
+						clobTokenIds.push(yesOutcome.clobTokenId)
 					}
 				}
 			}
-			if (clobTokenIds.length > 0) {
-				polymarketWebSocketClient.addToSubscription(clobTokenIds)
-			}
+		}
+		if (clobTokenIds.length > 0) {
+			// addToSubscription handles connection state - will connect if needed
+			await polymarketWebSocketClient.addToSubscription(clobTokenIds)
 		}
 	} catch (error) {
 		console.error(error)
