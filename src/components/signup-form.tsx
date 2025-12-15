@@ -27,8 +27,7 @@ import GoogleSignIn from "@/components/auth/google/google-sign-in"
 import OrComponent from "@/components/auth/or-component"
 import ErrorMessage from "@/components/messages/error-message"
 import registerSubmit from "@/utils/auth/submit/register-submit"
-import { registerSchema } from "@/utils/auth/auth-schemas"
-import UsernameInput from "@/components/auth/username-input"
+import { authSchema } from "@/utils/auth/auth-schemas"
 import PasswordField from "@/components/auth/password-input"
 import authClass from "@/classes/auth-class"
 
@@ -44,16 +43,15 @@ function SignupForm({
 	const [error, setError] = useState("")
 	const pathname = usePathname()
 
-	const form = useForm<IncomingRegisterRequest>({
-		resolver: zodResolver(registerSchema),
+	const form = useForm<IncomingAuthRequest>({
+		resolver: zodResolver(authSchema),
 		defaultValues: {
 			email: "",
-			username: "",
 			password: "",
 		}
 	})
 
-	const onSubmit = useCallback(async (values: IncomingRegisterRequest): Promise<void> => {
+	const onSubmit = useCallback(async (values: IncomingAuthRequest): Promise<void> => {
 		await registerSubmit(values, setError)
 	}, [])
 
@@ -72,11 +70,6 @@ function SignupForm({
 							{error && <ErrorMessage error={error} />}
 
 							<FieldGroup>
-								<Field>
-									<FieldLabel htmlFor="username">Username</FieldLabel>
-									<UsernameInput control={form.control} />
-								</Field>
-
 								<Field>
 									<FieldLabel htmlFor="email">Email</FieldLabel>
 									<FormField

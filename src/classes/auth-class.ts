@@ -8,7 +8,6 @@ class AuthClass {
 
 	// Auth state is now managed by server middleware, but we keep these for UI state
 	private _isAuthenticated = false
-	private _hasCompletedSignup = false
 	public isLoggingOut = false  // NEW
 
 	constructor() {
@@ -20,17 +19,8 @@ class AuthClass {
 		return this._isAuthenticated
 	}
 
-	get isFinishedWithSignup(): boolean {
-		return this._isAuthenticated && this._hasCompletedSignup
-	}
-
-	// Update auth state from server (called by components that receive server auth state)
-	public setAuthState = action((authState: {
-		isAuthenticated: boolean
-		hasCompletedSignup: boolean
-	}): void => {
-		this._isAuthenticated = authState.isAuthenticated
-		this._hasCompletedSignup = authState.hasCompletedSignup
+	public setIsAuthenticated = action((isAuthenticated: boolean): void => {
+		this._isAuthenticated = isAuthenticated
 	})
 
 	public setAuthenticating = action((authenticating: boolean): void => {
@@ -48,7 +38,6 @@ class AuthClass {
 	public logout = action((): void => {
 		// Just reset local auth state - your logout util handles the rest
 		this._isAuthenticated = false
-		this._hasCompletedSignup = false
 		this.setShowLoginOrRegister("Register")
 		this.setAuthenticating(false)
 	})

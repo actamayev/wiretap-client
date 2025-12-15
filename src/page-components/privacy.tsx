@@ -16,7 +16,7 @@ export default function PrivacyPage(): React.ReactNode {
 
 					<ComplianceSectionHeader>1. Information We Collect</ComplianceSectionHeader>
 					<ComplianceParagraph>
-						(a) Account Information: Email address, username, password (encrypted)
+						(a) Account Information: Email address, password (encrypted)
 					</ComplianceParagraph>
 					<ComplianceParagraph>
 						(b) Usage Data: Platform activity, simulated trades, paper portfolio data, strategy performance

@@ -5,15 +5,12 @@ import isEqual from "lodash-es/isEqual"
 import isEmailValid from "./is-email-valid"
 
 export default function confirmRegisterFields(
-	credentials: IncomingRegisterRequest,
+	credentials: IncomingAuthRequest,
 	setError: (error: string) => void
 ): boolean {
 	const contactType = isEmailValid(credentials.email)
 
-	if (
-		isEmpty(credentials.email) || isEmpty(credentials.password) ||
-		isEmpty(credentials.username)
-	) {
+	if (isEmpty(credentials.email) || isEmpty(credentials.password)) {
 		setError("Let's get your account set up! Fill in all fields to get started")
 		return false
 	} else if (isEqual(contactType, "Unknown")) {

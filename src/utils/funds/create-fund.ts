@@ -8,7 +8,7 @@ import fundsClass from "../../classes/funds-class"
 
 export default async function createFund(): Promise<FundsUUID | undefined> {
 	try {
-		if (authClass.isFinishedWithSignup === false) return
+		if (authClass.isLoggedIn === false) return
 
 		const fundInformation = fundsClass.createFundData
 		const createFundResponse = await wiretapApiClient.fundsDataService.createFund(fundInformation)

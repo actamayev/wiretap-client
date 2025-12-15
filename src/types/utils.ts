@@ -18,10 +18,6 @@ declare global {
 
 	//Auth
 	type LoginOrRegister = "Login" | "Register"
-
-	interface NewGoogleInfoFormValues {
-		username: string
-	}
 }
 
 export {}

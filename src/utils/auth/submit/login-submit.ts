@@ -10,7 +10,7 @@ import setErrorAxiosResponse from "../../error-handling/set-error-axios-response
 import fundsClass from "../../../classes/funds-class"
 
 export default async function loginSubmit(
-	loginInformation: IncomingLoginRequest,
+	loginInformation: IncomingAuthRequest,
 	setError: (error: string) => void
 ) : Promise<boolean> {
 	try {
@@ -24,10 +24,7 @@ export default async function loginSubmit(
 			setError("Unable to log in. Please reload the page and try again")
 			return false
 		}
-		authClass.setAuthState({
-			isAuthenticated: true,
-			hasCompletedSignup: true
-		})
+		authClass.setIsAuthenticated(true)
 		personalInfoClass.setRetrievedPersonalData(response.data.personalInfo)
 		fundsClass.setFunds(response.data.funds)
 		return true

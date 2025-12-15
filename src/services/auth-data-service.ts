@@ -7,7 +7,7 @@ export default class AuthDataService extends BaseDataService {
 		super(httpClient, pathHeader)
 	}
 
-	async login(loginInformation: IncomingLoginRequest): Promise<AxiosResponse<LoginSuccess | NonSuccessResponse>> {
+	async login(loginInformation: IncomingAuthRequest): Promise<AxiosResponse<LoginSuccess | NonSuccessResponse>> {
 		return await this.httpClient.http.post<LoginSuccess | NonSuccessResponse>(
 			this.buildUrl("/login"), { loginInformation }
 		)
@@ -19,15 +19,9 @@ export default class AuthDataService extends BaseDataService {
 		)
 	}
 
-	async register(registerInformation: IncomingRegisterRequest): Promise<AxiosResponse<AllMyFundsResponse | NonSuccessResponse>> {
+	async register(registerInformation: IncomingAuthRequest): Promise<AxiosResponse<AllMyFundsResponse | NonSuccessResponse>> {
 		return await this.httpClient.http.post<AllMyFundsResponse | NonSuccessResponse>(
 			this.buildUrl("/register"), { registerInformation }
-		)
-	}
-
-	async registerGoogleInfo(googleInfo: NewGoogleInfoRequest): Promise<AxiosResponse<NewGoogleUserResponse | NonSuccessResponse>> {
-		return await this.httpClient.http.post<NewGoogleUserResponse | NonSuccessResponse>(
-			this.buildUrl("/register-google-info"), { ...googleInfo }
 		)
 	}
 
