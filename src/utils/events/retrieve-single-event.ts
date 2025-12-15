@@ -6,6 +6,7 @@ import authClass from "../../classes/auth-class"
 import eventsClass from "../../classes/events-class"
 import { isNonSuccessResponse } from "../type-checks"
 import wiretapApiClient from "../../classes/wiretap-api-client-class"
+import retrieveEventPriceHistory from "./retrieve-event-price-history"
 
 export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise<void> {
 	try {
@@ -26,7 +27,12 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 			throw Error ("Unable to retrieve event")
 		}
 
-		eventsClass.addEvent(eventSlug, eventsResponse.data.event)
+		eventsClass.addSingleEventMetadata(eventSlug, eventsResponse.data.event)
+
+		// Fetch price history for each outcome (1D interval)
+		await retrieveEventPriceHistory(eventSlug)
+
+		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)
 	} catch (error) {
 		console.error(error)
 		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)

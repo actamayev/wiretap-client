@@ -40,7 +40,7 @@ const parseAmountValue = (value: string): string => {
 
 
 // eslint-disable-next-line max-lines-per-function, complexity
-function TradeCard({ event }: { event: ExtendedSingleEvent }): React.ReactNode {
+function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const updateClobToken = (outcome: OutcomeString): void => {
