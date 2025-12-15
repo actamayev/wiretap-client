@@ -14,7 +14,7 @@ interface WebSocketClientCallbacks {
 class PolymarketWebSocketClient {
 	private ws: WebSocket | null = null
 	private pingInterval: ReturnType<typeof setInterval> | null = null
-	private clobTokenIds: ClobTokenId[] = []
+	private clobTokenIds: Set<ClobTokenId> = new Set()
 	private callbacks: WebSocketClientCallbacks
 	private isConnected = false
 
@@ -31,7 +31,7 @@ class PolymarketWebSocketClient {
 			await this.disconnect()
 		}
 
-		this.clobTokenIds = clobTokenIds
+		this.clobTokenIds = new Set(clobTokenIds)
 		console.info(`🔌 Connecting to Polymarket WebSocket with ${clobTokenIds.length} assets...`)
 
 		return new Promise<void>((resolve, reject): void => {
@@ -44,11 +44,11 @@ class PolymarketWebSocketClient {
 				// Subscribe to market channel
 				const subscription: MarketChannelSubscription = {
 					type: "market",
-					assets_ids: this.clobTokenIds
+					assets_ids: Array.from(this.clobTokenIds)
 				}
 
 				this.ws?.send(JSON.stringify(subscription))
-				console.info(`📡 Subscribed to ${this.clobTokenIds.length} markets`)
+				console.info(`📡 Subscribed to ${this.clobTokenIds.size} markets`)
 
 				// Start ping interval
 				this.startPingInterval()
@@ -150,6 +150,7 @@ class PolymarketWebSocketClient {
 	private processMessage(message: PolymarketMarketChannelMessage): void {
 		switch (message.event_type) {
 			case "price_change":
+				console.log("price_change", message)
 				this.handlePriceChange(message)
 				this.callbacks.onPriceChange?.(message)
 				break
@@ -254,12 +255,12 @@ class PolymarketWebSocketClient {
 			return
 		}
 
-		this.clobTokenIds = clobTokenIds
+		this.clobTokenIds = new Set(clobTokenIds)
 		console.info(`🔄 Updating subscription to ${clobTokenIds.length} assets...`)
 
 		const subscription: MarketChannelSubscription = {
 			type: "market",
-			assets_ids: this.clobTokenIds
+			assets_ids: Array.from(this.clobTokenIds)
 		}
 
 		this.ws.send(JSON.stringify(subscription))
@@ -267,7 +268,38 @@ class PolymarketWebSocketClient {
 	}
 
 	public getCurrentSubscription(): ClobTokenId[] {
-		return [...this.clobTokenIds]
+		return Array.from(this.clobTokenIds)
+	}
+
+	/**
+	 * Add clob token IDs to the existing subscription
+	 * Merges new tokens with current subscription (Set automatically prevents duplicates)
+	 */
+	public addToSubscription(clobTokenIds: ClobTokenId[]): void {
+		if (!this.isConnected || !this.ws || this.ws.readyState !== WebSocket.OPEN) {
+			console.error("❌ Cannot add to subscription - WebSocket not connected")
+			return
+		}
+
+		const initialSize = this.clobTokenIds.size
+		// Add all new tokens to Set (duplicates are automatically ignored)
+		for (const tokenId of clobTokenIds) {
+			this.clobTokenIds.add(tokenId)
+		}
+
+		// Only update if we have new tokens
+		if (this.clobTokenIds.size === initialSize) return
+
+		const addedCount = this.clobTokenIds.size - initialSize
+		console.info(`➕ Adding ${addedCount} assets to subscription (total: ${this.clobTokenIds.size})...`)
+
+		const subscription: MarketChannelSubscription = {
+			type: "market",
+			assets_ids: Array.from(this.clobTokenIds)
+		}
+
+		this.ws.send(JSON.stringify(subscription))
+		console.info("✅ Subscription updated with new tokens")
 	}
 }
 
