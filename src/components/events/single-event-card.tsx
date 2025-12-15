@@ -153,8 +153,11 @@ function SingleEventCard({ event }: SingleEventCardProps): React.ReactNode {
 						<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
 							{((): React.ReactNode => {
 								const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-								return yesOutcome?.priceHistory && (
-									<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
+								return yesOutcome?.priceHistory["1d"] && yesOutcome.priceHistory["1d"].length > 0 && (
+									<PriceHistoryChart priceHistory={yesOutcome.priceHistory["1d"].map((entry): SinglePriceSnapshot => ({
+										timestamp: new Date(entry.t * 1000),
+										price: entry.p
+									}))} />
 								)
 							})()}
 						</div>

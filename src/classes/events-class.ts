@@ -39,7 +39,13 @@ class EventsClass {
 				noPrice: 1 - (((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2),
 				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
 					...outcome,
-					priceHistory: []
+					priceHistory: {
+						"1h": [],
+						"1d": [],
+						"1w": [],
+						"1m": [],
+						max: []
+					}
 				}))
 			}))
 		}
@@ -55,6 +61,22 @@ class EventsClass {
 
 	public setSearchTerm = action((newSearchTerm: string): void => {
 		this.searchTerm = newSearchTerm
+	})
+
+	public setOutcomePriceHistory = action((
+		eventSlug: EventSlug,
+		outcomeClobTokenId: ClobTokenId,
+		interval: keyof OutcomePriceHistories,
+		priceHistory: PriceHistoryEntry[]
+	): void => {
+		const event = this.events.get(eventSlug)
+		if (!event) return
+		const market = event.eventMarkets[0]
+		const outcome = market.outcomes.find(
+			(singleOutcome): boolean => singleOutcome.clobTokenId === outcomeClobTokenId
+		)
+		if (!outcome) return
+		outcome.priceHistory[interval] = priceHistory
 	})
 
 	// eslint-disable-next-line complexity
@@ -82,11 +104,17 @@ class EventsClass {
 
 				// Add price snapshot to outcome's price history if bestAsk is available
 				// (This happens for both Yes and No outcomes)
+				// Add to all intervals for real-time updates
 				if (priceUpdate.midpointPrice !== null) {
-					outcome.priceHistory.push({
-						timestamp: new Date(),
-						price: priceUpdate.midpointPrice ?? 0
-					})
+					const priceEntry: PriceHistoryEntry = {
+						t: new Date().getTime(),
+						p: priceUpdate.midpointPrice ?? 0
+					}
+					outcome.priceHistory["1h"].push(priceEntry)
+					outcome.priceHistory["1d"].push(priceEntry)
+					outcome.priceHistory["1w"].push(priceEntry)
+					outcome.priceHistory["1m"].push(priceEntry)
+					outcome.priceHistory.max.push(priceEntry)
 				}
 
 				return // Found and updated, exit early

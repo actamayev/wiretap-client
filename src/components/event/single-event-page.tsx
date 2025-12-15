@@ -15,7 +15,7 @@ import PriceHistoryChart from "../price-history-chart"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 
-
+// eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
@@ -47,6 +47,16 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event?.eventTitle])
 
+
+	// Get the selected outcome based on tradeClass.selectedMarket
+	const selectedOutcome = useMemo((): SingleOutcome | undefined => {
+		if (!event) return undefined
+		const market = event.eventMarkets[0]
+		if (!market) return undefined
+		return market.outcomes.find((outcome): boolean => outcome.outcome === tradeClass.selectedMarket)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event, tradeClass.selectedMarket])
+
 	if (isUndefined(event)) {
 		return (
 			<div className="flex items-center justify-center h-full">
@@ -55,7 +65,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		)
 	}
 
-
 	const formatDate = (date: Date): string => {
 		return new Intl.DateTimeFormat("en-US", {
 			month: "short",
@@ -63,8 +72,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			year: "numeric"
 		}).format(new Date(date))
 	}
-
-	const yesOutcome = event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
 
 	return (
 		<ContainerLayout>
@@ -104,8 +111,11 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 					<div className="flex-2 flex flex-col gap-4 min-h-0">
 						<div className="flex-1 min-h-0">
 							<div className="bg-sidebar-blue rounded-lg p-4 h-full border-2 border-white/30">
-								{yesOutcome?.priceHistory && (
-									<PriceHistoryChart priceHistory={yesOutcome.priceHistory} />
+								{selectedOutcome?.priceHistory["1d"] && selectedOutcome.priceHistory["1d"].length > 0 && (
+									<PriceHistoryChart priceHistory={selectedOutcome.priceHistory["1d"].map((entry): SinglePriceSnapshot => ({
+										timestamp: new Date(entry.t * 1000),
+										price: entry.p
+									}))} />
 								)}
 							</div>
 						</div>

@@ -10,7 +10,20 @@ declare global {
 	}
 
 	interface SingleOutcome extends SingleOutcomeMetadata {
-		priceHistory: SinglePriceSnapshot[]
+		priceHistory: OutcomePriceHistories
+	}
+
+	interface OutcomePriceHistories {
+		"1h": PriceHistoryEntry[]
+		"1d": PriceHistoryEntry[]
+		"1w": PriceHistoryEntry[]
+		"1m": PriceHistoryEntry[]
+		max: PriceHistoryEntry[]
+	}
+
+	interface PriceHistoryEntry {
+		t: number
+		p: number
 	}
 
 	interface SinglePriceSnapshot {
