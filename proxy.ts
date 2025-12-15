@@ -1,29 +1,6 @@
 import { jwtVerify } from "jose"
 import { NextRequest, NextResponse } from "next/server"
 
-interface JwtPayload {
-	userId: number
-	isActive?: boolean
-	iat?: number
-	exp?: number
-}
-
-// Helper function to clear auth cookie
-function clearAuthCookie(response: NextResponse): void {
-	response.cookies.set("auth_token", "", {
-		expires: new Date(0),
-		path: "/",
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "lax"
-	})
-}
-
-// Helper function to create redirect response
-function createRedirect(request: NextRequest, path: PageNames): NextResponse {
-	return NextResponse.redirect(new URL(path, request.url))
-}
-
 export async function proxy(request: NextRequest): Promise<NextResponse> {
 	try {
 		// Get JWT from cookie
@@ -31,7 +8,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 
 		let userId: number | null = null
 
-		// Step 1: Token Extraction & Validation
+		// Token Extraction & Validation
 		if (token) {
 			try {
 				const secret = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -45,32 +22,20 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
 			}
 		}
 
-		if (!userId) {
-			const response = createRedirect(request, "/")
-			clearAuthCookie(response)
-			return response
-		}
-		return handleAuthenticated({ userId })
+		// Always allow request through, regardless of auth status
+		// Client-side components will handle showing login/signup forms for protected routes
+		return handleNext(userId)
 	} catch (error) {
 		console.error("Middleware error:", error)
-		// On any error, treat as unauthenticated
-		return handleUnauthenticated()
+		// On any error, treat as unauthenticated but still allow through
+		return handleNext(null)
 	}
 }
 
-function handleUnauthenticated(): NextResponse {
+function handleNext(userId: number | null): NextResponse {
 	const response = NextResponse.next()
 
-	const authData = { userId: null }
-	response.headers.set("x-auth-data", JSON.stringify(authData))
-
-	return response
-}
-
-function handleAuthenticated(auth: { userId: number }): NextResponse {
-	const response = NextResponse.next()
-
-	const authData = { userId: auth.userId }
+	const authData = { userId }
 	response.headers.set("x-auth-data", JSON.stringify(authData))
 
 	return response

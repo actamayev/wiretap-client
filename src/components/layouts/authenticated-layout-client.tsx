@@ -2,13 +2,12 @@
 import { observer } from "mobx-react"
 import { usePathname } from "next/navigation"
 import authClass from "@/classes/auth-class"
-import { AuthState } from "@/lib/auth-server"
 import LoginForm from "@/components/login-form"
 import SignupForm from "@/components/signup-form"
 
 interface AuthenticatedLayoutClientProps {
 	children: React.ReactNode
-	authState: AuthState
+	userId: number | null
 }
 
 function checkRequiresAuth(pathname: string): boolean {
@@ -17,18 +16,18 @@ function checkRequiresAuth(pathname: string): boolean {
 		pathname.startsWith("/funds/")
 }
 
-function getIsAuthenticated(authState: AuthState): boolean {
+function getIsAuthenticated(userId: number | null): boolean {
 	return authClass.isLoggingOut
 		? authClass.isLoggedIn
-		: (authClass.isLoggedIn || authState.userId !== null)
+		: (authClass.isLoggedIn || userId !== null)
 }
 
 function AuthenticatedLayoutClient({
 	children,
-	authState
+	userId
 }: AuthenticatedLayoutClientProps): React.ReactNode {
 	const pathname = usePathname()
-	const isAuthenticated = getIsAuthenticated(authState)
+	const isAuthenticated = getIsAuthenticated(userId)
 
 	// If authenticated and complete, show the protected content
 	if (isAuthenticated) {
