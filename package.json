@@ -14,6 +14,13 @@
     "postinstall": "next telemetry disable",
     "check-unused": "ts-unused-exports tsconfig.json --excludePathsFromReport=\"test|spec|\\.next|proxy\\.ts|app/(manifest|robots|sitemap).ts|app/(layout|not-found).tsx|src/components/ui|app/.*/page\\.tsx\""
   },
+  "depcheck": {
+    "ignores": [
+      "@tailwindcss/postcss",
+      "tailwindcss",
+      "tw-animate-css"
+    ]
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.11",
