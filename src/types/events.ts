@@ -11,6 +11,7 @@ declare global {
 
 	interface SingleOutcome extends SingleOutcomeMetadata {
 		priceHistory: OutcomePriceHistories
+		retrievingPriceHistories: Array<keyof OutcomePriceHistories>
 	}
 
 	interface OutcomePriceHistories {

@@ -81,6 +81,11 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	): Promise<void> => {
 		if (!selectedOutcome || !event) return
 
+		// Check if already retrieving
+		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe)) {
+			return
+		}
+
 		// Check if data already exists
 		const existingData = selectedOutcome.priceHistory[timeframe]
 		if (existingData && existingData.length > 0) {
@@ -92,6 +97,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		}
 
 		setIsLoadingTimeframe(true)
+		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe, true)
 		try {
 			const config = timeframeConfig[timeframe]
 			const priceHistoryResponse = await retrieveOutcomePriceHistory({
@@ -111,6 +117,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			}
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
+			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe, false)
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
@@ -126,6 +133,11 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	// Automatically fetch current timeframe data when outcome changes (if data doesn't exist)
 	useEffect((): void => {
 		if (!selectedOutcome || !event || isLoadingTimeframe) return
+
+		// Don't fetch if already retrieving
+		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, selectedTimeframe)) {
+			return
+		}
 
 		const currentTimeframeData = selectedOutcome.priceHistory[selectedTimeframe]
 		// If current timeframe doesn't have data for this outcome, fetch it automatically

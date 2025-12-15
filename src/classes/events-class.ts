@@ -45,7 +45,8 @@ class EventsClass {
 						"1w": [],
 						"1m": [],
 						max: []
-					}
+					},
+					retrievingPriceHistories: []
 				}))
 			}))
 		}
@@ -77,7 +78,53 @@ class EventsClass {
 		)
 		if (!outcome) return
 		outcome.priceHistory[interval] = priceHistory
+		// Remove from retrieving array when data is set
+		outcome.retrievingPriceHistories = outcome.retrievingPriceHistories.filter(
+			(timeframe): boolean => timeframe !== interval
+		)
 	})
+
+	public setIsRetrievingPriceHistory = action((
+		eventSlug: EventSlug,
+		outcomeClobTokenId: ClobTokenId,
+		interval: keyof OutcomePriceHistories,
+		isRetrieving: boolean
+	): void => {
+		const event = this.events.get(eventSlug)
+		if (!event) return
+		const market = event.eventMarkets[0]
+		const outcome = market.outcomes.find(
+			(singleOutcome): boolean => singleOutcome.clobTokenId === outcomeClobTokenId
+		)
+		if (!outcome) return
+
+		if (isRetrieving) {
+			// Add to retrieving array if not already present
+			if (!outcome.retrievingPriceHistories.includes(interval)) {
+				outcome.retrievingPriceHistories.push(interval)
+			}
+		} else {
+			// Remove from retrieving array
+			outcome.retrievingPriceHistories = outcome.retrievingPriceHistories.filter(
+				(timeframe): boolean => timeframe !== interval
+			)
+		}
+	})
+
+	public isRetrievingPriceHistory = (
+		eventSlug: EventSlug,
+		outcomeClobTokenId: ClobTokenId,
+		interval: keyof OutcomePriceHistories
+	): boolean => {
+		const event = this.events.get(eventSlug)
+		if (!event) return false
+		const market = event.eventMarkets[0]
+		const outcome = market.outcomes.find(
+			(singleOutcome): boolean => singleOutcome.clobTokenId === outcomeClobTokenId
+		)
+		if (!outcome) return false
+		return outcome.retrievingPriceHistories.includes(interval)
+	}
 
 	// eslint-disable-next-line complexity
 	public updateOutcomePrice = action((priceUpdate: PriceUpdate): void => {
