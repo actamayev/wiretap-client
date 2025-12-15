@@ -35,16 +35,12 @@ class TradeClass {
 		this.marketId = marketId
 	})
 
-	private reset(): void {
+	public logout(): void {
 		this.tradeTab = "Buy"
 		this.selectedMarket = "Yes" as OutcomeString
 		this.selectedClobToken = undefined
 		this.amount = ""
 		this.marketId = undefined
-	}
-
-	public logout(): void {
-		this.reset()
 	}
 }
 
