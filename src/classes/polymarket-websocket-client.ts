@@ -1,0 +1,293 @@
+"use client"
+
+import { POLYMARKET_WS_URL, PING_INTERVAL_MS } from "../utils/constants/polymarket-websocket"
+import eventsClass from "./events-class"
+import fundsClass from "./funds-class"
+
+class PolymarketWebSocketClient {
+	private ws: WebSocket | null = null
+	private pingInterval: ReturnType<typeof setInterval> | null = null
+	private clobTokenIds: Set<ClobTokenId> = new Set()
+	private isConnected = false
+
+	constructor() {
+	}
+
+	/**
+	 * Connect to Polymarket WebSocket and subscribe to markets
+	 */
+	public async connect(clobTokenIds: ClobTokenId[]): Promise<void> {
+		if (this.isConnected) {
+			console.warn("⚠️ WebSocket already connected, disconnecting first...")
+			await this.disconnect()
+		}
+
+		this.clobTokenIds = new Set(clobTokenIds)
+		console.info(`🔌 Connecting to Polymarket WebSocket with ${clobTokenIds.length} assets...`)
+
+		return new Promise<void>((resolve, reject): void => {
+			this.ws = new WebSocket(POLYMARKET_WS_URL)
+
+			this.ws.onopen = (): void => {
+				console.info("✅ WebSocket connected")
+				this.isConnected = true
+
+				// Use setTimeout to ensure WebSocket is fully ready before sending
+				setTimeout((): void => {
+					this.sendSubscription()
+					this.startPingInterval()
+					resolve()
+				}, 0)
+			}
+
+			this.ws.onmessage = (event: MessageEvent): void => {
+				this.handleMessage(event.data)
+			}
+
+			this.ws.onerror = (error: Event): void => {
+				console.error("❌ WebSocket error:", error)
+				const errorObj = error instanceof Error ? error : new Error("WebSocket error occurred")
+				reject(errorObj)
+			}
+
+			this.ws.onclose = (event: CloseEvent): void => {
+				const reason = event.reason || "No reason provided"
+				console.info(
+					`🔌 WebSocket closed - Code: ${event.code}, Reason: ${reason}, WasClean: ${event.wasClean}`
+				)
+				this.isConnected = false
+				this.stopPingInterval()
+			}
+		})
+	}
+
+	/**
+	 * Send subscription message to WebSocket
+	 * Ensures WebSocket is OPEN before sending
+	 */
+	private sendSubscription(): void {
+		if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+			console.error("❌ Cannot send subscription - WebSocket not open")
+			return
+		}
+
+		// Subscribe to market channel
+		const subscription: MarketChannelSubscription = {
+			type: "market",
+			assets_ids: Array.from(this.clobTokenIds)
+		}
+
+		this.ws.send(JSON.stringify(subscription))
+		console.info(`📡 Subscribed to ${this.clobTokenIds.size} markets`)
+	}
+
+	/**
+	 * Disconnect from WebSocket
+	 */
+	private disconnect(): Promise<void> {
+		if (!this.ws) return Promise.resolve()
+
+		console.info("🔌 Disconnecting WebSocket...")
+		this.stopPingInterval()
+		this.isConnected = false
+
+		return new Promise<void>((resolve): void => {
+			if (this.ws?.readyState === WebSocket.OPEN) {
+				this.ws.close()
+				this.ws.onclose = (): void => {
+					this.ws = null
+					resolve()
+				}
+			} else {
+				this.ws = null
+				resolve()
+			}
+		})
+	}
+
+	private handleMessage(data: string | Blob | ArrayBuffer): void {
+		// Convert Blob or ArrayBuffer to string
+		let messageStr: string
+		if (typeof data === "string") {
+			messageStr = data
+		} else if (data instanceof Blob) {
+			// Handle Blob by reading as text (async, but we'll handle it synchronously for now)
+			const reader = new FileReader()
+			reader.onload = (): void => {
+				const text = reader.result as string
+				this.processMessageString(text)
+			}
+			reader.readAsText(data)
+			return
+		} else {
+			// ArrayBuffer - convert to string
+			const decoder = new TextDecoder()
+			messageStr = decoder.decode(data)
+		}
+
+		this.processMessageString(messageStr)
+	}
+
+	private processMessageString(messageStr: string): void {
+		// Handle PONG responses (not JSON)
+		if (messageStr === "PONG") {
+			console.debug("📥 Received PONG")
+			return
+		}
+
+		try {
+			const parsed = JSON.parse(messageStr)
+
+			// Handle array of messages (initial book snapshots)
+			if (Array.isArray(parsed)) {
+				console.debug(`📥 Received array of ${parsed.length} messages`)
+				for (const message of parsed) {
+					this.processMessage(message)
+				}
+				return
+			}
+
+			// Handle single message
+			console.debug("📥 Received message:", parsed.event_type || "unknown")
+			this.processMessage(parsed)
+		} catch (error) {
+			console.error("Failed to parse WebSocket message:", error, "Raw message:", messageStr)
+		}
+	}
+
+	/**
+	 * Process a single WebSocket message
+	 */
+	private processMessage(message: PolymarketMarketChannelMessage): void {
+		switch (message.event_type) {
+			case "price_change":
+				console.log("price_change", message)
+				this.handlePriceChange(message)
+				break
+
+			case "last_trade_price":
+				this.handleLastTradePrice(message)
+				break
+
+			case "book":
+			// We don't process full order book snapshots
+				break
+
+			case "tick_size_change":
+			// We don't track tick size changes
+				break
+
+			default:
+				console.warn("Unknown WebSocket message type:", message)
+		}
+	}
+
+	/**
+	 * Handle price_change messages and update events class and funds class
+	 */
+	private handlePriceChange(message: PolymarketPriceChangeMessage): void {
+		// Parse timestamp from WebSocket message (milliseconds as string)
+		const timestamp = message.timestamp ? parseInt(message.timestamp, 10) : undefined
+
+		for (const priceChange of message.price_changes) {
+			const bestBid = parseFloat(priceChange.best_bid)
+			const bestAsk = parseFloat(priceChange.best_ask)
+
+			// Calculate midpoint price
+			const midpointPrice = (!isNaN(bestBid) && !isNaN(bestAsk) && bestBid > 0 && bestAsk > 0)
+				? (bestBid + bestAsk) / 2
+				: null
+
+			const priceUpdate: PriceUpdate = {
+				clobTokenId: priceChange.asset_id,
+				midpointPrice,
+				timestamp
+			}
+
+			// Update events class with price update
+			eventsClass.updateOutcomePrice(priceUpdate)
+			// Update funds class with position price update
+			fundsClass.updatePositionPrice(priceUpdate)
+		}
+	}
+
+	/**
+	 * Handle last_trade_price messages and update events class and funds class
+	 */
+	private handleLastTradePrice(message: PolymarketLastTradePriceMessage): void {
+		const tradePrice = parseFloat(message.price)
+
+		// Use trade price as midpoint (or could fetch current best bid/ask)
+		const midpointPrice = !isNaN(tradePrice) && tradePrice > 0 ? tradePrice : null
+
+		const priceUpdate: PriceUpdate = {
+			clobTokenId: message.asset_id,
+			midpointPrice
+		}
+
+		// Update events class with price update
+		eventsClass.updateOutcomePrice(priceUpdate)
+		// Update funds class with position price update
+		fundsClass.updatePositionPrice(priceUpdate)
+	}
+
+	/**
+	 * Start sending PING messages every 10 seconds
+	 */
+	private startPingInterval(): void {
+		this.pingInterval = setInterval((): void => {
+			if (this.ws?.readyState === WebSocket.OPEN) {
+				this.ws.send("PING")
+			}
+		}, PING_INTERVAL_MS)
+	}
+
+	/**
+	 * Stop PING interval
+	 */
+	private stopPingInterval(): void {
+		if (!this.pingInterval) return
+		clearInterval(this.pingInterval)
+		this.pingInterval = null
+	}
+
+	/**
+	 * Check if WebSocket is connected
+	 */
+	public isWebSocketConnected(): boolean {
+		return this.isConnected && this.ws?.readyState === WebSocket.OPEN
+	}
+
+	/**
+	 * Add clob token IDs to the existing subscription
+	 * Merges new tokens with current subscription (Set automatically prevents duplicates)
+	 * Note: Polymarket's WebSocket requires reconnection to update subscriptions
+	 */
+	public async addToSubscription(clobTokenIds: ClobTokenId[]): Promise<void> {
+		const initialSize = this.clobTokenIds.size
+		// Add all new tokens to Set (duplicates are automatically ignored)
+		for (const tokenId of clobTokenIds) {
+			this.clobTokenIds.add(tokenId)
+		}
+
+		// Only reconnect if we have new tokens
+		if (this.clobTokenIds.size === initialSize) return
+
+		const addedCount = this.clobTokenIds.size - initialSize
+		console.info(`➕ Adding ${addedCount} assets to subscription (total: ${this.clobTokenIds.size})...`)
+
+		// Polymarket's WebSocket doesn't support subscription updates
+		// We need to reconnect with the full list of tokens
+		if (this.isConnected) {
+			await this.disconnect()
+		}
+
+		// Connect (or reconnect) with updated token list
+		await this.connect(Array.from(this.clobTokenIds))
+		console.info("✅ Subscription updated with new tokens")
+	}
+}
+
+const polymarketWebSocketClient = new PolymarketWebSocketClient()
+
+export default polymarketWebSocketClient
