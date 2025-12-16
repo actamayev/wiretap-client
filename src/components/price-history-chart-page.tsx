@@ -25,9 +25,15 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 	// Calculate price change to determine colors
 	const priceChange = ((): "up" | "down" | "neutral" => {
 		if (!priceHistory || priceHistory.length < 2) return "neutral"
-		const sortedHistory = [...priceHistory].sort((a, b): number =>
-			a.timestamp.getTime() - b.timestamp.getTime()
-		)
+		const sortedHistory = [...priceHistory].sort((a, b): number => {
+			const aTime = a.timestamp instanceof Date
+				? a.timestamp.getTime()
+				: new Date(a.timestamp).getTime()
+			const bTime = b.timestamp instanceof Date
+				? b.timestamp.getTime()
+				: new Date(b.timestamp).getTime()
+			return aTime - bTime
+		})
 		const firstPrice = sortedHistory[0]?.price ?? 0
 		const lastPrice = sortedHistory[sortedHistory.length - 1]?.price ?? 0
 		if (lastPrice > firstPrice) return "up"
@@ -168,7 +174,10 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 		priceHistory.forEach((snapshot): void => {
 			// Convert to local time by adjusting for timezone offset
 			// The chart displays UTC, so we adjust the timestamp to make it appear as local time
-			const utcTime = new Date(snapshot.timestamp).getTime() / 1000
+			const timestamp = snapshot.timestamp instanceof Date
+				? snapshot.timestamp
+				: new Date(snapshot.timestamp)
+			const utcTime = timestamp.getTime() / 1000
 			const localTime = utcTime - timezoneOffset
 			const value = multiplyBy100 ? snapshot.price * 100 : snapshot.price
 			// Keep the last value for each timestamp

@@ -63,7 +63,9 @@ function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 							priceHistory={
 								fund.portfolioHistory?.length > 0
 									? fund.portfolioHistory.map((snapshot): SinglePriceSnapshot => ({
-										timestamp: snapshot.timestamp,
+										timestamp: typeof snapshot.timestamp === "string"
+											? new Date(snapshot.timestamp)
+											: snapshot.timestamp,
 										price: snapshot.portfolioValueUsd,
 									}))
 									: ((): SinglePriceSnapshot[] => {

@@ -5,4 +5,3 @@ export const timeframeConfig = {
 	"1m": { label: "1M", interval: "1m" as const, fidelity: 180 },
 	max: { label: "ALL", interval: "max" as const, fidelity: 720 }
 } as const
-
