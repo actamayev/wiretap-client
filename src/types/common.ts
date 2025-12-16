@@ -180,32 +180,6 @@ declare global {
 		outcome: OutcomeString
 		clobTokenId: ClobTokenId
 	}
-
-	// ============================================
-	// Socket.IO Event Types
-	// ============================================
-
-	type ServerSocketEventPayloadMap = {
-		"market:prices": MarketPricesUpdate
-	}
-
-	type ServerSocketEvents = keyof ServerSocketEventPayloadMap
-
-	interface ServerSocketEventMessage<E extends ServerSocketEvents = ServerSocketEvents> {
-		event: E
-		payload: ServerSocketEventPayloadMap[E]
-	}
-
-	interface PriceUpdate {
-		clobTokenId: ClobTokenId
-		midpointPrice: number | null
-		timestamp?: number // Unix timestamp in milliseconds (from WebSocket message)
-	}
-
-	interface MarketPricesUpdate {
-		prices: PriceUpdate[]
-		timestamp: number // Unix timestamp in milliseconds
-	}
 }
 
 export {}
