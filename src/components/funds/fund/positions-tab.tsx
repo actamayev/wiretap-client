@@ -140,7 +140,7 @@ function PositionsTab({ positions }: PositionsTabProps): React.ReactNode {
 					<thead className="bg-off-sidebar-blue">
 						<tr>
 							<th className="text-left p-4 font-semibold">Market</th>
-							<th className="text-left p-4 font-semibold">Yes/No</th>
+							<th className="text-left p-4 font-semibold">Position</th>
 							<th className="text-left p-4 font-semibold">Average Cost Basis</th>
 							<th className="text-left p-4 font-semibold">Current Share Price</th>
 							<th className="text-left p-4 font-semibold">Shares</th>

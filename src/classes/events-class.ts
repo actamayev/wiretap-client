@@ -36,8 +36,8 @@ class EventsClass {
 			...event,
 			eventMarkets: event.eventMarkets.map((market): SingleMarket => ({
 				...market,
-				yesPrice: (market.midpointPrice ?? 0),
-				noPrice: 1 - (market.midpointPrice ?? 0),
+				firstOutcomePrice: (market.midpointPrice ?? 0),
+				secondOutcomePrice: 1 - (market.midpointPrice ?? 0),
 				selectedTimeframe: "1d",
 				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
 					...outcome,
@@ -249,21 +249,21 @@ class EventsClass {
 			)
 
 			if (!outcome) continue
-			// Find the "Yes" outcome for this market
-			const yesOutcome = market.outcomes.find(
-				(singleOutcome): boolean => singleOutcome.outcome === "Yes"
+			// Find the First outcome for this market
+			const firstOutcome = market.outcomes.find(
+				(singleOutcome): boolean => singleOutcome.outcomeIndex === 0
 			)
 
-			// Only update market-level pricing if this price update is for the "Yes" outcome
-			if (yesOutcome && outcome.clobTokenId === yesOutcome.clobTokenId) {
-				// Update market-level pricing from Yes outcome's best bid
+			// Only update market-level pricing if this price update is for the First outcome
+			if (firstOutcome && outcome.clobTokenId === firstOutcome.clobTokenId) {
+				// Update market-level pricing from First outcome's best bid
 				market.midpointPrice = priceUpdate.midpointPrice
-				market.yesPrice = (priceUpdate.midpointPrice ?? 0)
-				market.noPrice = 1 - (priceUpdate.midpointPrice ?? 0)
+				market.firstOutcomePrice = (priceUpdate.midpointPrice ?? 0)
+				market.secondOutcomePrice = 1 - (priceUpdate.midpointPrice ?? 0)
 			}
 
 			// Add price snapshot to outcome's price history if bestAsk is available
-			// (This happens for both Yes and No outcomes)
+			// (This happens for both First and Second outcomes)
 			// Apply sliding window logic to all intervals for real-time updates
 			if (priceUpdate.midpointPrice !== null) {
 				// Use timestamp from WebSocket message if available, otherwise use current time

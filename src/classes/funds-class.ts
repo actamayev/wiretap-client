@@ -6,16 +6,89 @@ import { action, makeAutoObservable, observable } from "mobx"
 class FundsClass {
 	public isRetrievingAllFunds = false
 	public hasRetrievedAllFunds = false
-	public funds: Map<FundsUUID, SingleFund> = new Map()
+	public funds: Map<FundsUUID, SingleUnfilledFund> = new Map()
 	public isCreateFundDialogOpen = false
 	public selectedFundUuid: FundsUUID | "" = ""
 	public createFundData: IncomingCreateFundRequest = {
 		fundName: "",
 		startingAccountCashBalanceUsd: 0
 	}
+	public retrievingDetailedFund: Map<FundsUUID, boolean> = new Map()
+	public retrievingPortfolioHistories: Map<string, boolean> = new Map() // Key: `${fundUUID}-${timeframe}`
 
 	constructor() {
 		makeAutoObservable(this)
+	}
+
+	public isDetailedFundRetrieved(fundUUID: FundsUUID): boolean {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return false
+		return !isUndefined(fund.transactions) && !isUndefined(fund.portfolioHistory)
+	}
+
+	public isRetrievingPortfolioHistory(fundUUID: FundsUUID, timeframe: keyof PortfolioPriceHistories): boolean {
+		const key = `${fundUUID}-${timeframe}`
+		return this.retrievingPortfolioHistories.get(key) || false
+	}
+
+	public setIsRetrievingPortfolioHistory = action((
+		fundUUID: FundsUUID,
+		timeframe: keyof PortfolioPriceHistories,
+		isRetrieving: boolean
+	): void => {
+		const key = `${fundUUID}-${timeframe}`
+		if (isRetrieving) {
+			this.retrievingPortfolioHistories.set(key, true)
+		} else {
+			this.retrievingPortfolioHistories.delete(key)
+		}
+	})
+
+	public setSelectedTimeframe = action((
+		fundUUID: FundsUUID,
+		timeframe: keyof PortfolioPriceHistories
+	): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+		fund.selectedTimeframe = timeframe
+	})
+
+	public setPortfolioHistory = action((
+		fundUUID: FundsUUID,
+		timeframe: keyof PortfolioPriceHistories,
+		history: SinglePortfolioSnapshot[]
+	): void => {
+		const fund = this.funds.get(fundUUID)
+		if (isUndefined(fund)) return
+
+		// Initialize portfolioHistory if it doesn't exist
+		if (isUndefined(fund.portfolioHistory)) {
+			fund.portfolioHistory = {
+				"1h": [],
+				"1d": [],
+				"1w": [],
+				"1m": [],
+				max: [],
+			}
+		}
+
+		// Convert timestamps from strings to Date objects if needed
+		const convertedHistory = history.map((snapshot): SinglePortfolioSnapshot => ({
+			...snapshot,
+			timestamp: typeof snapshot.timestamp === "string"
+				? new Date(snapshot.timestamp)
+				: snapshot.timestamp,
+		}))
+
+		fund.portfolioHistory[timeframe] = convertedHistory
+	})
+
+	public setIsRetrievingDetailedFund = action((fundUUID: FundsUUID, newIsRetrievingDetailedFund: boolean): void => {
+		this.retrievingDetailedFund.set(fundUUID, newIsRetrievingDetailedFund)
+	})
+
+	public isRetrievingDetailedFund = (fundUUID: FundsUUID): boolean => {
+		return this.retrievingDetailedFund.get(fundUUID) || false
 	}
 
 	public setIsCreateFundDialogOpen = action((newIsCreateFundDialogOpen: boolean): void => {
@@ -47,25 +120,45 @@ class FundsClass {
 		this.setSelectedFundUuid(primaryFund.fundUUID)
 	})
 
-	public addFund = action((fund: SingleFund): void => {
+	public addFund = action((fund: SingleUnfilledFund): void => {
 		// Make the fund observable so nested arrays (like positions) are tracked
 		// observable() automatically makes plain objects deeply observable
-		const observableFund = observable(fund) as SingleFund
+		const observableFund = observable(fund) as SingleUnfilledFund
 		this.funds.set(fund.fundUUID, observableFund)
 	})
 
-	public updateFundName = action((fundUUID: FundsUUID, newName: string): void => {
+	public addDetailedInformationToFund = action((fundUUID: FundsUUID, detailedFund: DetailedSingleFund): void => {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
-		fund.fundName = newName
-	})
+		fund.transactions = detailedFund.transactions
 
-	public setFundPositions = action((fundUUID: FundsUUID, positions: SinglePosition[]): void => {
-		const fund = this.funds.get(fundUUID)
-		if (isUndefined(fund)) return
+		// Initialize portfolioHistory structure if it doesn't exist
+		if (isUndefined(fund.portfolioHistory)) {
+			fund.portfolioHistory = {
+				"1h": [],
+				"1d": [],
+				"1w": [],
+				"1m": [],
+				max: [],
+			}
+		}
 
-		fund.positions = positions
+		// Convert the incoming portfolioHistory array to the "1d" timeframe
+		// (since retrieveDetailedFund currently only returns 1D data)
+		const convertedHistory = detailedFund.portfolioHistory.map((snapshot): SinglePortfolioSnapshot => ({
+			...snapshot,
+			timestamp: typeof snapshot.timestamp === "string"
+				? new Date(snapshot.timestamp)
+				: snapshot.timestamp,
+		}))
+
+		fund.portfolioHistory["1d"] = convertedHistory
+
+		// Set default selected timeframe to "1d"
+		if (isUndefined(fund.selectedTimeframe)) {
+			fund.selectedTimeframe = "1d"
+		}
 	})
 
 	public updateFundCashBalance = action((fundUUID: FundsUUID, newCashBalance: number): void => {
@@ -93,6 +186,22 @@ class FundsClass {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
+		if (isUndefined(fund.transactions)) {
+			fund.transactions = {
+				purchaseOrders: [{
+					outcome: buyTransaction.position.outcome,
+					numberOfSharesPurchased: buyTransaction.position.numberOfSharesHeld,
+					marketQuestion: buyTransaction.position.marketQuestion,
+					totalCost: buyTransaction.position.numberOfSharesHeld * buyTransaction.position.costBasisPerShareUsd,
+					transactionDate: new Date(),
+					polymarketSlug: buyTransaction.position.polymarketSlug,
+					polymarketImageUrl: buyTransaction.position.polymarketImageUrl,
+				}],
+				saleOrders: [],
+			}
+			return
+		}
+
 		fund.transactions.purchaseOrders.push({
 			outcome: buyTransaction.position.outcome,
 			numberOfSharesPurchased: buyTransaction.position.numberOfSharesHeld,
@@ -108,6 +217,21 @@ class FundsClass {
 		const fund = this.funds.get(fundUUID)
 		if (isUndefined(fund)) return
 
+		if (isUndefined(fund.transactions)) {
+			fund.transactions = {
+				purchaseOrders: [],
+				saleOrders: [{
+					outcome: sellTransaction.outcomeData.outcome,
+					numberOfSharesSold: sellTransaction.numberOfSharesSold,
+					marketQuestion: sellTransaction.outcomeData.marketQuestion,
+					totalProceeds: sellTransaction.totalProceeds,
+					transactionDate: new Date(),
+					polymarketSlug: sellTransaction.outcomeData.polymarketSlug,
+					polymarketImageUrl: sellTransaction.outcomeData.polymarketImageUrl,
+				}],
+			}
+			return
+		}
 		fund.transactions.saleOrders.push({
 			outcome: sellTransaction.outcomeData.outcome,
 			numberOfSharesSold: sellTransaction.numberOfSharesSold,
@@ -233,6 +357,7 @@ class FundsClass {
 		this.funds = new Map()
 		this.setIsCreateFundDialogOpen(false)
 		this.setSelectedFundUuid("")
+		this.retrievingPortfolioHistories = new Map()
 		this.setCreateFundData({
 			fundName: "",
 			startingAccountCashBalanceUsd: 0

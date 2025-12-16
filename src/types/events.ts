@@ -5,8 +5,8 @@ declare global {
 
 	interface SingleMarket extends SingleMarketMetadata {
 		outcomes: SingleOutcome[]
-		yesPrice: number
-		noPrice: number
+		firstOutcomePrice: number
+		secondOutcomePrice: number
 		selectedTimeframe: keyof OutcomePriceHistories
 	}
 

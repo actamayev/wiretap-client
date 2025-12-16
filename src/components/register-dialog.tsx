@@ -1,4 +1,4 @@
-/* eslint-disable max-depth */
+
 "use client"
 
 import { observer } from "mobx-react"
@@ -18,7 +18,7 @@ interface RegisterDialogProps {
 	onOpenChange: (open: boolean) => void
 	pendingNavigation?: {
 		eventSlug: EventSlug
-		market?: "Yes" | "No"
+		marketIndex?: number
 	} | null
 	event?: SingleEvent
 }
@@ -44,18 +44,12 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 
 			// If there's pending navigation (event interaction), handle it
 			if (pendingNavigation) {
-				// If market is specified (Yes/No button click), set trade state
-				if (pendingNavigation.market && event?.eventMarkets?.[0]) {
+				// If market is specified (First/Second outcome button click), set trade state
+				if (pendingNavigation.marketIndex !== undefined && event?.eventMarkets?.[0]) {
 					const market = event.eventMarkets[0]
-					if (pendingNavigation.market === "Yes") {
-						tradeClass.setSelectedMarket("Yes" as OutcomeString)
-						tradeClass.setMarketId(market.marketId)
-						tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
-					} else {
-						tradeClass.setSelectedMarket("No" as OutcomeString)
-						tradeClass.setMarketId(market.marketId)
-						tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
-					}
+					tradeClass.setSelectedMarketIndex(pendingNavigation.marketIndex)
+					tradeClass.setMarketId(market.marketId)
+					tradeClass.setSelectedClobToken(market.outcomes[pendingNavigation.marketIndex].clobTokenId)
 				}
 				// Close the dialog first
 				onOpenChange(false)

@@ -31,16 +31,16 @@ export default async function retrieveAllEvents(): Promise<void> {
 		)
 		await Promise.allSettled(priceHistoryPromises)
 
-		// Add all Yes outcome clob tokens to WebSocket subscription
+		// Add all First outcome clob tokens to WebSocket subscription
 		const clobTokenIds: ClobTokenId[] = []
 		for (const eventMetadata of eventsResponse.data.events) {
 			const event = eventsClass.events.get(eventMetadata.eventSlug)
 			if (!event) continue
 			const market = event.eventMarkets[0]
 			if (!market) continue
-			const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-			if (!yesOutcome) continue
-			clobTokenIds.push(yesOutcome.clobTokenId)
+			const firstOutcome = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
+			if (!firstOutcome) continue
+			clobTokenIds.push(firstOutcome.clobTokenId)
 		}
 		if (clobTokenIds.length > 0) {
 			// addToSubscription handles connection state - will connect if needed

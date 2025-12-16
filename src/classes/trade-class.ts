@@ -6,7 +6,7 @@ type TradeTab = "Buy" | "Sell"
 
 class TradeClass {
 	public tradeTab: TradeTab = "Buy"
-	public selectedMarket: OutcomeString = "Yes" as OutcomeString
+	public selectedMarketIndex: number = 0
 	public selectedClobToken: ClobTokenId | undefined = undefined
 	public amount: string = ""
 	public marketId: MarketId | undefined = undefined
@@ -19,8 +19,8 @@ class TradeClass {
 		this.tradeTab = tab
 	})
 
-	public setSelectedMarket = action((market: OutcomeString): void => {
-		this.selectedMarket = market
+	public setSelectedMarketIndex = action((marketIndex: number): void => {
+		this.selectedMarketIndex = marketIndex
 	})
 
 	public setSelectedClobToken = action((clobToken: ClobTokenId | undefined): void => {
@@ -37,7 +37,7 @@ class TradeClass {
 
 	public logout(): void {
 		this.tradeTab = "Buy"
-		this.selectedMarket = "Yes" as OutcomeString
+		this.selectedMarketIndex = 0
 		this.selectedClobToken = undefined
 		this.amount = ""
 		this.marketId = undefined

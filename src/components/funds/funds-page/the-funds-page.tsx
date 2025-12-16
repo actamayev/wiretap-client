@@ -1,7 +1,7 @@
 "use client"
 
 import { observer } from "mobx-react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { ArrowDownWideNarrow, Plus } from "lucide-react"
 import { Button } from "../../ui/button"
 import { Input } from "../../ui/input"
@@ -16,6 +16,7 @@ import SingleFundRow from "./single-fund-row"
 import fundsClass from "../../../classes/funds-class"
 import ContainerLayout from "../../layouts/container-layout"
 import { cn } from "../../../lib/utils"
+import retrieveDetailedFund from "../../../utils/funds/retrieve-detailed-fund"
 
 type SortOption = "alphabetical" | "current-value" | "starting-balance" | "profit-loss"
 
@@ -26,8 +27,15 @@ function TheFundsPage(): React.ReactNode {
 
 	const allFunds = useMemo((): SingleFund[] => {
 		return Array.from(fundsClass.funds.values())
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundsClass.funds.size])
+
+	useEffect((): void => {
+		// Cycle through all funds and retrieve detailed information for each
+		allFunds.forEach((fund: SingleFund): void => {
+			retrieveDetailedFund(fund.fundUUID)
+		})
+	}, [allFunds])
 
 	const filteredAndSortedFunds = useMemo((): SingleFund[] => {
 		// Filter by search query

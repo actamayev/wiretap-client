@@ -43,13 +43,13 @@ const parseAmountValue = (value: string): string => {
 function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 
-	const updateClobToken = (outcome: OutcomeString): void => {
+	const updateClobToken = (marketIndex: number): void => {
 		if (isUndefined(tradeClass.marketId)) return
 
 		// Find the event that contains this market
 		const market = event.eventMarkets.find((m): boolean => m.marketId === tradeClass.marketId)
 		if (market) {
-			const clobToken = outcome === "Yes" ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
+			const clobToken = marketIndex === 0 ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
 			tradeClass.setSelectedClobToken(clobToken)
 		}
 	}
@@ -121,38 +121,42 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 				</div>
 			</div>
 
-			{/* Yes/No Buttons */}
+			{/* First/Second Outcome Buttons */}
 			<div className="flex gap-2 mb-4">
 				<Button
-					variant={tradeClass.selectedMarket === "Yes" ? "default" : "outline"}
+					variant={tradeClass.selectedMarketIndex === 0 ? "default" : "outline"}
 					className={cn(
 						"flex-1 h-14",
-						tradeClass.selectedMarket === "Yes" ? "bg-yes-green hover:bg-yes-green-hover text-white" : ""
+						tradeClass.selectedMarketIndex === 0 ? "bg-yes-green hover:bg-yes-green-hover text-white" : ""
 					)}
 					onClick={(): void => {
-						tradeClass.setSelectedMarket("Yes" as OutcomeString)
-						updateClobToken("Yes" as OutcomeString)
+						tradeClass.setSelectedMarketIndex(0)
+						updateClobToken(0)
 					}}
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
-						<span className="font-semibold text-xl opacity-90">Yes</span>
-						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].yesPrice)}</span>
+						<span className="font-semibold text-xl opacity-90">
+							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
+						</span>
+						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].firstOutcomePrice)}</span>
 					</div>
 				</Button>
 				<Button
-					variant={tradeClass.selectedMarket === "No" ? "default" : "outline"}
+					variant={tradeClass.selectedMarketIndex === 1 ? "default" : "outline"}
 					className={cn(
 						"flex-1 h-14",
-						tradeClass.selectedMarket === "No" ? "bg-no-red hover:bg-no-red-hover text-white" : ""
+						tradeClass.selectedMarketIndex === 1 ? "bg-no-red hover:bg-no-red-hover text-white" : ""
 					)}
 					onClick={(): void => {
-						tradeClass.setSelectedMarket("No" as OutcomeString)
-						updateClobToken("No" as OutcomeString)
+						tradeClass.setSelectedMarketIndex(1)
+						updateClobToken(1)
 					}}
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
-						<span className="font-semibold text-xl opacity-90">No</span>
-						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].noPrice)}</span>
+						<span className="font-semibold text-xl opacity-90">
+							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
+						</span>
+						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].secondOutcomePrice)}</span>
 					</div>
 				</Button>
 			</div>
@@ -194,7 +198,10 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2">
 						{isLoading && <Spinner className="size-5" />}
-						<span>{tradeClass.tradeTab} {tradeClass.selectedMarket}</span>
+						<span>
+							{tradeClass.tradeTab} {" "}
+							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === tradeClass.selectedMarketIndex)?.outcome}
+						</span>
 					</div>
 				</Button>
 			</div>
