@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+
 "use client"
 
 import Image from "next/image"
@@ -17,7 +17,7 @@ import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome
 import { timeframeConfig } from "../../utils/constants/timeframe-config"
 import { cn } from "../../lib/utils"
 
-// eslint-disable-next-line max-lines-per-function, complexity
+// eslint-disable-next-line max-lines-per-function
 function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
@@ -189,10 +189,12 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 								</h3>
 							</div>
 							<div className="shrink-0 text-xl font-bold text-yes-green">
-								{(Math.round((event.eventMarkets[0].midpointPrice ?? 0) * 100) < 1 && (event.eventMarkets[0].midpointPrice ?? 0) > 0)
-									? "< 1"
-									: Math.round((event.eventMarkets[0].midpointPrice ?? 0) * 100)
-								}%
+								{(() => {
+									const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
+									if (percentage >= 99.5) return ">99"
+									if (percentage < 1 && percentage > 0) return "< 1"
+									return Math.round(percentage)
+								})()}%
 							</div>
 						</div>
 
