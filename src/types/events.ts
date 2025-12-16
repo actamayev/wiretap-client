@@ -26,6 +26,7 @@ declare global {
 	interface PriceHistoryEntry {
 		t: number
 		p: number
+		isWebSocket?: boolean // True if this data point came from WebSocket, false/undefined if from API
 	}
 
 	interface SinglePriceSnapshot {

@@ -71,6 +71,17 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
+	// Helper function to check if data is real historical data or just WebSocket updates
+	const hasRealHistoricalData = useCallback((
+		data: PriceHistoryEntry[]
+	): boolean => {
+		if (!data || data.length === 0) return false
+
+		// Check if we have at least one data point that is NOT from WebSocket
+		// If all data points are WebSocket updates, we don't have real historical data
+		return data.some((entry): boolean => !entry.isWebSocket)
+	}, [])
+
 	// Function to fetch price history for a specific timeframe
 	const fetchTimeframeData = useCallback(async (
 		timeframe: keyof OutcomePriceHistories,
@@ -83,9 +94,9 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			return
 		}
 
-		// Check if data already exists
+		// Check if real historical data already exists (not just WebSocket updates)
 		const existingData = selectedOutcome.priceHistory[timeframe]
-		if (existingData && existingData.length > 0) {
+		if (existingData && hasRealHistoricalData(existingData)) {
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
 				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
@@ -118,7 +129,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
-	}, [selectedOutcome, event])
+	}, [selectedOutcome, event, hasRealHistoricalData])
 
 	// Handle timeframe button click
 	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
@@ -126,7 +137,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		void fetchTimeframeData(timeframe)
 	}, [fetchTimeframeData, isLoadingTimeframe])
 
-	// Automatically fetch current timeframe data when outcome changes (if data doesn't exist)
+	// Automatically fetch current timeframe data when outcome changes (if data doesn't exist or is only WebSocket)
 	useEffect((): void => {
 		if (!selectedOutcome || !event || isLoadingTimeframe) return
 
@@ -136,13 +147,13 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		}
 
 		const currentTimeframeData = selectedOutcome.priceHistory[selectedTimeframe]
-		// If current timeframe doesn't have data for this outcome, fetch it automatically
+		// If current timeframe doesn't have real historical data for this outcome, fetch it automatically
 		// Skip timeframe update since we're already on this timeframe
-		if (!currentTimeframeData || currentTimeframeData.length === 0) {
+		if (!currentTimeframeData || currentTimeframeData.length === 0 || !hasRealHistoricalData(currentTimeframeData)) {
 			void fetchTimeframeData(selectedTimeframe, true)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedOutcome, selectedTimeframe])
+	}, [selectedOutcome, selectedTimeframe, hasRealHistoricalData])
 
 	if (isUndefined(event)) {
 		return (
