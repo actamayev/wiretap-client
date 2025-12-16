@@ -28,7 +28,11 @@ class EventsClass {
 	})
 
 	public setEventsMetadata = action((newEvents: SingleEventMetadata[]): void => {
-		newEvents.forEach((event): void => this.addSingleEventMetadata(event.eventSlug, event))
+		newEvents.forEach((event): void => {
+			this.addSingleEventMetadata(event.eventSlug, event)
+			// Ensure timeframe is set to "1w" after adding metadata (double-check)
+			this.setSelectedTimeframe(event.eventSlug, "1w")
+		})
 		// If we got fewer events than expected (less than 20), we've reached the end
 		this.hasMoreEvents = newEvents.length >= 20
 		this.setHasRetrievedAllEvents(true)
