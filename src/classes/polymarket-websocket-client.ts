@@ -26,37 +26,56 @@ class PolymarketWebSocketClient {
 		console.info(`🔌 Connecting to Polymarket WebSocket with ${clobTokenIds.length} assets...`)
 
 		return new Promise<void>((resolve, reject): void => {
-			this.ws = new WebSocket(POLYMARKET_WS_URL)
+			const ws = new WebSocket(POLYMARKET_WS_URL)
+			this.ws = ws
 
-			this.ws.onopen = (): void => {
+			ws.onopen = (): void => {
+				// Verify this is still the current WebSocket instance (not a stale connection)
+				if (this.ws !== ws) {
+					console.debug("🔌 Ignoring onopen from stale WebSocket connection (expected during reconnect)")
+					return
+				}
+
 				console.info("✅ WebSocket connected")
 				this.isConnected = true
 
-				// Use setTimeout to ensure WebSocket is fully ready before sending
-				setTimeout((): void => {
+				// Send subscription immediately - onopen only fires when WebSocket is OPEN
+				if (ws.readyState === WebSocket.OPEN) {
 					this.sendSubscription()
 					this.startPingInterval()
 					resolve()
-				}, 0)
+				} else {
+					console.error("❌ WebSocket not OPEN in onopen handler")
+					reject(new Error("WebSocket not OPEN in onopen handler"))
+				}
 			}
 
-			this.ws.onmessage = (event: MessageEvent): void => {
-				this.handleMessage(event.data)
+			ws.onmessage = (event: MessageEvent): void => {
+				// Only handle messages from the current WebSocket instance
+				if (this.ws === ws) {
+					this.handleMessage(event.data)
+				}
 			}
 
-			this.ws.onerror = (error: Event): void => {
-				console.error("❌ WebSocket error:", error)
-				const errorObj = error instanceof Error ? error : new Error("WebSocket error occurred")
-				reject(errorObj)
+			ws.onerror = (error: Event): void => {
+				// Only reject if this is the current WebSocket instance
+				if (this.ws === ws) {
+					console.error("❌ WebSocket error:", error)
+					const errorObj = error instanceof Error ? error : new Error("WebSocket error occurred")
+					reject(errorObj)
+				}
 			}
 
-			this.ws.onclose = (event: CloseEvent): void => {
-				const reason = event.reason || "No reason provided"
-				console.info(
-					`🔌 WebSocket closed - Code: ${event.code}, Reason: ${reason}, WasClean: ${event.wasClean}`
-				)
-				this.isConnected = false
-				this.stopPingInterval()
+			ws.onclose = (event: CloseEvent): void => {
+				// Only process close events from the current WebSocket instance
+				if (this.ws === ws) {
+					const reason = event.reason || "No reason provided"
+					console.info(
+						`🔌 WebSocket closed - Code: ${event.code}, Reason: ${reason}, WasClean: ${event.wasClean}`
+					)
+					this.isConnected = false
+					this.stopPingInterval()
+				}
 			}
 		})
 	}
@@ -66,19 +85,29 @@ class PolymarketWebSocketClient {
 	 * Ensures WebSocket is OPEN before sending
 	 */
 	private sendSubscription(): void {
-		if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-			console.error("❌ Cannot send subscription - WebSocket not open")
+		// Double-check WebSocket state before sending
+		if (!this.ws) {
+			console.error("❌ Cannot send subscription - WebSocket is null")
 			return
 		}
 
-		// Subscribe to market channel
-		const subscription: MarketChannelSubscription = {
-			type: "market",
-			assets_ids: Array.from(this.clobTokenIds)
+		if (this.ws.readyState !== WebSocket.OPEN) {
+			console.error(`❌ Cannot send subscription - WebSocket state: ${this.ws.readyState}`)
+			return
 		}
 
-		this.ws.send(JSON.stringify(subscription))
-		console.info(`📡 Subscribed to ${this.clobTokenIds.size} markets`)
+		try {
+			// Subscribe to market channel
+			const subscription: MarketChannelSubscription = {
+				type: "market",
+				assets_ids: Array.from(this.clobTokenIds)
+			}
+
+			this.ws.send(JSON.stringify(subscription))
+			console.info(`📡 Subscribed to ${this.clobTokenIds.size} markets`)
+		} catch (error) {
+			console.error("❌ Error sending subscription:", error)
+		}
 	}
 
 	/**
@@ -91,15 +120,17 @@ class PolymarketWebSocketClient {
 		this.stopPingInterval()
 		this.isConnected = false
 
+		// Store reference to current WebSocket to avoid race conditions
+		const wsToClose = this.ws
+		this.ws = null // Clear reference immediately to prevent new operations
+
 		return new Promise<void>((resolve): void => {
-			if (this.ws?.readyState === WebSocket.OPEN) {
-				this.ws.close()
-				this.ws.onclose = (): void => {
-					this.ws = null
+			if (wsToClose.readyState === WebSocket.OPEN || wsToClose.readyState === WebSocket.CONNECTING) {
+				wsToClose.close()
+				wsToClose.onclose = (): void => {
 					resolve()
 				}
 			} else {
-				this.ws = null
 				resolve()
 			}
 		})
@@ -161,12 +192,11 @@ class PolymarketWebSocketClient {
 	private processMessage(message: PolymarketMarketChannelMessage): void {
 		switch (message.event_type) {
 			case "price_change":
-				console.log("price_change", message)
 				this.handlePriceChange(message)
 				break
 
 			case "last_trade_price":
-				this.handleLastTradePrice(message)
+				//We don't process last trade price messages
 				break
 
 			case "book":
@@ -209,26 +239,6 @@ class PolymarketWebSocketClient {
 			// Update funds class with position price update
 			fundsClass.updatePositionPrice(priceUpdate)
 		}
-	}
-
-	/**
-	 * Handle last_trade_price messages and update events class and funds class
-	 */
-	private handleLastTradePrice(message: PolymarketLastTradePriceMessage): void {
-		const tradePrice = parseFloat(message.price)
-
-		// Use trade price as midpoint (or could fetch current best bid/ask)
-		const midpointPrice = !isNaN(tradePrice) && tradePrice > 0 ? tradePrice : null
-
-		const priceUpdate: PriceUpdate = {
-			clobTokenId: message.asset_id,
-			midpointPrice
-		}
-
-		// Update events class with price update
-		eventsClass.updateOutcomePrice(priceUpdate)
-		// Update funds class with position price update
-		fundsClass.updatePositionPrice(priceUpdate)
 	}
 
 	/**
