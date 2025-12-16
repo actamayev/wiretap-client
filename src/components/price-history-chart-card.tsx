@@ -132,10 +132,7 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 					style: 0, // Solid line
 				},
 			},
-			handleScroll: {
-				mouseWheel: false,
-				pressedMouseMove: false,
-			},
+			handleScroll: false,
 			handleScale: {
 				axisPressedMouseMove: false,
 				mouseWheel: false,
