@@ -18,7 +18,7 @@ interface RegisterDialogProps {
 	onOpenChange: (open: boolean) => void
 	pendingNavigation?: {
 		eventSlug: EventSlug
-		marketIndex?: number
+		outcomeIndex?: number
 	} | null
 	event?: SingleEvent
 }
@@ -45,11 +45,11 @@ function RegisterDialog({ open, onOpenChange, pendingNavigation, event }: Regist
 			// If there's pending navigation (event interaction), handle it
 			if (pendingNavigation) {
 				// If market is specified (First/Second outcome button click), set trade state
-				if (pendingNavigation.marketIndex !== undefined && event?.eventMarkets?.[0]) {
+				if (pendingNavigation.outcomeIndex !== undefined && event?.eventMarkets?.[0]) {
 					const market = event.eventMarkets[0]
-					tradeClass.setSelectedMarketIndex(pendingNavigation.marketIndex)
+					tradeClass.setSelectedOutcomeIndex(pendingNavigation.outcomeIndex as 0 | 1)
 					tradeClass.setMarketId(market.marketId)
-					tradeClass.setSelectedClobToken(market.outcomes[pendingNavigation.marketIndex].clobTokenId)
+					tradeClass.setSelectedClobToken(market.outcomes[pendingNavigation.outcomeIndex].clobTokenId)
 				}
 				// Close the dialog first
 				onOpenChange(false)

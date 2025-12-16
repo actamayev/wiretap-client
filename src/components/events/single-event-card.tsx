@@ -17,13 +17,13 @@ import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome
 import { timeframeConfig } from "../../utils/constants/timeframe-config"
 import { cn } from "../../lib/utils"
 
-// eslint-disable-next-line max-lines-per-function
+// eslint-disable-next-line max-lines-per-function, complexity
 function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
 	const [pendingNavigation, setPendingNavigation] = useState<{
 		eventSlug: EventSlug
-		marketIndex?: number
+		outcomeIndex?: 0 | 1
 	} | null>(null)
 
 	const handleTitleClick = useCallback((): void => {
@@ -44,14 +44,14 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		if (!authClass.isLoggedIn) {
 			setPendingNavigation({
 				eventSlug: event.eventSlug,
-				marketIndex: 0
+				outcomeIndex: 0
 			})
 			setShowRegisterDialog(true)
 			return
 		}
 
 		const market = event.eventMarkets[0]
-		tradeClass.setSelectedMarketIndex(0)
+		tradeClass.setSelectedOutcomeIndex(0)
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
 		navigate(`/event/${event.eventSlug}`)
@@ -62,14 +62,14 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		if (!authClass.isLoggedIn) {
 			setPendingNavigation({
 				eventSlug: event.eventSlug,
-				marketIndex: 1
+				outcomeIndex: 1
 			})
 			setShowRegisterDialog(true)
 			return
 		}
 
 		const market = event.eventMarkets[0]
-		tradeClass.setSelectedMarketIndex(1)
+		tradeClass.setSelectedOutcomeIndex(1)
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
 		navigate(`/event/${event.eventSlug}`)
@@ -77,9 +77,8 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 
 	const handleDialogClose = useCallback((open: boolean): void => {
 		setShowRegisterDialog(open)
-		if (!open) {
-			setPendingNavigation(null)
-		}
+		if (open) return
+		setPendingNavigation(null)
 	}, [])
 
 	// Get selected timeframe from events class
@@ -188,7 +187,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 							</h3>
 						</div>
 						<div className="shrink-0 text-xl font-bold text-yes-green">
-							{(() => {
+							{((): number | string => {
 								const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
 								if (percentage >= 99.5) return ">99"
 								if (percentage < 1 && percentage > 0) return "< 1"
@@ -284,7 +283,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 								</h3>
 							</div>
 							<div className="shrink-0 text-xl font-bold text-yes-green">
-								{(() => {
+								{((): number | string => {
 									const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
 									if (percentage >= 99.5) return ">99"
 									if (percentage < 1 && percentage > 0) return "< 1"

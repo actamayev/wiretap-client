@@ -38,8 +38,10 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		if (!event) return
 		const market = event.eventMarkets[0]
 		tradeClass.setMarketId(market.marketId)
-		const firstClobToken = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.clobTokenId
-		tradeClass.setSelectedClobToken(firstClobToken)
+		// Use the selected outcome index if set, otherwise default to first outcome
+		const selectedOutcomeIndex = tradeClass.selectedOutcomeIndex ?? 0
+		const selectedClobToken = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === selectedOutcomeIndex)?.clobTokenId
+		tradeClass.setSelectedClobToken(selectedClobToken)
 	}, [event])
 
 	useEffect((): void => {
