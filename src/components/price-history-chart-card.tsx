@@ -117,6 +117,7 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 					width: 1,
 					color: mutedForegroundColor,
 					style: 0, // Solid line
+					labelVisible: false, // Hide the time label on x-axis when hovering
 				},
 				horzLine: {
 					visible: true,
