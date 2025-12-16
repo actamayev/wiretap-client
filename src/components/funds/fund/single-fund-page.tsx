@@ -4,6 +4,7 @@ import { observer } from "mobx-react"
 import { useEffect, useMemo, useState, useCallback } from "react"
 import isUndefined from "lodash-es/isUndefined"
 import fundsClass from "../../../classes/funds-class"
+import authClass from "../../../classes/auth-class"
 import ContainerLayout from "../../layouts/container-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
 import { Button } from "../../ui/button"
@@ -18,15 +19,23 @@ import { timeframeConfig } from "../../../utils/constants/timeframe-config"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
-	useEffect((): void => {
-		retrieveDetailedFund(fundId)
-	}, [fundId])
-
 	const fund = useMemo((): SingleUnfilledFund | undefined => {
 		return fundsClass.funds.get(fundId)
 		// MobX observable - accessing .size ensures reactivity
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundId, fundsClass.funds.size])
+
+	useEffect((): void => {
+		// Only retrieve detailed fund if:
+		// 1. User is logged in
+		// 2. Fund exists in the map
+		// 3. Detailed info hasn't been retrieved yet
+		if (!authClass.isLoggedIn || !fund || fundsClass.isDetailedFundRetrieved(fundId)) {
+			return
+		}
+		void retrieveDetailedFund(fundId)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [fundId, fund, authClass.isLoggedIn])
 
 	// Get selected timeframe from fund, default to "1d"
 	const selectedTimeframe = useMemo((): keyof PortfolioPriceHistories => {
