@@ -101,7 +101,7 @@ function Events(): React.ReactNode {
 		if (isLoading) {
 			return (
 				<div className="flex flex-col w-full p-6">
-					<div className="grid grid-cols-2 gap-6 w-full">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
 						{/* Show 8 skeleton cards while loading */}
 						{Array.from({ length: 8 }).map((_, index): React.ReactNode => (
 							<EventCardSkeleton key={`skeleton-${index}`} />
@@ -127,7 +127,7 @@ function Events(): React.ReactNode {
 
 		return (
 			<div ref={containerRef} className="flex flex-col w-full p-6">
-				<div className="grid grid-cols-2 gap-6 w-full">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
 					{events.map((event): React.ReactNode => {
 						return <SingleEventCard key={event.eventId} event={event} />
 					})}
