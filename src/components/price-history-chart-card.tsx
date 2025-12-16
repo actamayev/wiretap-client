@@ -206,6 +206,7 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 		}
 
 		// Subscribe to crosshair move events to position tooltip at crosshair
+		// eslint-disable-next-line complexity
 		chart.subscribeCrosshairMove((param): void => {
 			if (!tooltipRef.current || !chartContainerRef.current || !param.point) {
 				if (tooltipRef.current) {
@@ -249,6 +250,7 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 			const containerWidth = Number(chartContainerRef.current.clientWidth)
 			const tooltipRect = tooltipRef.current.getBoundingClientRect()
 			const tooltipWidth = tooltipRect.width
+			const tooltipHeight = tooltipRect.height
 			const halfTooltipWidth = tooltipWidth / 2
 
 			// Calculate centered position accounting for transform translate(-50%)
@@ -267,7 +269,28 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 				leftPosition = Number(containerWidth - halfTooltipWidth)
 			}
 
+			// Calculate vertical position accounting for transform translate(-100%)
+			// The tooltip is positioned above the cursor (translate -100% moves it up by its full height)
+			// With margin-top: -8px, the top edge is at: y - tooltipHeight - 8
+			let topPosition: number = y
+			const marginTop = 8 // From CSS margin-top: -8px
+			const topEdgePosition = y - tooltipHeight - marginTop
+
+			// Check if tooltip would go off the top edge
+			if (topEdgePosition < 0) {
+				// Position tooltip below the cursor instead
+				// Change transform to position below: translate(-50%, 0) and adjust margin
+				tooltipRef.current.style.transform = "translate(-50%, 0)"
+				tooltipRef.current.style.marginTop = "8px"
+				topPosition = y
+			} else {
+				// Reset to default positioning above cursor
+				tooltipRef.current.style.transform = "translate(-50%, -100%)"
+				tooltipRef.current.style.marginTop = "-8px"
+			}
+
 			tooltipRef.current.style.left = `${leftPosition}px`
+			tooltipRef.current.style.top = `${topPosition}px`
 		})
 
 		// Hide TradingView logo/watermark via CSS (fallback if attributionLogo doesn't work)
