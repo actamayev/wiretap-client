@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react"
 import { cn } from "../../../lib/utils"
-import PriceHistoryChart from "../../price-history-chart"
+import PriceHistoryChartCard from "../../price-history-chart-card"
 import useTypedNavigate from "../../../hooks/navigate/use-typed-navigate"
 import { formatCurrency } from "../../../utils/format"
 
@@ -59,7 +59,7 @@ function SingleFundRow({ fund }: { fund: SingleFund }): React.ReactNode {
 				{/* Column 4: Performance Chart */}
 				<div className="flex-1 flex flex-col">
 					<div className="h-24 w-full rounded-[5px] overflow-hidden">
-						<PriceHistoryChart
+						<PriceHistoryChartCard
 							priceHistory={
 								fund.portfolioHistory?.length > 0
 									? fund.portfolioHistory.map((snapshot): SinglePriceSnapshot => ({

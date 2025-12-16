@@ -14,7 +14,7 @@ import CustomTooltip from "../custom-tooltip"
 import authClass from "../../classes/auth-class"
 import tradeClass from "../../classes/trade-class"
 import eventsClass from "../../classes/events-class"
-import PriceHistoryChart from "../price-history-chart"
+import PriceHistoryChartPage from "../price-history-chart-page"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
@@ -220,7 +220,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 							<div className="bg-sidebar-blue rounded-lg p-4 h-full border-2 border-white/30">
 								{selectedOutcome?.priceHistory[selectedTimeframe] &&
 									selectedOutcome.priceHistory[selectedTimeframe].length > 0 && (
-									<PriceHistoryChart
+									<PriceHistoryChartPage
 										priceHistory={selectedOutcome.priceHistory[selectedTimeframe].map(
 											(entry): SinglePriceSnapshot => ({
 												timestamp: new Date(entry.t * 1000),

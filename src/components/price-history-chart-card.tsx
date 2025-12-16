@@ -3,63 +3,15 @@
 import { useEffect, useRef } from "react"
 import { observer } from "mobx-react"
 import { createChart, IChartApi, ISeriesApi, LineData, LineSeries, Time } from "lightweight-charts"
+import getCSSVariableAsRGB from "../utils/get-css-variable-as-rgb"
 
-interface PriceHistoryChartProps {
+interface PriceHistoryChartCardProps {
 	priceHistory: SinglePriceSnapshot[]
 	multiplyBy100?: boolean // Whether to multiply values by 100 (for percentages). Defaults to true.
 }
 
-// Convert CSS variable to RGB format that lightweight-charts understands
-function getCSSVariableAsRGB(variable: string, fallback: string): string {
-	try {
-		// Create a temporary element and use the CSS variable directly
-		// This converts any CSS color format (lab, oklch, rgb, etc.) to rgb()
-		const tempEl = document.createElement("div")
-		// Use the CSS variable directly via var()
-		tempEl.style.setProperty("color", `var(${variable}, ${fallback})`)
-		// Make it invisible but still in the DOM for computed style
-		tempEl.style.position = "absolute"
-		tempEl.style.visibility = "hidden"
-		tempEl.style.pointerEvents = "none"
-		tempEl.style.width = "1px"
-		tempEl.style.height = "1px"
-		tempEl.style.top = "-9999px"
-		document.body.appendChild(tempEl)
-
-		// Force a reflow to ensure styles are computed
-
-		tempEl.offsetHeight
-
-		const computedColor = window.getComputedStyle(tempEl).color
-		document.body.removeChild(tempEl)
-
-		// Use canvas to ensure we get a valid RGB value
-		// This handles cases where browser returns lab() or other formats
-		const canvas = document.createElement("canvas")
-		canvas.width = 1
-		canvas.height = 1
-		const ctx = canvas.getContext("2d")
-		if (ctx) {
-			ctx.fillStyle = computedColor || fallback
-			ctx.fillRect(0, 0, 1, 1)
-			const imageData = ctx.getImageData(0, 0, 1, 1)
-			const [r, g, b] = imageData.data
-			return `rgb(${r}, ${g}, ${b})`
-		}
-
-		// Fallback: return computed color if it's already in rgb format
-		if (computedColor && computedColor.startsWith("rgb")) {
-			return computedColor
-		}
-	} catch (error) {
-		// If conversion fails, use fallback
-		console.warn(`Failed to convert CSS variable ${variable} to RGB:`, error)
-	}
-	return fallback
-}
-
 // eslint-disable-next-line max-lines-per-function
-function PriceHistoryChart({ priceHistory, multiplyBy100 = true }: PriceHistoryChartProps): React.ReactNode {
+function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHistoryChartCardProps): React.ReactNode {
 	const chartContainerRef = useRef<HTMLDivElement>(null)
 	const chartRef = useRef<IChartApi | null>(null)
 	const seriesRef = useRef<ISeriesApi<"Line"> | null>(null)
@@ -366,4 +318,4 @@ function PriceHistoryChart({ priceHistory, multiplyBy100 = true }: PriceHistoryC
 	)
 }
 
-export default observer(PriceHistoryChart)
+export default observer(PriceHistoryChartCard)

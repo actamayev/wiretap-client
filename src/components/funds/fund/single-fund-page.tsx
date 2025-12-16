@@ -6,7 +6,7 @@ import isUndefined from "lodash-es/isUndefined"
 import fundsClass from "../../../classes/funds-class"
 import ContainerLayout from "../../layouts/container-layout"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs"
-import PriceHistoryChart from "../../price-history-chart"
+import PriceHistoryChartPage from "../../price-history-chart-page"
 import PositionsTab from "./positions-tab"
 import TransactionHistoryTab from "./transaction-history-tab"
 
@@ -35,7 +35,7 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 				{/* Portfolio Value Chart */}
 				<div className="w-full h-64 rounded-lg overflow-hidden bg-sidebar-blue p-4 border-2 border-white/30">
 					<div className="w-full h-full rounded-[5px] overflow-hidden">
-						<PriceHistoryChart
+						<PriceHistoryChartPage
 							priceHistory={
 								fund.portfolioHistory && fund.portfolioHistory.length > 0
 									? fund.portfolioHistory.map((snapshot): SinglePriceSnapshot => ({
