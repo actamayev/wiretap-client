@@ -1,14 +1,15 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { observer } from "mobx-react"
 import eventsClass from "../../classes/events-class"
 import ContainerLayout from "../layouts/container-layout"
-import retrieveAllEvents from "../../utils/events/retrieve-all-events"
+import retrieveAllEvents, { retrieveMoreEvents } from "../../utils/events/retrieve-all-events"
 import authClass from "../../classes/auth-class"
 import SingleEventCard from "./single-event-card"
 import EventCardSkeleton from "./event-card-skeleton"
 
+// eslint-disable-next-line max-lines-per-function
 function Events(): React.ReactNode {
 	useEffect((): void => {
 		void retrieveAllEvents()
@@ -40,6 +41,73 @@ function Events(): React.ReactNode {
 
 	const hasSearchTerm = eventsClass.searchTerm.trim().length > 0
 	const isLoading = eventsClass.isRetrievingAllEvents && events.length === 0
+	const loadMoreRef = useRef<HTMLDivElement>(null)
+	const containerRef = useRef<HTMLDivElement>(null)
+
+	// Infinite scroll: load more events when scrolling near bottom
+	useEffect((): (() => void) | undefined => {
+		// Don't load more if there's a search term (search filters local events)
+		if (hasSearchTerm) return undefined
+
+		// Find the scrolling container (parent of the content)
+		const scrollContainer = containerRef.current?.closest(".overflow-y-auto") as HTMLElement | null
+		if (!scrollContainer) {
+			console.warn("Could not find scrolling container for IntersectionObserver")
+			return undefined
+		}
+
+		const intersectionObserver = new IntersectionObserver(
+			(entries): void => {
+				const [entry] = entries
+				// Always access latest values from eventsClass (MobX observable)
+				const hasMore = eventsClass.hasMoreEvents
+				const isRetrieving = eventsClass.isRetrievingAllEvents
+
+				console.log("Sentinel element intersection:", {
+					isIntersecting: entry.isIntersecting,
+					hasMoreEvents: hasMore,
+					isRetrieving,
+					currentOffset: eventsClass.currentOffset,
+					eventsCount: events.length
+				})
+
+				// Load more when sentinel element is visible and we have more events to load
+				if (
+					entry.isIntersecting &&
+					hasMore &&
+					!isRetrieving
+				) {
+					console.log("✅ Triggering retrieveMoreEvents")
+					void retrieveMoreEvents()
+				}
+			},
+			{
+				root: scrollContainer, // Use the scrolling container as root
+				rootMargin: "200px" // Start loading 200px before reaching the bottom
+			}
+		)
+
+		const currentRef = loadMoreRef.current
+		if (!currentRef) {
+			console.warn("loadMoreRef.current is null")
+			return undefined
+		}
+
+		console.log("Setting up IntersectionObserver", {
+			hasMoreEvents: eventsClass.hasMoreEvents,
+			scrollContainer: !!scrollContainer
+		})
+		intersectionObserver.observe(currentRef)
+
+		return (): void => {
+			if (currentRef) {
+				intersectionObserver.unobserve(currentRef)
+			}
+		}
+		// Re-run when search term changes or when events are added (to re-setup observer)
+		// MobX observables are accessed directly inside the callback
+
+	}, [hasSearchTerm, events.length])
 
 	const renderContent = (): React.ReactNode => {
 		if (isLoading) {
@@ -70,12 +138,23 @@ function Events(): React.ReactNode {
 		}
 
 		return (
-			<div className="flex flex-col w-full p-6">
+			<div ref={containerRef} className="flex flex-col w-full p-6">
 				<div className="grid grid-cols-2 gap-6 w-full">
 					{events.map((event): React.ReactNode => {
 						return <SingleEventCard key={event.eventId} event={event} />
 					})}
 				</div>
+				{/* Sentinel element for infinite scroll - always render when not searching */}
+				{!hasSearchTerm && (
+					<div ref={loadMoreRef} className="flex justify-center py-4 min-h-[100px]">
+						{eventsClass.isRetrievingAllEvents && (
+							<div className="flex items-center gap-2 text-muted-foreground">
+								<EventCardSkeleton />
+								<span className="text-sm">Loading more events...</span>
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		)
 	}

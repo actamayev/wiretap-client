@@ -7,10 +7,11 @@ export default class EventsDataService extends BaseDataService {
 		super(httpClient, pathHeader)
 	}
 
-	async retrieveAllEvents(): Promise<AxiosResponse<AllEventsResponse | ErrorResponse>> {
-		return await this.httpClient.http.get<AllEventsResponse | ErrorResponse>(
-			this.buildUrl("/all-events")
-		)
+	async retrieveAllEvents(offset = 0): Promise<AxiosResponse<AllEventsResponse | ErrorResponse>> {
+		const url = offset === 0
+			? this.buildUrl("/all-events")
+			: this.buildUrl(`/all-events?offset=${offset}`)
+		return await this.httpClient.http.get<AllEventsResponse | ErrorResponse>(url)
 	}
 
 	async retrieveSingleEvent(eventSlug: EventSlug): Promise<AxiosResponse<SingleEventResponse | NonSuccessResponse>> {

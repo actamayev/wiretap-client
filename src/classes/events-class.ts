@@ -8,6 +8,8 @@ class EventsClass {
 	public retrievingSingleEvent: Map<EventSlug, boolean> = new Map()
 	public events: Map<EventSlug, SingleEvent> = new Map()
 	public searchTerm = ""
+	public currentOffset = 0
+	public hasMoreEvents = true // Track if there are more events to load
 
 	constructor() {
 		makeAutoObservable(this)
@@ -27,8 +29,24 @@ class EventsClass {
 
 	public setEventsMetadata = action((newEvents: SingleEventMetadata[]): void => {
 		newEvents.forEach((event): void => this.addSingleEventMetadata(event.eventSlug, event))
+		// If we got fewer events than expected (less than 20), we've reached the end
+		this.hasMoreEvents = newEvents.length >= 20
 		this.setHasRetrievedAllEvents(true)
 		this.setIsRetrievingAllEvents(false)
+	})
+
+	public setCurrentOffset = action((offset: number): void => {
+		this.currentOffset = offset
+	})
+
+	public incrementOffset = action((): void => {
+		this.currentOffset += 20
+	})
+
+	public resetPagination = action((): void => {
+		this.currentOffset = 0
+		this.hasMoreEvents = true
+		this.hasRetrievedAllEvents = false
 	})
 
 	public addSingleEventMetadata = action((eventSlug: EventSlug, event: SingleEventMetadata): void => {
