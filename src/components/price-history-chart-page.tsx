@@ -130,10 +130,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 					labelVisible: false,
 				},
 			},
-			handleScroll: {
-				mouseWheel: false,
-				pressedMouseMove: false,
-			},
+			handleScroll: false,
 			handleScale: {
 				axisPressedMouseMove: false,
 				mouseWheel: false,
