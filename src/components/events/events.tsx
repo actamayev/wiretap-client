@@ -63,21 +63,12 @@ function Events(): React.ReactNode {
 				const hasMore = eventsClass.hasMoreEvents
 				const isRetrieving = eventsClass.isRetrievingAllEvents
 
-				console.log("Sentinel element intersection:", {
-					isIntersecting: entry.isIntersecting,
-					hasMoreEvents: hasMore,
-					isRetrieving,
-					currentOffset: eventsClass.currentOffset,
-					eventsCount: events.length
-				})
-
 				// Load more when sentinel element is visible and we have more events to load
 				if (
 					entry.isIntersecting &&
 					hasMore &&
 					!isRetrieving
 				) {
-					console.log("✅ Triggering retrieveMoreEvents")
 					void retrieveMoreEvents()
 				}
 			},
@@ -94,10 +85,6 @@ function Events(): React.ReactNode {
 			return undefined
 		}
 
-		console.log("Setting up IntersectionObserver", {
-			hasMoreEvents: eventsClass.hasMoreEvents,
-			scrollContainer: !!scrollContainer
-		})
 		intersectionObserver.observe(currentRef)
 
 		return (): void => {

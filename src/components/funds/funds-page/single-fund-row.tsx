@@ -61,8 +61,8 @@ function SingleFundRow({ fund }: { fund: SingleUnfilledFund }): React.ReactNode 
 					<div className="h-24 w-full rounded-[5px] overflow-hidden">
 						<PriceHistoryChartCard
 							priceHistory={
-								fund.portfolioHistory?.["1d"] && fund.portfolioHistory["1d"].length > 0
-									? fund.portfolioHistory["1d"].map((snapshot): SinglePriceSnapshot => ({
+								fund.portfolioHistory?.["1w"] && fund.portfolioHistory["1w"].length > 0
+									? fund.portfolioHistory["1w"].map((snapshot): SinglePriceSnapshot => ({
 										timestamp: typeof snapshot.timestamp === "string"
 											? new Date(snapshot.timestamp)
 											: snapshot.timestamp,

@@ -56,7 +56,7 @@ class EventsClass {
 				...market,
 				firstOutcomePrice: (market.midpointPrice ?? 0),
 				secondOutcomePrice: 1 - (market.midpointPrice ?? 0),
-				selectedTimeframe: "1d",
+				selectedTimeframe: "1w",
 				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
 					...outcome,
 					priceHistory: {
@@ -148,9 +148,9 @@ class EventsClass {
 
 	public getSelectedTimeframe = (eventSlug: EventSlug): keyof OutcomePriceHistories => {
 		const event = this.events.get(eventSlug)
-		if (!event) return "1d"
+		if (!event) return "1w"
 		const market = event.eventMarkets[0]
-		if (!market) return "1d"
+		if (!market) return "1w"
 		return market.selectedTimeframe
 	}
 

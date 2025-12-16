@@ -85,7 +85,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
 		const market = event.eventMarkets[0]
-		return market?.selectedTimeframe ?? "1d"
+		return market?.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event.eventSlug, event.eventMarkets[0]?.selectedTimeframe])
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)

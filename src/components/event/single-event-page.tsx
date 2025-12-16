@@ -39,7 +39,6 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		const market = event.eventMarkets[0]
 		tradeClass.setMarketId(market.marketId)
 		const firstClobToken = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.clobTokenId
-		console.log("firstClobToken", firstClobToken)
 		tradeClass.setSelectedClobToken(firstClobToken)
 	}, [event])
 
@@ -60,9 +59,9 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
-		if (!event) return "1d"
+		if (!event) return "1w"
 		const market = event.eventMarkets[0]
-		return market?.selectedTimeframe ?? "1d"
+		return market?.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [event, event?.eventMarkets[0]?.selectedTimeframe])
 

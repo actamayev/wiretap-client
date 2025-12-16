@@ -37,9 +37,9 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [fundId, fund, authClass.isLoggedIn])
 
-	// Get selected timeframe from fund, default to "1d"
+	// Get selected timeframe from fund, default to "1w"
 	const selectedTimeframe = useMemo((): keyof PortfolioPriceHistories => {
-		return fund?.selectedTimeframe ?? "1d"
+		return fund?.selectedTimeframe ?? "1w"
 
 	}, [fund?.selectedTimeframe])
 
