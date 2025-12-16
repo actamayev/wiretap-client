@@ -11,7 +11,7 @@ function ContainerLayout(props: { children: React.ReactNode }): React.ReactNode 
 		<div className="h-screen flex flex-col w-full bg-sidebar-blue">
 			{/* Header */}
 			<header
-				className="bg-sidebar-blue mr-6"
+				className="bg-sidebar-blue md:mr-6"
 				style={{ paddingBlock: "18px" }}
 			>
 				<HeaderContent />
@@ -19,7 +19,7 @@ function ContainerLayout(props: { children: React.ReactNode }): React.ReactNode 
 
 			{/* Main content area with hidden scrollbar */}
 			<div
-				className={"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue mr-6 rounded-tl-3xl rounded-tr-3xl"}
+				className={"flex-1 overflow-y-auto scrollbar-hide bg-off-sidebar-blue md:mr-6 rounded-tl-3xl rounded-tr-3xl"}
 				style={{
 					/* Firefox */
 					scrollbarWidth: "none",
