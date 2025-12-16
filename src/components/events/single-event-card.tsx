@@ -188,7 +188,10 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 								</h3>
 							</div>
 							<div className="shrink-0 text-xl font-bold text-yes-green">
-								{Math.round((event.eventMarkets[0].midpointPrice ?? 0) * 100)}%
+								{(Math.round((event.eventMarkets[0].midpointPrice ?? 0) * 100) < 1 && (event.eventMarkets[0].midpointPrice ?? 0) > 0)
+									? "< 1"
+									: Math.round((event.eventMarkets[0].midpointPrice ?? 0) * 100)
+								}%
 							</div>
 						</div>
 
