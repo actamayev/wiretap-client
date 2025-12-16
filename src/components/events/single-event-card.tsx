@@ -211,8 +211,11 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 						)}
 					</div>
 
-					{/* Row 3: Timeframe Selector */}
-					<div className="flex items-center justify-center">
+					{/* Row 3: Volume and Timeframe Selector */}
+					<div className="flex items-center justify-between">
+						<div className="text-sm text-white/40">
+							{formatVolume(event.eventTotalVolume)}
+						</div>
 						<div className="flex gap-1">
 							{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
 								(timeframe): React.ReactNode => (
