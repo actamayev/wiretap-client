@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 "use client"
 
 import { observer } from "mobx-react"
@@ -43,13 +44,13 @@ const parseAmountValue = (value: string): string => {
 function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const [isLoading, setIsLoading] = useState(false)
 
-	const updateClobToken = (marketIndex: number): void => {
+	const updateClobToken = (outcomeIndex: 0 | 1): void => {
 		if (isUndefined(tradeClass.marketId)) return
 
 		// Find the event that contains this market
 		const market = event.eventMarkets.find((m): boolean => m.marketId === tradeClass.marketId)
 		if (market) {
-			const clobToken = marketIndex === 0 ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
+			const clobToken = outcomeIndex === 0 ? market.outcomes[0].clobTokenId : market.outcomes[1].clobTokenId
 			tradeClass.setSelectedClobToken(clobToken)
 		}
 	}
@@ -124,13 +125,13 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 			{/* First/Second Outcome Buttons */}
 			<div className="flex gap-2 mb-4">
 				<Button
-					variant={tradeClass.selectedMarketIndex === 0 ? "default" : "outline"}
+					variant={tradeClass.selectedOutcomeIndex === 0 ? "default" : "outline"}
 					className={cn(
 						"flex-1 h-14",
-						tradeClass.selectedMarketIndex === 0 ? "bg-yes-green hover:bg-yes-green-hover text-white" : ""
+						tradeClass.selectedOutcomeIndex === 0 ? "bg-yes-green hover:bg-yes-green-hover text-white" : ""
 					)}
 					onClick={(): void => {
-						tradeClass.setSelectedMarketIndex(0)
+						tradeClass.setSelectedOutcomeIndex(0)
 						updateClobToken(0)
 					}}
 				>
@@ -142,13 +143,13 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 					</div>
 				</Button>
 				<Button
-					variant={tradeClass.selectedMarketIndex === 1 ? "default" : "outline"}
+					variant={tradeClass.selectedOutcomeIndex === 1 ? "default" : "outline"}
 					className={cn(
 						"flex-1 h-14",
-						tradeClass.selectedMarketIndex === 1 ? "bg-no-red hover:bg-no-red-hover text-white" : ""
+						tradeClass.selectedOutcomeIndex === 1 ? "bg-no-red hover:bg-no-red-hover text-white" : ""
 					)}
 					onClick={(): void => {
-						tradeClass.setSelectedMarketIndex(1)
+						tradeClass.setSelectedOutcomeIndex(1)
 						updateClobToken(1)
 					}}
 				>
@@ -200,7 +201,7 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 						{isLoading && <Spinner className="size-5" />}
 						<span>
 							{tradeClass.tradeTab} {" "}
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === tradeClass.selectedMarketIndex)?.outcome}
+							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === tradeClass.selectedOutcomeIndex)?.outcome}
 						</span>
 					</div>
 				</Button>
