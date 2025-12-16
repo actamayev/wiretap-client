@@ -9,6 +9,7 @@ import wiretapApiClient from "../../classes/wiretap-api-client-class"
 import retrieveEventPriceHistory from "./retrieve-event-price-history"
 import polymarketWebSocketClient from "../../classes/polymarket-websocket-client"
 
+// eslint-disable-next-line complexity
 export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise<void> {
 	try {
 		if (
@@ -29,24 +30,20 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 		}
 
 		eventsClass.addSingleEventMetadata(eventSlug, eventsResponse.data.event)
+		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)
 
 		// Fetch price history for each outcome (1D interval)
 		await retrieveEventPriceHistory(eventSlug)
 
 		// Add Yes outcome clob token to WebSocket subscription
 		const event = eventsClass.events.get(eventSlug)
-		if (event) {
-			const market = event.eventMarkets[0]
-			if (market) {
-				const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-				if (yesOutcome) {
-					// addToSubscription handles connection state - will connect if needed
-					await polymarketWebSocketClient.addToSubscription([yesOutcome.clobTokenId])
-				}
-			}
-		}
-
-		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)
+		if (!event) return
+		const market = event.eventMarkets[0]
+		if (!market) return
+		const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+		if (!yesOutcome) return
+		// addToSubscription handles connection state - will connect if needed
+		await polymarketWebSocketClient.addToSubscription([yesOutcome.clobTokenId])
 	} catch (error) {
 		console.error(error)
 		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)

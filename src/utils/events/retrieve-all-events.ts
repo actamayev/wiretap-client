@@ -35,15 +35,12 @@ export default async function retrieveAllEvents(): Promise<void> {
 		const clobTokenIds: ClobTokenId[] = []
 		for (const eventMetadata of eventsResponse.data.events) {
 			const event = eventsClass.events.get(eventMetadata.eventSlug)
-			if (event) {
-				const market = event.eventMarkets[0]
-				if (market) {
-					const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-					if (yesOutcome) {
-						clobTokenIds.push(yesOutcome.clobTokenId)
-					}
-				}
-			}
+			if (!event) continue
+			const market = event.eventMarkets[0]
+			if (!market) continue
+			const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+			if (!yesOutcome) continue
+			clobTokenIds.push(yesOutcome.clobTokenId)
 		}
 		if (clobTokenIds.length > 0) {
 			// addToSubscription handles connection state - will connect if needed
