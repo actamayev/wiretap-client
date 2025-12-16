@@ -234,10 +234,40 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 			// Position tooltip at crosshair point (on the line)
 			// param.point coordinates are relative to the chart container
 			// Since container has position: relative, these coordinates work directly
-			const x = param.point.x
-			const y = param.point.y
+			const x = Number(param.point.x)
+			const y = Number(param.point.y)
+
+			// Get tooltip dimensions to ensure it stays within chart bounds
+			// Note: tooltip uses transform: translate(-50%, -100%) which centers it horizontally
+			// First set initial position to get accurate width measurement
 			tooltipRef.current.style.left = `${x}px`
 			tooltipRef.current.style.top = `${y}px`
+
+			// Force a reflow to get accurate dimensions
+			tooltipRef.current.offsetWidth
+
+			const containerWidth = Number(chartContainerRef.current.clientWidth)
+			const tooltipRect = tooltipRef.current.getBoundingClientRect()
+			const tooltipWidth = tooltipRect.width
+			const halfTooltipWidth = tooltipWidth / 2
+
+			// Calculate centered position accounting for transform translate(-50%)
+			// The left edge will be at: leftPosition - halfTooltipWidth
+			// The right edge will be at: leftPosition + halfTooltipWidth
+			let leftPosition: number = x
+
+			// Check if tooltip would go off the left edge
+			if (x - halfTooltipWidth < 0) {
+				// Position tooltip so its left edge aligns with container's left edge
+				leftPosition = Number(halfTooltipWidth)
+			}
+			// Check if tooltip would go off the right edge
+			else if (x + halfTooltipWidth > containerWidth) {
+				// Position tooltip so its right edge aligns with container's right edge
+				leftPosition = Number(containerWidth - halfTooltipWidth)
+			}
+
+			tooltipRef.current.style.left = `${leftPosition}px`
 		})
 
 		// Hide TradingView logo/watermark via CSS (fallback if attributionLogo doesn't work)
