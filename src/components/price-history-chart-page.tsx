@@ -245,6 +245,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 		}
 
 		// Subscribe to crosshair move events to position magnifier tooltip at top
+		// eslint-disable-next-line complexity
 		chart.subscribeCrosshairMove((param): void => {
 			if (
 				!tooltipRef.current ||
