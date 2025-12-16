@@ -26,11 +26,11 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 	const priceChange = ((): "up" | "down" | "neutral" => {
 		if (!priceHistory || priceHistory.length < 2) return "neutral"
 		const sortedHistory = [...priceHistory].sort((a, b): number => {
-			const aTime = a.timestamp instanceof Date 
-				? a.timestamp.getTime() 
+			const aTime = a.timestamp instanceof Date
+				? a.timestamp.getTime()
 				: new Date(a.timestamp).getTime()
-			const bTime = b.timestamp instanceof Date 
-				? b.timestamp.getTime() 
+			const bTime = b.timestamp instanceof Date
+				? b.timestamp.getTime()
 				: new Date(b.timestamp).getTime()
 			return aTime - bTime
 		})
@@ -176,8 +176,8 @@ function PriceHistoryChartCard({ priceHistory, multiplyBy100 = true }: PriceHist
 		priceHistory.forEach((snapshot): void => {
 			// Convert to local time by adjusting for timezone offset
 			// The chart displays UTC, so we adjust the timestamp to make it appear as local time
-			const timestamp = snapshot.timestamp instanceof Date 
-				? snapshot.timestamp 
+			const timestamp = snapshot.timestamp instanceof Date
+				? snapshot.timestamp
 				: new Date(snapshot.timestamp)
 			const utcTime = timestamp.getTime() / 1000
 			const localTime = utcTime - timezoneOffset

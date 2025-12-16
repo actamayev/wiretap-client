@@ -29,7 +29,13 @@ export default async function createFund(): Promise<FundsUUID | undefined> {
 				purchaseOrders: [],
 				saleOrders: []
 			},
-			portfolioHistory: []
+			portfolioHistory: {
+				"1h": [],
+				"1d": [],
+				"1w": [],
+				"1m": [],
+				max: []
+			}
 		})
 		return createFundResponse.data.fundUUID
 	} catch (error) {

@@ -13,6 +13,21 @@ export default class FundsDataService extends BaseDataService {
 		)
 	}
 
+	async retrieveDetailedFund(wiretapFundUUID: FundsUUID): Promise<AxiosResponse<DetailedSingleFundResponse | NonSuccessResponse>> {
+		return await this.httpClient.http.get<DetailedSingleFundResponse | NonSuccessResponse>(
+			this.buildUrl(`/detailed-fund/${wiretapFundUUID}`)
+		)
+	}
+
+	async retrievePortfolioHistoryByResolution(
+		wiretapFundUUID: FundsUUID,
+		timeWindow: TimeWindow
+	): Promise<AxiosResponse<SinglePortfolioSnapshotResponse | NonSuccessResponse>> {
+		return await this.httpClient.http.post<SinglePortfolioSnapshotResponse | NonSuccessResponse>(
+			this.buildUrl(`/portfolio-history-by-resolution/${wiretapFundUUID}`), { timeWindow }
+		)
+	}
+
 	async createFund(fundInformation: IncomingCreateFundRequest): Promise<AxiosResponse<CreateFundResponse | ErrorResponse>> {
 		return await this.httpClient.http.post<CreateFundResponse | ErrorResponse>(
 			this.buildUrl("/create-fund"), { fundInformation }

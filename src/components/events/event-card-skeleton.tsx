@@ -18,7 +18,7 @@ function EventCardSkeleton(): React.ReactNode {
 						<Skeleton className="shrink-0 w-12 h-6" />
 					</div>
 
-					{/* Row 2: Yes/No Buttons */}
+					{/* Row 2: First/Second Outcome Buttons */}
 					<div className="flex gap-4">
 						<Skeleton className="flex-1 h-10 rounded-[5px]" />
 						<Skeleton className="flex-1 h-10 rounded-[5px]" />

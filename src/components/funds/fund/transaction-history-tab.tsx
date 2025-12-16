@@ -122,7 +122,7 @@ export default function TransactionHistoryTab({ transactions }: TransactionHisto
 						<tr>
 							<th className="text-left p-4 font-semibold">Activity</th>
 							<th className="text-left p-4 font-semibold">Market</th>
-							<th className="text-left p-4 font-semibold">Yes/No</th>
+							<th className="text-left p-4 font-semibold">Position</th>
 							<th className="text-left p-4 font-semibold">Shares</th>
 							<th className="text-left p-4 font-semibold">Cost/Proceeds</th>
 							<th className="text-left p-4 font-semibold">Transaction Date</th>

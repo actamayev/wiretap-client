@@ -35,15 +35,15 @@ export default async function retrieveSingleEvent(eventSlug: EventSlug): Promise
 		// Fetch price history for each outcome (1D interval)
 		await retrieveEventPriceHistory(eventSlug)
 
-		// Add Yes outcome clob token to WebSocket subscription
+		// Add First outcome clob token to WebSocket subscription
 		const event = eventsClass.events.get(eventSlug)
 		if (!event) return
 		const market = event.eventMarkets[0]
 		if (!market) return
-		const yesOutcome = market.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
-		if (!yesOutcome) return
+		const firstOutcome  = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
+		if (!firstOutcome) return
 		// addToSubscription handles connection state - will connect if needed
-		await polymarketWebSocketClient.addToSubscription([yesOutcome.clobTokenId])
+		await polymarketWebSocketClient.addToSubscription([firstOutcome.clobTokenId])
 	} catch (error) {
 		console.error(error)
 		eventsClass.setIsRetrievingSingleEvent(eventSlug, false)

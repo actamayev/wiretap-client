@@ -17,13 +17,13 @@ import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome
 import { timeframeConfig } from "../../utils/constants/timeframe-config"
 import { cn } from "../../lib/utils"
 
-// eslint-disable-next-line max-lines-per-function
+// eslint-disable-next-line max-lines-per-function, complexity
 function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const navigate = useTypedNavigate()
 	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
 	const [pendingNavigation, setPendingNavigation] = useState<{
 		eventSlug: EventSlug
-		market?: "Yes" | "No"
+		marketIndex?: number
 	} | null>(null)
 
 	const handleTitleClick = useCallback((): void => {
@@ -39,37 +39,37 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		navigate(`/event/${event.eventSlug}`)
 	}, [navigate, event.eventSlug])
 
-	const handleYesClick = useCallback((): void => {
+	const handleFirstOutcomeClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
 			setPendingNavigation({
 				eventSlug: event.eventSlug,
-				market: "Yes"
+				marketIndex: 0
 			})
 			setShowRegisterDialog(true)
 			return
 		}
 
 		const market = event.eventMarkets[0]
-		tradeClass.setSelectedMarket("Yes" as OutcomeString)
+		tradeClass.setSelectedMarketIndex(0)
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
 		navigate(`/event/${event.eventSlug}`)
 	}, [navigate, event.eventSlug, event.eventMarkets])
 
-	const handleNoClick = useCallback((): void => {
+	const handleSecondOutcomeClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
 			setPendingNavigation({
 				eventSlug: event.eventSlug,
-				market: "No"
+				marketIndex: 1
 			})
 			setShowRegisterDialog(true)
 			return
 		}
 
 		const market = event.eventMarkets[0]
-		tradeClass.setSelectedMarket("No" as OutcomeString)
+		tradeClass.setSelectedMarketIndex(1)
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
 		navigate(`/event/${event.eventSlug}`)
@@ -90,9 +90,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	}, [event.eventSlug, event.eventMarkets[0]?.selectedTimeframe])
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
-	// Get the Yes outcome
-	const yesOutcome = useMemo((): SingleOutcome | undefined => {
-		return event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
+	// Get the First outcome
+	const firstOutcome = useMemo((): SingleOutcome | undefined => {
+		return event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
 	}, [event])
 
 	// Helper function to check if data is real historical data or just WebSocket updates
@@ -108,43 +108,43 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 
 	// Function to fetch price history for a specific timeframe
 	const fetchTimeframeData = useCallback(async (timeframe: keyof OutcomePriceHistories): Promise<void> => {
-		if (!yesOutcome) return
+		if (!firstOutcome) return
 
 		// Check if already retrieving
-		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe)) {
+		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, firstOutcome.clobTokenId, timeframe)) {
 			return
 		}
 
 		// Check if real historical data already exists (not just WebSocket updates)
-		const existingData = yesOutcome.priceHistory[timeframe]
+		const existingData = firstOutcome.priceHistory[timeframe]
 		if (existingData && hasRealHistoricalData(existingData)) {
 			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			return
 		}
 
 		setIsLoadingTimeframe(true)
-		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe, true)
+		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, firstOutcome.clobTokenId, timeframe, true)
 		try {
 			const config = timeframeConfig[timeframe]
 			const priceHistoryResponse = await retrieveOutcomePriceHistory({
-				market: yesOutcome.clobTokenId as string,
+				market: firstOutcome.clobTokenId as string,
 				interval: config.interval,
 				fidelity: config.fidelity
 			})
 			eventsClass.setOutcomePriceHistory(
 				event.eventSlug,
-				yesOutcome.clobTokenId,
+				firstOutcome.clobTokenId,
 				timeframe,
 				priceHistoryResponse.history
 			)
 			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
-			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, yesOutcome.clobTokenId, timeframe, false)
+			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, firstOutcome.clobTokenId, timeframe, false)
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
-	}, [yesOutcome, event.eventSlug, hasRealHistoricalData])
+	}, [firstOutcome, event.eventSlug, hasRealHistoricalData])
 
 	// Handle timeframe button click
 	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
@@ -196,23 +196,23 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 							</div>
 						</div>
 
-						{/* Row 2: Yes/No Buttons */}
+						{/* Row 2: First/Second Outcome Buttons */}
 						<div className="flex gap-4">
 							<Button
 								variant="default"
 								size="sm"
 								className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
-								onClick={handleYesClick}
+								onClick={handleFirstOutcomeClick}
 							>
-								Yes
+								{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
 							</Button>
 							<Button
 								variant="default"
 								size="sm"
 								className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
-								onClick={handleNoClick}
+								onClick={handleSecondOutcomeClick}
 							>
-								No
+								{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
 							</Button>
 						</div>
 
@@ -250,10 +250,10 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 					{/* Right Section - 2/5 width */}
 					<div className="w-2/5 flex flex-col h-full min-h-0">
 						<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
-							{yesOutcome?.priceHistory[selectedTimeframe] &&
-								yesOutcome.priceHistory[selectedTimeframe].length > 0 && (
+							{firstOutcome?.priceHistory[selectedTimeframe] &&
+								firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
 								<PriceHistoryChartCard
-									priceHistory={yesOutcome.priceHistory[selectedTimeframe].map(
+									priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
 										(entry): SinglePriceSnapshot => ({
 											timestamp: new Date(entry.t * 1000),
 											price: entry.p

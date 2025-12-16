@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { Clock } from "lucide-react"
+import { CustomPolymarket } from "../../icons/custom-polymarket"
 import { observer } from "mobx-react"
 import isUndefined from "lodash-es/isUndefined"
 import { useMemo, useEffect, useState, useCallback } from "react"
@@ -36,14 +37,10 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	useEffect((): void => {
 		if (!event) return
 		const market = event.eventMarkets[0]
-		// First outcome is Yes, second is No
-		const yesOutcome = market.outcomes[0]
-		const noOutcome = market.outcomes[1]
-
 		tradeClass.setMarketId(market.marketId)
-		// Set clob token based on selected market (Yes = index 0, No = index 1)
-		const clobToken = tradeClass.selectedMarket === "Yes" ? yesOutcome.clobTokenId : noOutcome.clobTokenId
-		tradeClass.setSelectedClobToken(clobToken)
+		const firstClobToken = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.clobTokenId
+		console.log("firstClobToken", firstClobToken)
+		tradeClass.setSelectedClobToken(firstClobToken)
 	}, [event])
 
 	useEffect((): void => {
@@ -57,9 +54,9 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		if (!event) return undefined
 		const market = event.eventMarkets[0]
 		if (!market) return undefined
-		return market.outcomes.find((outcome): boolean => outcome.outcome === tradeClass.selectedMarket)
+		return market.outcomes.find((outcome): boolean => outcome.clobTokenId === tradeClass.selectedClobToken)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event, tradeClass.selectedMarket])
+	}, [event, tradeClass.selectedClobToken])
 
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
@@ -164,11 +161,13 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 	}
 
 	const formatDate = (date: Date): string => {
+		const d = new Date(date)
 		return new Intl.DateTimeFormat("en-US", {
 			month: "short",
 			day: "numeric",
-			year: "numeric"
-		}).format(new Date(date))
+			year: "numeric",
+			timeZone: "UTC"
+		}).format(d)
 	}
 
 	return (
@@ -196,6 +195,17 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 								{event.eventTitle}
 							</a>
 						</h1>
+						<a
+							href={`https://polymarket.com/event/${eventSlug}`}
+							target="_blank"
+							rel="noopener noreferrer"
+							className={cn(
+								"relative w-10 h-10 shrink-0 rounded-md overflow-hidden bg-transparent",
+								"flex items-center justify-center hover:opacity-80 transition-opacity"
+							)}
+						>
+							<CustomPolymarket className="size-10!" />
+						</a>
 					</div>
 					<div className="flex items-center gap-4 text-sm text-muted-foreground">
 						<span>${Math.floor(event.eventTotalVolume).toLocaleString()} Vol.</span>
