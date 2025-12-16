@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { observer } from "mobx-react"
-import { createChart, IChartApi, ISeriesApi, LineData, LineSeries, Time } from "lightweight-charts"
+import { createChart, IChartApi, ISeriesApi, AreaData, AreaSeries, Time } from "lightweight-charts"
 import getCSSVariableAsRGB from "../utils/get-css-variable-as-rgb"
 
 interface PriceHistoryChartPageProps {
@@ -14,13 +14,45 @@ interface PriceHistoryChartPageProps {
 function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHistoryChartPageProps): React.ReactNode {
 	const chartContainerRef = useRef<HTMLDivElement>(null)
 	const chartRef = useRef<IChartApi | null>(null)
-	const seriesRef = useRef<ISeriesApi<"Line"> | null>(null)
+	const seriesRef = useRef<ISeriesApi<"Area"> | null>(null)
 	const watermarkStyleRef = useRef<HTMLStyleElement | null>(null)
 	const tooltipRef = useRef<HTMLDivElement | null>(null)
 
 	// Track price history length to detect changes (MobX observable arrays need explicit tracking)
 	// Accessing .length ensures MobX tracks this property
 	const priceHistoryLength = priceHistory?.length ?? 0
+
+	// Calculate price change to determine colors
+	const priceChange = ((): "up" | "down" | "neutral" => {
+		if (!priceHistory || priceHistory.length < 2) return "neutral"
+		const sortedHistory = [...priceHistory].sort((a, b): number =>
+			a.timestamp.getTime() - b.timestamp.getTime()
+		)
+		const firstPrice = sortedHistory[0]?.price ?? 0
+		const lastPrice = sortedHistory[sortedHistory.length - 1]?.price ?? 0
+		if (lastPrice > firstPrice) return "up"
+		if (lastPrice < firstPrice) return "down"
+		return "neutral"
+	})()
+
+	// Determine colors based on price change
+	let lineColor: string
+	let areaTopColor: string
+	let areaBottomColor: string
+
+	if (priceChange === "up") {
+		lineColor = "rgb(40, 165, 155)"
+		areaTopColor = "rgba(40, 165, 155, 0.28)"
+		areaBottomColor = "rgba(5, 20, 20, 0.05)"
+	} else if (priceChange === "down") {
+		lineColor = "rgb(240, 80, 80)"
+		areaTopColor = "rgba(240, 80, 80, 0.28)"
+		areaBottomColor = "rgba(50, 20, 20, 0.05)"
+	} else {
+		lineColor = getCSSVariableAsRGB("--chart-line", "rgb(44, 145, 205)")
+		areaTopColor = "rgba(44, 145, 205, 0.28)"
+		areaBottomColor = "rgba(29, 42, 57, 0.05)"
+	}
 
 	// Initialize and update chart
 	// eslint-disable-next-line max-lines-per-function
@@ -29,7 +61,6 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 			return (): void => {}
 		}
 
-		const chartLineColor = getCSSVariableAsRGB("--chart-line", "rgb(44, 145, 205)")
 		const chartBackgroundColor = getCSSVariableAsRGB("--chart-background", "rgb(29, 42, 57)")
 		const mutedForegroundColor = getCSSVariableAsRGB("--muted-foreground", "rgb(113, 113, 122)")
 		// Grid line color
@@ -106,9 +137,11 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 
 		chartRef.current = chart
 
-		// Create line series with price format including %
-		const lineSeries = chart.addSeries(LineSeries, {
-			color: chartLineColor,
+		// Create area series with price format including %
+		const areaSeries = chart.addSeries(AreaSeries, {
+			lineColor: lineColor,
+			topColor: areaTopColor,
+			bottomColor: areaBottomColor,
 			lineWidth: 2,
 			priceFormat: multiplyBy100 ? {
 				type: "custom",
@@ -125,7 +158,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 			},
 		})
 
-		seriesRef.current = lineSeries
+		seriesRef.current = areaSeries
 
 		// Convert price history to chart data format
 		// Sort by timestamp and remove duplicates (keep last value for same timestamp)
@@ -142,8 +175,8 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 			chartDataMap.set(localTime, value)
 		})
 
-		const chartData: LineData<Time>[] = Array.from(chartDataMap.entries())
-			.map(([time, value]): LineData<Time> => ({ time: time as Time, value }))
+		const chartData: AreaData<Time>[] = Array.from(chartDataMap.entries())
+			.map(([time, value]): AreaData<Time> => ({ time: time as Time, value }))
 			.sort((a, b): number => Number(a.time) - Number(b.time))
 
 		// Update chart data
@@ -152,7 +185,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 			// Fit content
 			chart.timeScale().fitContent()
 		} else {
-			lineSeries.setData(chartData)
+			areaSeries.setData(chartData)
 			// Fit content
 			chart.timeScale().fitContent()
 		}
@@ -189,6 +222,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 		`
 		tooltip.style.background = "rgba(0, 0, 0, 0.25)"
 		tooltip.style.color = "white"
+		tooltip.style.borderColor = lineColor
 		if (chartContainerRef.current) {
 			chartContainerRef.current.appendChild(tooltip)
 			tooltipRef.current = tooltip
@@ -228,7 +262,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 				return
 			}
 
-			const data = param.seriesData.get(lineSeries) as LineData<Time> | undefined
+			const data = param.seriesData.get(areaSeries) as AreaData<Time> | undefined
 			if (!data || typeof data.value !== "number") {
 				if (tooltipRef.current) {
 					tooltipRef.current.style.display = "none"
@@ -341,7 +375,7 @@ function PriceHistoryChartPage({ priceHistory, multiplyBy100 = true }: PriceHist
 				chart.remove()
 			}
 		}
-	}, [priceHistory, priceHistoryLength, multiplyBy100])
+	}, [priceHistory, priceHistoryLength, multiplyBy100, priceChange, lineColor, areaTopColor, areaBottomColor])
 
 	return (
 		<div className="w-full h-full relative" ref={chartContainerRef} />
