@@ -6,7 +6,7 @@ import { observer } from "mobx-react"
 import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
 import { Spinner } from "../ui/spinner"
-import PriceHistoryChart from "../price-history-chart"
+import PriceHistoryChartCard from "../price-history-chart-card"
 import { formatVolume } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
@@ -252,7 +252,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 						<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
 							{yesOutcome?.priceHistory[selectedTimeframe] &&
 								yesOutcome.priceHistory[selectedTimeframe].length > 0 && (
-								<PriceHistoryChart
+								<PriceHistoryChartCard
 									priceHistory={yesOutcome.priceHistory[selectedTimeframe].map(
 										(entry): SinglePriceSnapshot => ({
 											timestamp: new Date(entry.t * 1000),
