@@ -40,7 +40,7 @@ export default async function retrieveAllEvents(offset?: number): Promise<void> 
 			eventsClass.incrementOffset()
 		}
 
-		// Fetch price history for each event (1D interval)
+		// Fetch price history for each event (1W interval)
 		const priceHistoryPromises = eventsResponse.data.events.map(
 			(event): Promise<void> => retrieveEventPriceHistory(event.eventSlug)
 		)

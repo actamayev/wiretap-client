@@ -14,32 +14,34 @@ export default async function retrieveEventPriceHistory(eventSlug: EventSlug): P
 	const firstOutcome = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
 	if (!firstOutcome) return
 
+	const timeFrame = "1w"
+
 	// Check if already retrieving or if data exists
-	if (eventsClass.isRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, "1d")) {
+	if (eventsClass.isRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, timeFrame)) {
 		return
 	}
 
-	const existingData = firstOutcome.priceHistory["1d"]
+	const existingData = firstOutcome.priceHistory[timeFrame]
 	if (existingData && existingData.length > 0) {
 		return
 	}
 
-	eventsClass.setIsRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, "1d", true)
+	eventsClass.setIsRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, timeFrame, true)
 	try {
 		const priceHistoryResponse = await retrieveOutcomePriceHistory({
 			market: firstOutcome.clobTokenId as string,
-			interval: "1d",
+			interval: timeFrame,
 			fidelity: 5
 		})
 		eventsClass.setOutcomePriceHistory(
 			eventSlug,
 			firstOutcome.clobTokenId,
-			"1d",
+			timeFrame,
 			priceHistoryResponse.history
 		)
 	} catch (error) {
 		console.error(`Error retrieving price history for outcome ${firstOutcome.clobTokenId}:`, error)
-		eventsClass.setIsRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, "1d", false)
+		eventsClass.setIsRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, timeFrame, false)
 	}
 }
 
