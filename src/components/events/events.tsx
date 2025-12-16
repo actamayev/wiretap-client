@@ -89,7 +89,8 @@ function Events(): React.ReactNode {
 
 		const currentRef = loadMoreRef.current
 		if (!currentRef) {
-			console.warn("loadMoreRef.current is null")
+			// Sentinel element not rendered yet (hasMoreEvents might be false)
+			// Observer will be set up when sentinel appears
 			return undefined
 		}
 
@@ -104,10 +105,10 @@ function Events(): React.ReactNode {
 				intersectionObserver.unobserve(currentRef)
 			}
 		}
-		// Re-run when search term changes or when events are added (to re-setup observer)
+		// Re-run when search term changes, events are added, or hasMoreEvents changes
 		// MobX observables are accessed directly inside the callback
-
-	}, [hasSearchTerm, events.length])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [hasSearchTerm, events.length, eventsClass.hasMoreEvents])
 
 	const renderContent = (): React.ReactNode => {
 		if (isLoading) {
@@ -144,9 +145,9 @@ function Events(): React.ReactNode {
 						return <SingleEventCard key={event.eventId} event={event} />
 					})}
 				</div>
-				{/* Sentinel element for infinite scroll - always render when not searching */}
-				{!hasSearchTerm && (
-					<div ref={loadMoreRef} className="flex justify-center py-4 min-h-[100px]">
+				{/* Sentinel element for infinite scroll - only render when there are more events */}
+				{!hasSearchTerm && eventsClass.hasMoreEvents && (
+					<div ref={loadMoreRef} className="flex justify-center py-4">
 						{eventsClass.isRetrievingAllEvents && (
 							<div className="flex items-center gap-2 text-muted-foreground">
 								<EventCardSkeleton />
