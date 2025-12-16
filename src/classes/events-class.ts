@@ -179,7 +179,8 @@ class EventsClass {
 					const timestampSeconds = Math.floor(timestampMs / 1000)
 					const priceEntry: PriceHistoryEntry = {
 						t: timestampSeconds,
-						p: priceUpdate.midpointPrice ?? 0
+						p: priceUpdate.midpointPrice ?? 0,
+						isWebSocket: true // Mark as WebSocket data
 					}
 					outcome.priceHistory["1h"].push(priceEntry)
 					outcome.priceHistory["1d"].push(priceEntry)

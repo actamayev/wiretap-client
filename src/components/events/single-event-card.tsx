@@ -94,6 +94,17 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		return event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcome === "Yes")
 	}, [event])
 
+	// Helper function to check if data is real historical data or just WebSocket updates
+	const hasRealHistoricalData = useCallback((
+		data: PriceHistoryEntry[]
+	): boolean => {
+		if (!data || data.length === 0) return false
+
+		// Check if we have at least one data point that is NOT from WebSocket
+		// If all data points are WebSocket updates, we don't have real historical data
+		return data.some((entry): boolean => !entry.isWebSocket)
+	}, [])
+
 	// Function to fetch price history for a specific timeframe
 	const fetchTimeframeData = useCallback(async (timeframe: keyof OutcomePriceHistories): Promise<void> => {
 		if (!yesOutcome) return
@@ -103,9 +114,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 			return
 		}
 
-		// Check if data already exists
+		// Check if real historical data already exists (not just WebSocket updates)
 		const existingData = yesOutcome.priceHistory[timeframe]
-		if (existingData && existingData.length > 0) {
+		if (existingData && hasRealHistoricalData(existingData)) {
 			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			return
 		}
@@ -132,7 +143,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
-	}, [yesOutcome, event.eventSlug])
+	}, [yesOutcome, event.eventSlug, hasRealHistoricalData])
 
 	// Handle timeframe button click
 	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
