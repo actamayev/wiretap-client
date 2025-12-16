@@ -35,8 +35,8 @@ class EventsClass {
 			...event,
 			eventMarkets: event.eventMarkets.map((market): SingleMarket => ({
 				...market,
-				yesPrice: ((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2,
-				noPrice: 1 - (((market.midpointPrice ?? 0) + (market.midpointPrice ?? 0)) / 2),
+				yesPrice: (market.midpointPrice ?? 0),
+				noPrice: 1 - (market.midpointPrice ?? 0),
 				selectedTimeframe: "1d",
 				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
 					...outcome,
@@ -146,7 +146,6 @@ class EventsClass {
 		market.selectedTimeframe = timeframe
 	})
 
-	// eslint-disable-next-line complexity
 	public updateOutcomePrice = action((priceUpdate: PriceUpdate): void => {
 		// Find the event and market that contains an outcome with the matching clobTokenId
 		for (const event of this.events.values()) {
@@ -155,42 +154,41 @@ class EventsClass {
 				(singleOutcome): boolean => singleOutcome.clobTokenId === priceUpdate.clobTokenId
 			)
 
-			if (outcome) {
-				// Find the "Yes" outcome for this market
-				const yesOutcome = market.outcomes.find(
-					(singleOutcome): boolean => singleOutcome.outcome === "Yes"
-				)
+			if (!outcome) continue
+			// Find the "Yes" outcome for this market
+			const yesOutcome = market.outcomes.find(
+				(singleOutcome): boolean => singleOutcome.outcome === "Yes"
+			)
 
-				// Only update market-level pricing if this price update is for the "Yes" outcome
-				if (yesOutcome && outcome.clobTokenId === yesOutcome.clobTokenId) {
-					// Update market-level pricing from Yes outcome's best bid
-					market.midpointPrice = priceUpdate.midpointPrice
-					market.yesPrice = ((priceUpdate.midpointPrice ?? 0) + (priceUpdate.midpointPrice ?? 0)) / 2
-					market.noPrice = 1 - (((priceUpdate.midpointPrice ?? 0) + (priceUpdate.midpointPrice ?? 0)) / 2)
-				}
-
-				// Add price snapshot to outcome's price history if bestAsk is available
-				// (This happens for both Yes and No outcomes)
-				// Add to all intervals for real-time updates
-				if (priceUpdate.midpointPrice !== null) {
-					// Use timestamp from WebSocket message if available, otherwise use current time
-					// WebSocket timestamp is in milliseconds, but PriceHistoryEntry.t expects seconds (Unix timestamp)
-					const timestampMs = priceUpdate.timestamp ?? new Date().getTime()
-					const timestampSeconds = Math.floor(timestampMs / 1000)
-					const priceEntry: PriceHistoryEntry = {
-						t: timestampSeconds,
-						p: priceUpdate.midpointPrice ?? 0,
-						isWebSocket: true // Mark as WebSocket data
-					}
-					outcome.priceHistory["1h"].push(priceEntry)
-					outcome.priceHistory["1d"].push(priceEntry)
-					outcome.priceHistory["1w"].push(priceEntry)
-					outcome.priceHistory["1m"].push(priceEntry)
-					outcome.priceHistory.max.push(priceEntry)
-				}
-
-				return // Found and updated, exit early
+			// Only update market-level pricing if this price update is for the "Yes" outcome
+			if (yesOutcome && outcome.clobTokenId === yesOutcome.clobTokenId) {
+				// Update market-level pricing from Yes outcome's best bid
+				market.midpointPrice = priceUpdate.midpointPrice
+				market.yesPrice = (priceUpdate.midpointPrice ?? 0)
+				market.noPrice = 1 - (priceUpdate.midpointPrice ?? 0)
 			}
+
+			// Add price snapshot to outcome's price history if bestAsk is available
+			// (This happens for both Yes and No outcomes)
+			// Add to all intervals for real-time updates
+			if (priceUpdate.midpointPrice !== null) {
+				// Use timestamp from WebSocket message if available, otherwise use current time
+				// WebSocket timestamp is in milliseconds, but PriceHistoryEntry.t expects seconds (Unix timestamp)
+				const timestampMs = priceUpdate.timestamp ?? new Date().getTime()
+				const timestampSeconds = Math.floor(timestampMs / 1000)
+				const priceEntry: PriceHistoryEntry = {
+					t: timestampSeconds,
+					p: priceUpdate.midpointPrice ?? 0,
+					isWebSocket: true // Mark as WebSocket data
+				}
+				outcome.priceHistory["1h"].push(priceEntry)
+				outcome.priceHistory["1d"].push(priceEntry)
+				outcome.priceHistory["1w"].push(priceEntry)
+				outcome.priceHistory["1m"].push(priceEntry)
+				outcome.priceHistory.max.push(priceEntry)
+			}
+
+			return // Found and updated, exit early
 		}
 	})
 
