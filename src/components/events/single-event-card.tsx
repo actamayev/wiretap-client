@@ -7,7 +7,7 @@ import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
 import { Spinner } from "../ui/spinner"
 import PriceHistoryChartCard from "../price-history-chart-card"
-import { formatVolume } from "../../utils/format"
+import { formatVolume, formatPercentage } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
@@ -166,12 +166,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 						</h3>
 					</div>
 					<div className="shrink-0 text-xl font-bold text-yes-green">
-						{((): number | string => {
-							const percentage = (market?.midpointPrice ?? 0) * 100
-							if (percentage >= 99.5) return ">99"
-							if (percentage < 1 && percentage > 0) return "< 1"
-							return Math.round(percentage)
-						})()}%
+						{formatPercentage(market?.midpointPrice)}%
 					</div>
 				</div>
 
@@ -265,12 +260,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 							</h3>
 						</div>
 						<div className="shrink-0 text-xl font-bold text-yes-green">
-							{((): number | string => {
-								const percentage = (market?.midpointPrice ?? 0) * 100
-								if (percentage >= 99.5) return ">99"
-								if (percentage < 1 && percentage > 0) return "< 1"
-								return Math.round(percentage)
-							})()}%
+							{formatPercentage(market?.midpointPrice)}%
 						</div>
 					</div>
 

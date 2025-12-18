@@ -7,7 +7,7 @@ import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
 import { Spinner } from "../ui/spinner"
 import PriceHistoryChartCard from "../price-history-chart-card"
-import { formatVolume } from "../../utils/format"
+import { formatVolume, formatPercentage } from "../../utils/format"
 import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
@@ -180,12 +180,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						</h3>
 					</div>
 					<div className="shrink-0 text-xl font-bold text-yes-green">
-						{((): number | string => {
-							const percentage = (selectedMarket?.midpointPrice ?? 0) * 100
-							if (percentage >= 99.5) return ">99"
-							if (percentage < 1 && percentage > 0) return "< 1"
-							return Math.round(percentage)
-						})()}%
+						{formatPercentage(selectedMarket?.midpointPrice)}%
 					</div>
 				</div>
 
@@ -292,7 +287,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 									{market.marketQuestion || market.groupItemTitle || `Market ${index + 1}`}
 								</div>
 								<div className="text-xs text-yes-green font-medium">
-									{Math.round((market.midpointPrice ?? 0) * 100)}%
+									{formatPercentage(market.midpointPrice)}%
 								</div>
 							</div>
 						</div>
@@ -324,12 +319,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 							</h3>
 						</div>
 						<div className="shrink-0 text-xl font-bold text-yes-green">
-							{((): number | string => {
-								const percentage = (selectedMarket?.midpointPrice ?? 0) * 100
-								if (percentage >= 99.5) return ">99"
-								if (percentage < 1 && percentage > 0) return "< 1"
-								return Math.round(percentage)
-							})()}%
+							{formatPercentage(selectedMarket?.midpointPrice)}%
 						</div>
 					</div>
 
@@ -418,10 +408,10 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 										<Eye className="size-4" />
 									</Button>
 									<div className="text-xs text-white/50 line-clamp-1 flex-1">
-										{market.marketQuestion || market.groupItemTitle || `Market ${index + 1}`}
+										{market.groupItemTitle || market.marketQuestion || `Market ${index + 1}`}
 									</div>
 									<div className="text-xs text-yes-green font-medium">
-										{Math.round((market.midpointPrice ?? 0) * 100)}%
+										{formatPercentage(market.midpointPrice)}%
 									</div>
 								</div>
 							</div>
