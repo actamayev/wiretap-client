@@ -15,6 +15,7 @@ import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome
 import retrieveEventPriceHistory from "../../utils/events/retrieve-event-price-history"
 import { timeframeConfig } from "../../utils/constants/polymarket-constants"
 import { cn } from "../../lib/utils"
+import { formatPercentage } from "../../utils/format"
 
 // eslint-disable-next-line max-lines-per-function
 function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNode {
@@ -159,7 +160,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 			<div className="flex flex-col gap-3 flex-1 min-h-0">
 				{/* Icon and Title */}
 				<div className="flex items-center gap-3 shrink-0">
-					<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
+					<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-transparent">
 						<Image
 							src={event.eventImageUrl}
 							alt={event.eventTitle}
@@ -179,7 +180,10 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 				</div>
 
 				{/* Markets List - Scrollable */}
-				<div className="flex flex-col gap-2 flex-1 overflow-y-auto min-h-0">
+				<div className={cn(
+					"flex flex-col gap-2 flex-1 overflow-y-auto min-h-0",
+					"[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+				)}>
 					{event.eventMarkets.map((market, index): React.ReactNode => {
 						const firstOutcomeText = market.outcomes.find(
 							(outcome): boolean => outcome.outcomeIndex === 0
@@ -208,6 +212,11 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 								{/* Group Name */}
 								<div className="text-sm text-white/80 line-clamp-1 flex-1 min-w-0">
 									{market.groupItemTitle || market.marketQuestion || `Market ${index + 1}`}
+								</div>
+
+								{/* Midpoint Price */}
+								<div className="text-sm text-yes-green font-medium shrink-0">
+									{formatPercentage(market.midpointPrice)}%
 								</div>
 
 								{/* Eye Button */}

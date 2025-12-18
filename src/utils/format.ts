@@ -32,6 +32,6 @@ export function formatCurrency(value: number): string {
 export function formatPercentage(probability: number | null | undefined): string {
 	const percentage = (probability ?? 0) * 100
 	if (percentage >= 99.5) return ">99"
-	if (percentage < 1 && percentage > 0) return "< 1"
+	if (percentage < 1) return "< 1"
 	return Math.round(percentage).toString()
 }
