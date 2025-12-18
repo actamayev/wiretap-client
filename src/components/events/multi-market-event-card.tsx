@@ -285,7 +285,9 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 									disabled={isLoadingTimeframe}
 									className={cn(
 										"min-w-[45px] h-7 text-xs px-2",
-										selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+										selectedTimeframe === timeframe
+											? "bg-primary text-primary-foreground"
+											: "bg-[rgb(29,42,57)] border-white/20 hover:bg-white/10 hover:border-white/30"
 									)}
 								>
 									{isLoadingTimeframe && selectedTimeframe === timeframe ? (

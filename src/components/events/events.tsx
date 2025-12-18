@@ -127,8 +127,8 @@ function Events(): React.ReactNode {
 		}
 
 		return (
-			<div ref={containerRef} className="flex flex-col w-full p-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+			<div ref={containerRef} className="flex flex-col w-full p-3">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
 					{events.map((event): React.ReactNode => {
 						const isMultiMarket = event.eventMarkets.length > 1
 						return isMultiMarket ? (

@@ -141,12 +141,12 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	return (
 		<div
 			className={cn(
-				"rounded-lg p-4 hover:shadow-md transition-shadow",
+				"rounded-lg hover:shadow-md transition-shadow",
 				"bg-sidebar-blue aspect-615/350 md:aspect-615/175 flex flex-col border border-white/50"
 			)}
 		>
 			{/* Mobile Layout: Stacked vertically */}
-			<div className="flex flex-col gap-3 md:hidden w-full">
+			<div className="flex flex-col gap-3 md:hidden w-full p-4">
 				{/* Row 1: Image, Name, Percentage */}
 				<div className="flex items-center gap-3">
 					<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
@@ -202,7 +202,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 									disabled={isLoadingTimeframe}
 									className={cn(
 										"min-w-[45px] h-7 text-xs px-2",
-										selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+										selectedTimeframe === timeframe
+											? "bg-primary text-primary-foreground"
+											: "bg-[rgb(29,42,57)] border-white/20 hover:bg-white/10 hover:border-white/30"
 									)}
 								>
 									{isLoadingTimeframe && selectedTimeframe === timeframe ? (
@@ -238,9 +240,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 			</div>
 
 			{/* Desktop Layout: Side by side */}
-			<div className="hidden md:flex gap-8 w-full flex-1 min-h-0">
+			<div className="hidden md:flex gap-8 w-full flex-1 min-h-0 pl-4">
 				{/* Left Section - 3/5 width */}
-				<div className="w-3/5 flex flex-col gap-3 h-full">
+				<div className="w-3/5 flex flex-col gap-3 h-full pt-4">
 					{/* Row 1: Image, Name, Percentage */}
 					<div className="flex items-center gap-3">
 						<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
@@ -301,7 +303,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 										disabled={isLoadingTimeframe}
 										className={cn(
 											"min-w-[45px] h-7 text-xs px-2",
-											selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+											selectedTimeframe === timeframe
+												? "bg-primary text-primary-foreground"
+												: "bg-[rgb(29,42,57)] border-white/20 hover:bg-white/10 hover:border-white/30"
 										)}
 									>
 										{isLoadingTimeframe && selectedTimeframe === timeframe ? (
@@ -318,7 +322,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 
 				{/* Right Section - 2/5 width */}
 				<div className="w-2/5 flex flex-col h-full min-h-0">
-					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
+					<div className="flex-1 min-h-0 rounded-br-lg rounded-tr-lg overflow-hidden ">
 						{firstOutcome?.priceHistory[selectedTimeframe] &&
 								firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
 							<PriceHistoryChartCard
