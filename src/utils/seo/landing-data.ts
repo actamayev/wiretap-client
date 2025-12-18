@@ -7,7 +7,7 @@ const organizationSchema = {
 	"alternateName": [
 		"Wiretap Paper Trading",
 		"Wiretap Pro",
-		"Wiretap Polymarket",
+		"Wiretap Prediction Markets",
 		"Wiretap Trading Simulator"
 	],
 	"url": "https://wiretap.pro",
@@ -18,7 +18,7 @@ const organizationSchema = {
 		"height": 512
 	},
 
-	"description": "Paper trading platform for Polymarket. Improve your trading strategy without risking real money. Paper trade until you're not a joke.",
+	"description": "Paper trading platform for prediction markets including Polymarket and Kalshi. Improve your trading strategy without risking real money. Paper trade until you're not a joke.",
 	"slogan": "Paper trade on Wiretap until you're not a joke",
 	"foundingDate": "2025",
 
@@ -42,18 +42,19 @@ const organizationSchema = {
 	"offers": {
 		"@type": "Offer",
 		"category": "Trading Software",
-		"description": "Paper trading platform for Polymarket where traders improve their strategies without risking real money"
+		"description": "Paper trading platform for prediction markets including Polymarket and Kalshi where traders improve their strategies without risking real money"
 	},
 
 	// Target audience
 	"audience": {
 		"@type": "BusinessAudience",
-		"audienceType": "Polymarket Traders, Aspiring Traders, Trading Enthusiasts"
+		"audienceType": "Prediction Market Traders, Polymarket Traders, Kalshi Traders, Aspiring Traders, Trading Enthusiasts"
 	},
 
 	// Business categories
 	"knowsAbout": [
 		"Polymarket",
+		"Kalshi",
 		"Paper Trading",
 		"Prediction Markets",
 		"Trading Simulation",
@@ -74,7 +75,7 @@ const websiteSchema = {
 	"@type": "WebSite",
 	"name": "Wiretap",
 	"url": "https://wiretap.pro",
-	"description": "Paper trading platform for Polymarket. Improve your trading strategy without risking real money.",
+	"description": "Paper trading platform for prediction markets including Polymarket and Kalshi. Improve your trading strategy without risking real money.",
 	"publisher": {
 		"@type": "Organization",
 		"name": "Wiretap"
@@ -95,7 +96,7 @@ const softwareApplicationSchema = {
 	"@context": "https://schema.org",
 	"@type": "SoftwareApplication",
 	"name": "Wiretap",
-	"description": "Paper trading platform for Polymarket where you can practice and improve your trading strategy without risking real money. Get better before you go broke.",
+	"description": "Paper trading platform for prediction markets including Polymarket and Kalshi where you can practice and improve your trading strategy without risking real money. Get better before you go broke.",
 	"applicationCategory": "Trading Software",
 	"operatingSystem": "Web",
 	"offers": {
@@ -106,7 +107,7 @@ const softwareApplicationSchema = {
 		"url": "https://wiretap.pro"
 	},
 	"featureList": [
-		"Paper trading on Polymarket markets",
+		"Paper trading on prediction markets (Polymarket, Kalshi)",
 		"Risk-free trading practice",
 		"Improve your trading strategy",
 		"Track your performance"
@@ -119,7 +120,7 @@ const serviceSchema = {
 	"@context": "https://schema.org",
 	"@type": "Service",
 	"name": "Wiretap Paper Trading",
-	"description": "Paper trade on Polymarket until you're not a joke. Improve your trading strategy without risking real money.",
+	"description": "Paper trade on prediction markets including Polymarket and Kalshi until you're not a joke. Improve your trading strategy without risking real money.",
 	"provider": {
 		"@type": "Organization",
 		"name": "Wiretap"
@@ -137,8 +138,8 @@ const serviceSchema = {
 				"@type": "Offer",
 				"itemOffered": {
 					"@type": "Service",
-					"name": "Paper Trading on Polymarket",
-					"description": "Practice trading on Polymarket markets without risking real money"
+					"name": "Paper Trading on Prediction Markets",
+					"description": "Practice trading on prediction markets including Polymarket and Kalshi without risking real money"
 				}
 			},
 			{
@@ -163,7 +164,7 @@ const faqSchema = {
 			"name": "What is Wiretap?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap is a paper trading platform for Polymarket. Paper trade until you're not a joke. Improve your trading strategy without risking real money."
+				"text": "Wiretap is a paper trading platform for prediction markets including Polymarket and Kalshi. Paper trade until you're not a joke. Improve your trading strategy without risking real money."
 			}
 		},
 		{
@@ -171,7 +172,7 @@ const faqSchema = {
 			"name": "When does Wiretap beta open?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap beta opens December 10th. Sign up at wiretap.pro to get access to paper trading on Polymarket markets."
+				"text": "Wiretap beta opens December 10th. Sign up at wiretap.pro to get access to paper trading on prediction markets including Polymarket and Kalshi."
 			}
 		},
 		{
@@ -179,7 +180,7 @@ const faqSchema = {
 			"name": "How does Wiretap work?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap lets you paper trade on Polymarket markets without risking real money. Practice your trading strategy and improve before you go broke with real trades."
+				"text": "Wiretap lets you paper trade on prediction markets including Polymarket and Kalshi without risking real money. Practice your trading strategy and improve before you go broke with real trades."
 			}
 		},
 		{
@@ -187,7 +188,7 @@ const faqSchema = {
 			"name": "What makes Wiretap different?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap is built specifically for Polymarket paper trading. If your Polymarket strategy is hope and vibes, that's why you're broke. Wiretap helps you improve your trading before risking real money."
+				"text": "Wiretap is built specifically for prediction market paper trading including Polymarket and Kalshi. If your prediction market strategy is hope and vibes, that's why you're broke. Wiretap helps you improve your trading before risking real money."
 			}
 		},
 		{
@@ -195,7 +196,7 @@ const faqSchema = {
 			"name": "Who is Wiretap for?",
 			"acceptedAnswer": {
 				"@type": "Answer",
-				"text": "Wiretap is for anyone trading on Polymarket who wants to improve. If you're tired of losing money because your strategy is hope and vibes, Wiretap helps you practice until you're not a joke."
+				"text": "Wiretap is for anyone trading on prediction markets including Polymarket and Kalshi who wants to improve. If you're tired of losing money because your strategy is hope and vibes, Wiretap helps you practice until you're not a joke."
 			}
 		},
 		{

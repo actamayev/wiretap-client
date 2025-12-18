@@ -4,17 +4,17 @@ import Events from "../src/components/events/events"
 import AuthenticatedLayout from "../src/components/layouts/authenticated-layout"
 
 export const metadata = createMetadata({
-	title: "Wiretap | Paper trading on Polymarket",
-	description: "Paper trade on Polymarket",
+	title: "Wiretap | Paper trade Prediction Markets",
+	description: "Paper trade Prediction Markets",
 	path: "/",
 	keywords: [
 		"prediction markets",
-		"trading intelligence",
-		"market data",
-		"polymarket",
 		"paper trading",
 		"trading tools",
-		"market intelligence"
+		"market intelligence",
+		"prediction markets",
+		"polymarket",
+		"kalshi"
 	],
 	needsWiretapSuffix: false
 })
