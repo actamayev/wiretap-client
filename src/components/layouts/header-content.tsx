@@ -1,24 +1,20 @@
 "use client"
 
-import { useState } from "react"
 import { observer } from "mobx-react"
 import { cn } from "../../lib/utils"
 import { Button } from "../ui/button"
 import PortfolioStats from "./portfolio-stats"
-import FeedbackDialog from "./feedback-dialog"
 import FundsDropdown from "./funds-dropdown"
 import SearchBar from "./search-bar"
 import authClass from "../../classes/auth-class"
 
 function HeaderContent(): React.ReactNode {
-	const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false)
-
 	const handleFeedbackClick = (): void => {
 		if (!authClass.isLoggedIn) {
 			authClass.setShowRegisterDialog(true)
 			return
 		}
-		setIsFeedbackDialogOpen(true)
+		authClass.setShowFeedbackDialog(true)
 	}
 
 	return (
@@ -39,8 +35,6 @@ function HeaderContent(): React.ReactNode {
 			>
 				<span className="text-button-text text-base">Feedback</span>
 			</Button>
-
-			<FeedbackDialog open={isFeedbackDialogOpen} onOpenChange={setIsFeedbackDialogOpen} />
 		</div>
 	)
 }

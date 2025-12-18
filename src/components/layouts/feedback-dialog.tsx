@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { observer } from "mobx-react"
 import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
 import {
@@ -13,31 +14,27 @@ import {
 } from "../ui/dialog"
 import sendFeedback from "../../utils/misc/send-feedback"
 import { cn } from "../../lib/utils"
+import authClass from "../../classes/auth-class"
 
-interface FeedbackDialogProps {
-	open: boolean
-	onOpenChange: (open: boolean) => void
-}
-
-export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps): React.ReactNode {
+function FeedbackDialog(): React.ReactNode {
 	const [feedbackText, setFeedbackText] = useState("")
 	const [isLoading, setIsLoading] = useState(false)
 
 	const handleSend = async (): Promise<void> => {
 		const success = await sendFeedback(feedbackText, setIsLoading)
 		if (success) {
-			onOpenChange(false)
+			authClass.setShowFeedbackDialog(false)
 			setFeedbackText("")
 		}
 	}
 
 	const handleCancel = (): void => {
-		onOpenChange(false)
+		authClass.setShowFeedbackDialog(false)
 		setFeedbackText("")
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={authClass.showFeedbackDialog} onOpenChange={authClass.setShowFeedbackDialog}>
 			<DialogContent className="max-w-2xl border border-white/30 bg-sidebar-blue" onClick={(e): void => e.stopPropagation()}>
 				<DialogHeader>
 					<DialogTitle className="text-2xl">Feedback</DialogTitle>
@@ -82,3 +79,4 @@ export default function FeedbackDialog({ open, onOpenChange }: FeedbackDialogPro
 	)
 }
 
+export default observer(FeedbackDialog)

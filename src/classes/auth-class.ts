@@ -10,6 +10,7 @@ class AuthClass {
 	private _isAuthenticated = false
 	public isLoggingOut = false  // NEW
 	public showRegisterDialog = false
+	public showFeedbackDialog = false
 	public pendingNavigation: {
 		eventSlug: EventSlug
 		outcomeIndex?: number
@@ -50,6 +51,10 @@ class AuthClass {
 		}
 	})
 
+	public setShowFeedbackDialog = action((state: boolean): void => {
+		this.showFeedbackDialog = state
+	})
+
 	public setPendingNavigation = action((navigation: {
 		eventSlug: EventSlug
 		outcomeIndex?: number
@@ -64,6 +69,7 @@ class AuthClass {
 		this.setShowLoginOrRegister("Register")
 		this.setAuthenticating(false)
 		this.setShowRegisterDialog(false)
+		this.setShowFeedbackDialog(false)
 		this.pendingNavigation = null
 		this.pendingEvent = null
 	})
