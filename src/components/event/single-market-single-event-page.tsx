@@ -90,6 +90,7 @@ function SingleMarketSingleEventPage({ eventSlug }: { eventSlug: EventSlug }): R
 	const fetchTimeframeData = useCallback(async (
 		timeframe: keyof OutcomePriceHistories,
 		skipTimeframeUpdate = false
+	// eslint-disable-next-line complexity
 	): Promise<void> => {
 		if (!selectedOutcome || !event || !market) return
 
