@@ -7,6 +7,7 @@ const DEFAULT_OG_IMAGE = "/logo512.png"
 const STATIC_KEYWORDS = [
 	"prediction markets",
 	"polymarket",
+	"kalshi",
 	"paper trading",
 	"trading tools",
 	"market intelligence"
