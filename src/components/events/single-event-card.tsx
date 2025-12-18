@@ -5,6 +5,7 @@ import Image from "next/image"
 import { observer } from "mobx-react"
 import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
+import { Badge } from "../ui/badge"
 import { Spinner } from "../ui/spinner"
 import PriceHistoryChartCard from "../price-history-chart-card"
 import { formatVolume, formatPercentage } from "../../utils/format"
@@ -187,9 +188,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 
 				{/* Row 3: Volume and Timeframe Selector */}
 				<div className="flex items-center justify-between">
-					<div className="text-sm text-white/40">
+					<Badge variant="outline">
 						{formatVolume(event.eventTotalVolume)}
-					</div>
+					</Badge>
 					<div className="flex gap-1">
 						{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
 							(timeframe): React.ReactNode => (
@@ -286,9 +287,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 
 					{/* Row 3: Volume and Timeframe Selector */}
 					<div className="flex items-center justify-between">
-						<div className="text-sm text-white/40">
+						<Badge variant="outline">
 							{formatVolume(event.eventTotalVolume)}
-						</div>
+						</Badge>
 						<div className="flex gap-1">
 							{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
 								(timeframe): React.ReactNode => (

@@ -5,6 +5,7 @@ import { Eye } from "lucide-react"
 import { observer } from "mobx-react"
 import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
+import { Badge } from "../ui/badge"
 import { Spinner } from "../ui/spinner"
 import PriceHistoryChartCard from "../price-history-chart-card"
 import tradeClass from "../../classes/trade-class"
@@ -151,8 +152,8 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 	return (
 		<div
 			className={cn(
-				"rounded-lg py-4 pl-4 hover:shadow-md transition-shadow",
-				"bg-sidebar-blue flex flex-col border border-white/50",
+				"rounded-lg hover:shadow-md transition-shadow",
+				"bg-sidebar-blue flex flex-col border border-white/50 pt-4 pl-4",
 				cardHeightClass
 			)}
 		>
@@ -177,9 +178,9 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 				</div>
 			</div>
 
-			{/* Row 2: Markets List (1/5) and Chart (4/5) */}
-			<div className="flex gap-4 flex-1 min-h-0 mb-3">
-				{/* Left: Markets List - 1/5 width */}
+			{/* Row 2: Content - Markets List (left) and Chart Area (right) */}
+			<div className="flex gap-4 flex-1 min-h-0">
+				{/* Left: Markets List - extends to bottom */}
 				<div className={cn(
 					"w-1/4 flex flex-col gap-2 overflow-y-auto min-h-0",
 					"[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
@@ -265,50 +266,53 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 					})}
 				</div>
 
-				{/* Right: Chart - 4/5 width */}
-				<div className="w-3/4 flex-1 min-h-0 rounded-[5px] overflow-hidden">
-					{firstOutcome?.priceHistory[selectedTimeframe] &&
-							firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
-						<PriceHistoryChartCard
-							priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
-								(entry): SinglePriceSnapshot => ({
-									timestamp: new Date(entry.t * 1000),
-									price: entry.p
-								})
-							)}
-						/>
-					)}
-				</div>
-			</div>
+				{/* Right: Chart Area - extends to bottom */}
+				<div className="w-3/4 flex flex-col flex-1 min-h-0">
+					{/* Top Row: Timescale (left) and Volume (right) */}
+					<div className="flex items-center justify-between shrink-0 mb-2">
+						{/* Timeframe Buttons */}
+						<div className="flex gap-1">
+							{timeframeKeys.map((timeframe): React.ReactNode => (
+								<Button
+									key={timeframe}
+									variant={selectedTimeframe === timeframe ? "default" : "outline"}
+									size="sm"
+									onClick={(): void => handleTimeframeClick(timeframe)}
+									disabled={isLoadingTimeframe}
+									className={cn(
+										"min-w-[45px] h-7 text-xs px-2",
+										selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+									)}
+								>
+									{isLoadingTimeframe && selectedTimeframe === timeframe ? (
+										<Spinner className="size-3" />
+									) : (
+										timeframeConfig[timeframe].label
+									)}
+								</Button>
+							))}
+						</div>
 
-			{/* Row 3: Volume (left) and Timeframe Buttons (right) */}
-			<div className="flex items-center justify-between shrink-0">
-				{/* Volume */}
-				<div className="text-sm text-white/40">
-					{formatVolume(event.eventTotalVolume)}
-				</div>
+						{/* Volume */}
+						<Badge variant="outline" className="mr-4">
+							{formatVolume(event.eventTotalVolume)}
+						</Badge>
+					</div>
 
-				{/* Timeframe Buttons */}
-				<div className="flex gap-1">
-					{timeframeKeys.map((timeframe): React.ReactNode => (
-						<Button
-							key={timeframe}
-							variant={selectedTimeframe === timeframe ? "default" : "outline"}
-							size="sm"
-							onClick={(): void => handleTimeframeClick(timeframe)}
-							disabled={isLoadingTimeframe}
-							className={cn(
-								"min-w-[45px] h-7 text-xs px-2",
-								selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
-							)}
-						>
-							{isLoadingTimeframe && selectedTimeframe === timeframe ? (
-								<Spinner className="size-3" />
-							) : (
-								timeframeConfig[timeframe].label
-							)}
-						</Button>
-					))}
+					{/* Bottom Row: Chart - extends to bottom */}
+					<div className="flex-1 min-h-0 overflow-hidden rounded-br-lg">
+						{firstOutcome?.priceHistory[selectedTimeframe] &&
+								firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
+							<PriceHistoryChartCard
+								priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
+									(entry): SinglePriceSnapshot => ({
+										timestamp: new Date(entry.t * 1000),
+										price: entry.p
+									})
+								)}
+							/>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>
