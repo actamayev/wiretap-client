@@ -1,6 +1,6 @@
 
 import { action, makeAutoObservable, observable } from "mobx"
-import { timeframeConfig } from "../utils/constants/timeframe-config"
+import { timeframeConfig } from "../utils/constants/polymarket-constants"
 
 class EventsClass {
 	public isRetrievingAllEvents = false

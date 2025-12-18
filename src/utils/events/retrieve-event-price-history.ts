@@ -2,7 +2,7 @@
 
 import eventsClass from "../../classes/events-class"
 import retrieveOutcomePriceHistory from "../polymarket/retrieve-outcome-price-history"
-import { timeframeConfig } from "../constants/timeframe-config"
+import { timeframeConfig } from "../constants/polymarket-constants"
 
 export default async function retrieveEventPriceHistory(eventSlug: EventSlug): Promise<void> {
 	const event = eventsClass.events.get(eventSlug)

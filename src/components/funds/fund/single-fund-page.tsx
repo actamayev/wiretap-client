@@ -15,7 +15,7 @@ import PositionsTab from "./positions-tab"
 import TransactionHistoryTab from "./transaction-history-tab"
 import retrieveDetailedFund from "../../../utils/funds/retrieve-detailed-fund"
 import retrievePortfolioPriceHistory from "../../../utils/funds/retrieve-portfolio-price-history"
-import { timeframeConfig } from "../../../utils/constants/timeframe-config"
+import { timeframeConfig } from "../../../utils/constants/polymarket-constants"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {

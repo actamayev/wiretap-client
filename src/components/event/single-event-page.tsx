@@ -19,7 +19,7 @@ import PriceHistoryChartPage from "../price-history-chart-page"
 import ContainerLayout from "../layouts/container-layout"
 import retrieveSingleEvent from "../../utils/events/retrieve-single-event"
 import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
-import { timeframeConfig } from "../../utils/constants/timeframe-config"
+import { timeframeConfig } from "../../utils/constants/polymarket-constants"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {

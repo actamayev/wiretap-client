@@ -13,7 +13,7 @@ import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
 import eventsClass from "../../classes/events-class"
 import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
-import { timeframeConfig } from "../../utils/constants/timeframe-config"
+import { timeframeConfig } from "../../utils/constants/polymarket-constants"
 import { cn } from "../../lib/utils"
 
 // eslint-disable-next-line max-lines-per-function, complexity
