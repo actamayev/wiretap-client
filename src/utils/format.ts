@@ -23,3 +23,15 @@ export function formatCurrency(value: number): string {
 		maximumFractionDigits: 2
 	})
 }
+
+/**
+ * Formats a probability/percentage value (0-1 range) to a string representation
+ * @param probability - A value between 0 and 1 representing the probability
+ * @returns A formatted string: ">99" for >= 99.5%, "< 1" for < 1% and > 0%, or rounded percentage otherwise
+ */
+export function formatPercentage(probability: number | null | undefined): string {
+	const percentage = (probability ?? 0) * 100
+	if (percentage >= 99.5) return ">99"
+	if (percentage < 1) return "< 1"
+	return Math.round(percentage).toString()
+}

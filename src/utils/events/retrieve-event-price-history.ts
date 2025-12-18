@@ -2,28 +2,36 @@
 
 import eventsClass from "../../classes/events-class"
 import retrieveOutcomePriceHistory from "../polymarket/retrieve-outcome-price-history"
-import { timeframeConfig } from "../constants/timeframe-config"
+import { timeframeConfig } from "../constants/polymarket-constants"
 
-export default async function retrieveEventPriceHistory(eventSlug: EventSlug): Promise<void> {
+export default async function retrieveEventPriceHistory(
+	eventSlug: EventSlug,
+	marketId?: MarketId
+): Promise<void> {
 	const event = eventsClass.events.get(eventSlug)
 	if (!event) return
 
-	const market = event.eventMarkets[0]
+	// Use provided marketId or fall back to selected market
+	const targetMarketId = marketId ?? event.selectedMarketId
+	const market = event.eventMarkets.find(
+		(m): boolean => m.marketId === targetMarketId
+	)
 	if (!market) return
 
 	// Only retrieve price history for the First outcome
 	const firstOutcome = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
 	if (!firstOutcome) return
 
-	const timeFrame = "1w"
+	// Use the event's selected timeframe, or default to "1w" if not set
+	const timeFrame = event.selectedTimeframe ?? "1w"
 	const config = timeframeConfig[timeFrame]
 
-	// Ensure selected timeframe is set to "1w" immediately (before fetching)
+	// Ensure selected timeframe is set (in case it wasn't set before)
 	// This ensures the chart displays the correct timeframe even if data hasn't loaded yet
 	eventsClass.setSelectedTimeframe(eventSlug, timeFrame)
 
 	// Check if already retrieving or if data exists
-	if (eventsClass.isRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, timeFrame)) {
+	if (eventsClass.isRetrievingPriceHistory(eventSlug, market.marketId, firstOutcome.clobTokenId, timeFrame)) {
 		return
 	}
 
@@ -32,7 +40,7 @@ export default async function retrieveEventPriceHistory(eventSlug: EventSlug): P
 		return
 	}
 
-	eventsClass.setIsRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, timeFrame, true)
+	eventsClass.setIsRetrievingPriceHistory(eventSlug, market.marketId, firstOutcome.clobTokenId, timeFrame, true)
 	try {
 		const priceHistoryResponse = await retrieveOutcomePriceHistory({
 			market: firstOutcome.clobTokenId as string,
@@ -41,6 +49,7 @@ export default async function retrieveEventPriceHistory(eventSlug: EventSlug): P
 		})
 		eventsClass.setOutcomePriceHistory(
 			eventSlug,
+			market.marketId,
 			firstOutcome.clobTokenId,
 			timeFrame,
 			priceHistoryResponse.history
@@ -49,7 +58,7 @@ export default async function retrieveEventPriceHistory(eventSlug: EventSlug): P
 		eventsClass.setSelectedTimeframe(eventSlug, timeFrame)
 	} catch (error) {
 		console.error(`Error retrieving price history for outcome ${firstOutcome.clobTokenId}:`, error)
-		eventsClass.setIsRetrievingPriceHistory(eventSlug, firstOutcome.clobTokenId, timeFrame, false)
+		eventsClass.setIsRetrievingPriceHistory(eventSlug, market.marketId, firstOutcome.clobTokenId, timeFrame, false)
 	}
 }
 
