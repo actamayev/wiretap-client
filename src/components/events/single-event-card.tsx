@@ -23,10 +23,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const handleTitleClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
-			authClass.setPendingNavigation({
-				eventSlug: event.eventSlug
-				// No market - just viewing the event
-			}, event)
+			authClass.setPendingNavigation(event)
 			authClass.setShowRegisterDialog(true)
 			return
 		}
@@ -36,10 +33,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const handleFirstOutcomeClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
-			authClass.setPendingNavigation({
-				eventSlug: event.eventSlug,
-				outcomeIndex: 0
-			}, event)
+			authClass.setPendingNavigation(event, 0)
 			authClass.setShowRegisterDialog(true)
 			return
 		}
@@ -54,10 +48,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const handleSecondOutcomeClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
-			authClass.setPendingNavigation({
-				eventSlug: event.eventSlug,
-				outcomeIndex: 1
-			}, event)
+			authClass.setPendingNavigation(event, 1)
 			authClass.setShowRegisterDialog(true)
 			return
 		}

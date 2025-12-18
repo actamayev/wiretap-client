@@ -55,12 +55,12 @@ class AuthClass {
 		this.showFeedbackDialog = state
 	})
 
-	public setPendingNavigation = action((navigation: {
-		eventSlug: EventSlug
-		outcomeIndex?: number
-	} | null, event?: SingleEvent): void => {
-		this.pendingNavigation = navigation
-		this.pendingEvent = event || null
+	public setPendingNavigation = action((event: SingleEvent, outcomeIndex?: number): void => {
+		this.pendingNavigation = {
+			eventSlug: event.eventSlug,
+			outcomeIndex: outcomeIndex
+		}
+		this.pendingEvent = event
 	})
 
 	public logout = action((): void => {
