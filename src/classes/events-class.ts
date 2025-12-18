@@ -30,12 +30,10 @@ class EventsClass {
 	public setEventsMetadata = action((newEvents: SingleEventMetadata[]): void => {
 		newEvents.forEach((eventMetadata): void => {
 			this.addSingleEventMetadata(eventMetadata.eventSlug, eventMetadata)
-			// Ensure timeframe is set to "1w" for all markets after adding metadata
+			// Ensure timeframe is set to "1w" at event level after adding metadata
 			const event = this.events.get(eventMetadata.eventSlug)
 			if (event) {
-				event.eventMarkets.forEach((market): void => {
-					this.setSelectedTimeframe(eventMetadata.eventSlug, market.marketId, "1w")
-				})
+				this.setSelectedTimeframe(eventMetadata.eventSlug, "1w")
 			}
 		})
 		// If we got fewer events than expected (less than 20), we've reached the end
@@ -72,7 +70,6 @@ class EventsClass {
 				...market,
 				firstOutcomePrice: (market.midpointPrice ?? 0),
 				secondOutcomePrice: 1 - (market.midpointPrice ?? 0),
-				selectedTimeframe: "1w",
 				outcomes: market.outcomes.map((outcome): SingleOutcome => ({
 					...outcome,
 					priceHistory: {
@@ -86,7 +83,9 @@ class EventsClass {
 				}))
 			})),
 			// Default to the first market (highest midpoint price after sorting)
-			selectedMarketId: sortedMarkets[0]?.marketId ?? (0 as MarketId)
+			selectedMarketId: sortedMarkets[0]?.marketId ?? (0 as MarketId),
+			// Default timeframe for the event
+			selectedTimeframe: "1w"
 		}
 		// Make the event observable so nested arrays (like priceHistory) are tracked
 		// observable() automatically makes plain objects deeply observable
@@ -221,28 +220,19 @@ class EventsClass {
 		return outcome.retrievingPriceHistories.includes(interval)
 	}
 
-	public getSelectedTimeframe = (eventSlug: EventSlug, marketId: MarketId): keyof OutcomePriceHistories => {
+	public getSelectedTimeframe = (eventSlug: EventSlug): keyof OutcomePriceHistories => {
 		const event = this.events.get(eventSlug)
 		if (!event) return "1w"
-		const market = event.eventMarkets.find(
-			(m): boolean => m.marketId === marketId
-		)
-		if (!market) return "1w"
-		return market.selectedTimeframe
+		return event.selectedTimeframe ?? "1w"
 	}
 
 	public setSelectedTimeframe = action((
 		eventSlug: EventSlug,
-		marketId: MarketId,
 		timeframe: keyof OutcomePriceHistories
 	): void => {
 		const event = this.events.get(eventSlug)
 		if (!event) return
-		const market = event.eventMarkets.find(
-			(m): boolean => m.marketId === marketId
-		)
-		if (!market) return
-		market.selectedTimeframe = timeframe
+		event.selectedTimeframe = timeframe
 	})
 
 	/**

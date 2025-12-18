@@ -69,9 +69,9 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
-		return market?.selectedTimeframe ?? "1w"
+		return event.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event.eventSlug, market?.selectedTimeframe])
+	}, [event.eventSlug, event.selectedTimeframe])
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
 	// Get the First outcome
@@ -102,7 +102,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		// Check if real historical data already exists (not just WebSocket updates)
 		const existingData = firstOutcome.priceHistory[timeframe]
 		if (existingData && hasRealHistoricalData(existingData)) {
-			eventsClass.setSelectedTimeframe(event.eventSlug, market.marketId, timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			return
 		}
 
@@ -122,7 +122,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 				timeframe,
 				priceHistoryResponse.history
 			)
-			eventsClass.setSelectedTimeframe(event.eventSlug, market.marketId, timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
 			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, market.marketId, firstOutcome.clobTokenId, timeframe, false)

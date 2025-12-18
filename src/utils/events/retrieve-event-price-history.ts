@@ -22,12 +22,13 @@ export default async function retrieveEventPriceHistory(
 	const firstOutcome = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
 	if (!firstOutcome) return
 
-	const timeFrame = "1w"
+	// Use the event's selected timeframe, or default to "1w" if not set
+	const timeFrame = event.selectedTimeframe ?? "1w"
 	const config = timeframeConfig[timeFrame]
 
-	// Ensure selected timeframe is set to "1w" immediately (before fetching)
+	// Ensure selected timeframe is set (in case it wasn't set before)
 	// This ensures the chart displays the correct timeframe even if data hasn't loaded yet
-	eventsClass.setSelectedTimeframe(eventSlug, market.marketId, timeFrame)
+	eventsClass.setSelectedTimeframe(eventSlug, timeFrame)
 
 	// Check if already retrieving or if data exists
 	if (eventsClass.isRetrievingPriceHistory(eventSlug, market.marketId, firstOutcome.clobTokenId, timeFrame)) {
@@ -54,7 +55,7 @@ export default async function retrieveEventPriceHistory(
 			priceHistoryResponse.history
 		)
 		// Ensure the selected timeframe is set to match what we just fetched
-		eventsClass.setSelectedTimeframe(eventSlug, market.marketId, timeFrame)
+		eventsClass.setSelectedTimeframe(eventSlug, timeFrame)
 	} catch (error) {
 		console.error(`Error retrieving price history for outcome ${firstOutcome.clobTokenId}:`, error)
 		eventsClass.setIsRetrievingPriceHistory(eventSlug, market.marketId, firstOutcome.clobTokenId, timeFrame, false)

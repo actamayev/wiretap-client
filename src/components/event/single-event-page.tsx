@@ -68,10 +68,10 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
-		if (!event || !market) return "1w"
-		return market.selectedTimeframe ?? "1w"
+		if (!event) return "1w"
+		return event.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event, market?.selectedTimeframe])
+	}, [event, event?.selectedTimeframe])
 
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
@@ -105,7 +105,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		if (existingData && hasRealHistoricalData(existingData)) {
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
-				eventsClass.setSelectedTimeframe(event.eventSlug, market.marketId, timeframe)
+				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			}
 			return
 		}
@@ -130,7 +130,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			)
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
-				eventsClass.setSelectedTimeframe(event.eventSlug, market.marketId, timeframe)
+				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			}
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)

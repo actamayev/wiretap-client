@@ -61,11 +61,11 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 		await retrieveEventPriceHistory(event.eventSlug, marketId)
 	}, [event.eventSlug])
 
-	// Get selected timeframe from the selected market
+	// Get selected timeframe from the event
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
-		return selectedMarket?.selectedTimeframe ?? "1w"
+		return event.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event.eventSlug, selectedMarket?.selectedTimeframe])
+	}, [event.eventSlug, event.selectedTimeframe])
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
 	// Get the First outcome of the selected market
@@ -98,7 +98,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 		// Check if real historical data already exists (not just WebSocket updates)
 		const existingData = firstOutcome.priceHistory[timeframe]
 		if (existingData && hasRealHistoricalData(existingData)) {
-			eventsClass.setSelectedTimeframe(event.eventSlug, selectedMarket.marketId, timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 			return
 		}
 
@@ -120,7 +120,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 				timeframe,
 				priceHistoryResponse.history
 			)
-			eventsClass.setSelectedTimeframe(event.eventSlug, selectedMarket.marketId, timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
 			eventsClass.setIsRetrievingPriceHistory(
