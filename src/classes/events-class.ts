@@ -28,10 +28,15 @@ class EventsClass {
 	})
 
 	public setEventsMetadata = action((newEvents: SingleEventMetadata[]): void => {
-		newEvents.forEach((event): void => {
-			this.addSingleEventMetadata(event.eventSlug, event)
-			// Ensure timeframe is set to "1w" after adding metadata (double-check)
-			this.setSelectedTimeframe(event.eventSlug, "1w")
+		newEvents.forEach((eventMetadata): void => {
+			this.addSingleEventMetadata(eventMetadata.eventSlug, eventMetadata)
+			// Ensure timeframe is set to "1w" for all markets after adding metadata
+			const event = this.events.get(eventMetadata.eventSlug)
+			if (event) {
+				event.eventMarkets.forEach((market): void => {
+					this.setSelectedTimeframe(eventMetadata.eventSlug, market.marketId, "1w")
+				})
+			}
 		})
 		// If we got fewer events than expected (less than 20), we've reached the end
 		this.hasMoreEvents = newEvents.length >= 20
@@ -79,13 +84,60 @@ class EventsClass {
 					},
 					retrievingPriceHistories: []
 				}))
-			}))
+			})),
+			// Default to the first market (highest midpoint price after sorting)
+			selectedMarketId: sortedMarkets[0]?.marketId ?? (0 as MarketId)
 		}
 		// Make the event observable so nested arrays (like priceHistory) are tracked
 		// observable() automatically makes plain objects deeply observable
 		const observableEvent = observable(extendedEvent)
 		this.events.set(eventSlug, observableEvent)
 	})
+
+	/**
+	 * Get the selected market for an event
+	 */
+	public getSelectedMarket = (eventSlug: EventSlug): SingleMarket | undefined => {
+		const event = this.events.get(eventSlug)
+		if (!event) return undefined
+		return event.eventMarkets.find(
+			(market): boolean => market.marketId === event.selectedMarketId
+		)
+	}
+
+	/**
+	 * Get the selected market ID for an event
+	 */
+	public getSelectedMarketId = (eventSlug: EventSlug): MarketId | undefined => {
+		const event = this.events.get(eventSlug)
+		if (!event) return undefined
+		return event.selectedMarketId
+	}
+
+	/**
+	 * Set the selected market for an event
+	 */
+	public setSelectedMarketId = action((eventSlug: EventSlug, marketId: MarketId): void => {
+		const event = this.events.get(eventSlug)
+		if (!event) return
+		// Verify the market exists in this event
+		const marketExists = event.eventMarkets.some(
+			(market): boolean => market.marketId === marketId
+		)
+		if (!marketExists) return
+		event.selectedMarketId = marketId
+	})
+
+	/**
+	 * Find a market by ID within an event
+	 */
+	public getMarketById = (eventSlug: EventSlug, marketId: MarketId): SingleMarket | undefined => {
+		const event = this.events.get(eventSlug)
+		if (!event) return undefined
+		return event.eventMarkets.find(
+			(market): boolean => market.marketId === marketId
+		)
+	}
 
 	public isRetrievingSingleEvent = (eventSlug: EventSlug): boolean => {
 		return this.retrievingSingleEvent.get(eventSlug) || false
@@ -97,13 +149,17 @@ class EventsClass {
 
 	public setOutcomePriceHistory = action((
 		eventSlug: EventSlug,
+		marketId: MarketId,
 		outcomeClobTokenId: ClobTokenId,
 		interval: keyof OutcomePriceHistories,
 		priceHistory: PriceHistoryEntry[]
 	): void => {
 		const event = this.events.get(eventSlug)
 		if (!event) return
-		const market = event.eventMarkets[0]
+		const market = event.eventMarkets.find(
+			(m): boolean => m.marketId === marketId
+		)
+		if (!market) return
 		const outcome = market.outcomes.find(
 			(singleOutcome): boolean => singleOutcome.clobTokenId === outcomeClobTokenId
 		)
@@ -117,13 +173,17 @@ class EventsClass {
 
 	public setIsRetrievingPriceHistory = action((
 		eventSlug: EventSlug,
+		marketId: MarketId,
 		outcomeClobTokenId: ClobTokenId,
 		interval: keyof OutcomePriceHistories,
 		isRetrieving: boolean
 	): void => {
 		const event = this.events.get(eventSlug)
 		if (!event) return
-		const market = event.eventMarkets[0]
+		const market = event.eventMarkets.find(
+			(m): boolean => m.marketId === marketId
+		)
+		if (!market) return
 		const outcome = market.outcomes.find(
 			(singleOutcome): boolean => singleOutcome.clobTokenId === outcomeClobTokenId
 		)
@@ -144,12 +204,16 @@ class EventsClass {
 
 	public isRetrievingPriceHistory = (
 		eventSlug: EventSlug,
+		marketId: MarketId,
 		outcomeClobTokenId: ClobTokenId,
 		interval: keyof OutcomePriceHistories
 	): boolean => {
 		const event = this.events.get(eventSlug)
 		if (!event) return false
-		const market = event.eventMarkets[0]
+		const market = event.eventMarkets.find(
+			(m): boolean => m.marketId === marketId
+		)
+		if (!market) return false
 		const outcome = market.outcomes.find(
 			(singleOutcome): boolean => singleOutcome.clobTokenId === outcomeClobTokenId
 		)
@@ -157,21 +221,26 @@ class EventsClass {
 		return outcome.retrievingPriceHistories.includes(interval)
 	}
 
-	public getSelectedTimeframe = (eventSlug: EventSlug): keyof OutcomePriceHistories => {
+	public getSelectedTimeframe = (eventSlug: EventSlug, marketId: MarketId): keyof OutcomePriceHistories => {
 		const event = this.events.get(eventSlug)
 		if (!event) return "1w"
-		const market = event.eventMarkets[0]
+		const market = event.eventMarkets.find(
+			(m): boolean => m.marketId === marketId
+		)
 		if (!market) return "1w"
 		return market.selectedTimeframe
 	}
 
 	public setSelectedTimeframe = action((
 		eventSlug: EventSlug,
+		marketId: MarketId,
 		timeframe: keyof OutcomePriceHistories
 	): void => {
 		const event = this.events.get(eventSlug)
 		if (!event) return
-		const market = event.eventMarkets[0]
+		const market = event.eventMarkets.find(
+			(m): boolean => m.marketId === marketId
+		)
 		if (!market) return
 		market.selectedTimeframe = timeframe
 	})
@@ -272,51 +341,53 @@ class EventsClass {
 	public updateOutcomePrice = action((priceUpdate: PriceUpdate): void => {
 		// Find the event and market that contains an outcome with the matching clobTokenId
 		for (const event of this.events.values()) {
-			const market = event.eventMarkets[0]
-			const outcome = market.outcomes.find(
-				(singleOutcome): boolean => singleOutcome.clobTokenId === priceUpdate.clobTokenId
-			)
+			// Search across all markets in the event
+			for (const market of event.eventMarkets) {
+				const outcome = market.outcomes.find(
+					(singleOutcome): boolean => singleOutcome.clobTokenId === priceUpdate.clobTokenId
+				)
 
-			if (!outcome) continue
-			// Find the First outcome for this market
-			const firstOutcome = market.outcomes.find(
-				(singleOutcome): boolean => singleOutcome.outcomeIndex === 0
-			)
+				if (!outcome) continue
+				// Find the First outcome for this market
+				const firstOutcome = market.outcomes.find(
+					(singleOutcome): boolean => singleOutcome.outcomeIndex === 0
+				)
 
-			// Only update market-level pricing if this price update is for the First outcome
-			if (firstOutcome && outcome.clobTokenId === firstOutcome.clobTokenId) {
-				// Update market-level pricing from First outcome's best bid
-				market.midpointPrice = priceUpdate.midpointPrice
-				market.firstOutcomePrice = (priceUpdate.midpointPrice ?? 0)
-				market.secondOutcomePrice = 1 - (priceUpdate.midpointPrice ?? 0)
-			}
-
-			// Add price snapshot to outcome's price history if bestAsk is available
-			// (This happens for both First and Second outcomes)
-			// Apply sliding window logic to all intervals for real-time updates
-			if (priceUpdate.midpointPrice !== null) {
-				// Use timestamp from WebSocket message if available, otherwise use current time
-				// WebSocket timestamp is in milliseconds, but PriceHistoryEntry.t expects seconds (Unix timestamp)
-				const timestampMs = priceUpdate.timestamp ?? new Date().getTime()
-				const timestampSeconds = Math.floor(timestampMs / 1000)
-				const priceEntry: PriceHistoryEntry = {
-					t: timestampSeconds,
-					p: priceUpdate.midpointPrice ?? 0,
-					isWebSocket: true // Mark as WebSocket data
+				// Only update market-level pricing if this price update is for the First outcome
+				if (firstOutcome && outcome.clobTokenId === firstOutcome.clobTokenId) {
+					// Update market-level pricing from First outcome's best bid
+					market.midpointPrice = priceUpdate.midpointPrice
+					market.firstOutcomePrice = (priceUpdate.midpointPrice ?? 0)
+					market.secondOutcomePrice = 1 - (priceUpdate.midpointPrice ?? 0)
 				}
 
-				// Apply sliding window logic to each timeframe
-				const timeframes: Array<keyof OutcomePriceHistories> = ["1h", "1d", "1w", "1m", "max"]
-				for (const timeframe of timeframes) {
-					outcome.priceHistory[timeframe] = this.applySlidingWindow(
-						outcome.priceHistory[timeframe],
-						timeframe,
-						priceEntry
-					)
-				}
-			}
+				// Add price snapshot to outcome's price history if bestAsk is available
+				// (This happens for both First and Second outcomes)
+				// Apply sliding window logic to all intervals for real-time updates
+				if (priceUpdate.midpointPrice !== null) {
+					// Use timestamp from WebSocket message if available, otherwise use current time
+					// WebSocket timestamp is in milliseconds, but PriceHistoryEntry.t expects seconds (Unix timestamp)
+					const timestampMs = priceUpdate.timestamp ?? new Date().getTime()
+					const timestampSeconds = Math.floor(timestampMs / 1000)
+					const priceEntry: PriceHistoryEntry = {
+						t: timestampSeconds,
+						p: priceUpdate.midpointPrice ?? 0,
+						isWebSocket: true // Mark as WebSocket data
+					}
 
-			return // Found and updated, exit early
+					// Apply sliding window logic to each timeframe
+					const timeframes: Array<keyof OutcomePriceHistories> = ["1h", "1d", "1w", "1m", "max"]
+					for (const timeframe of timeframes) {
+						outcome.priceHistory[timeframe] = this.applySlidingWindow(
+							outcome.priceHistory[timeframe],
+							timeframe,
+							priceEntry
+						)
+					}
+				}
+
+				return // Found and updated, exit early
+			}
 		}
 	})
 

@@ -33,16 +33,25 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eventSlug, eventsClass.events.size])
 
+	// Get the selected market
+	const market = useMemo((): SingleMarket | undefined => {
+		if (!event) return undefined
+		return event.eventMarkets.find(
+			(m): boolean => m.marketId === event.selectedMarketId
+		) ?? event.eventMarkets[0]
+	}, [event])
+
 	// Update trade class with prices, market id, and clob token when event is available
 	useEffect((): void => {
-		if (!event) return
-		const market = event.eventMarkets[0]
+		if (!event || !market) return
 		tradeClass.setMarketId(market.marketId)
 		// Use the selected outcome index if set, otherwise default to first outcome
 		const selectedOutcomeIndex = tradeClass.selectedOutcomeIndex ?? 0
-		const selectedClobToken = market.outcomes.find((outcome): boolean => outcome.outcomeIndex === selectedOutcomeIndex)?.clobTokenId
+		const selectedClobToken = market.outcomes.find(
+			(outcome): boolean => outcome.outcomeIndex === selectedOutcomeIndex
+		)?.clobTokenId
 		tradeClass.setSelectedClobToken(selectedClobToken)
-	}, [event])
+	}, [event, market])
 
 	useEffect((): void => {
 		if (!event) return
@@ -52,20 +61,17 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 
 	// Get the selected outcome based on tradeClass.selectedMarket
 	const selectedOutcome = useMemo((): SingleOutcome | undefined => {
-		if (!event) return undefined
-		const market = event.eventMarkets[0]
-		if (!market) return undefined
+		if (!event || !market) return undefined
 		return market.outcomes.find((outcome): boolean => outcome.clobTokenId === tradeClass.selectedClobToken)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event, tradeClass.selectedClobToken])
+	}, [event, market, tradeClass.selectedClobToken])
 
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
-		if (!event) return "1w"
-		const market = event.eventMarkets[0]
-		return market?.selectedTimeframe ?? "1w"
+		if (!event || !market) return "1w"
+		return market.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event, event?.eventMarkets[0]?.selectedTimeframe])
+	}, [event, market?.selectedTimeframe])
 
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
@@ -85,10 +91,12 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		timeframe: keyof OutcomePriceHistories,
 		skipTimeframeUpdate = false
 	): Promise<void> => {
-		if (!selectedOutcome || !event) return
+		if (!selectedOutcome || !event || !market) return
 
 		// Check if already retrieving
-		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe)) {
+		if (eventsClass.isRetrievingPriceHistory(
+			event.eventSlug, market.marketId, selectedOutcome.clobTokenId, timeframe
+		)) {
 			return
 		}
 
@@ -97,13 +105,15 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 		if (existingData && hasRealHistoricalData(existingData)) {
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
-				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
+				eventsClass.setSelectedTimeframe(event.eventSlug, market.marketId, timeframe)
 			}
 			return
 		}
 
 		setIsLoadingTimeframe(true)
-		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe, true)
+		eventsClass.setIsRetrievingPriceHistory(
+			event.eventSlug, market.marketId, selectedOutcome.clobTokenId, timeframe, true
+		)
 		try {
 			const config = timeframeConfig[timeframe]
 			const priceHistoryResponse = await retrieveOutcomePriceHistory({
@@ -113,21 +123,24 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			})
 			eventsClass.setOutcomePriceHistory(
 				event.eventSlug,
+				market.marketId,
 				selectedOutcome.clobTokenId,
 				timeframe,
 				priceHistoryResponse.history
 			)
 			// Only update timeframe state if not skipping (e.g., when called from button click)
 			if (!skipTimeframeUpdate) {
-				eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
+				eventsClass.setSelectedTimeframe(event.eventSlug, market.marketId, timeframe)
 			}
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
-			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, timeframe, false)
+			eventsClass.setIsRetrievingPriceHistory(
+				event.eventSlug, market.marketId, selectedOutcome.clobTokenId, timeframe, false
+			)
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
-	}, [selectedOutcome, event, hasRealHistoricalData])
+	}, [selectedOutcome, event, market, hasRealHistoricalData])
 
 	// Handle timeframe button click
 	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
@@ -137,10 +150,12 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 
 	// Automatically fetch current timeframe data when outcome changes (if data doesn't exist or is only WebSocket)
 	useEffect((): void => {
-		if (!selectedOutcome || !event || isLoadingTimeframe) return
+		if (!selectedOutcome || !event || !market || isLoadingTimeframe) return
 
 		// Don't fetch if already retrieving
-		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, selectedOutcome.clobTokenId, selectedTimeframe)) {
+		if (eventsClass.isRetrievingPriceHistory(
+			event.eventSlug, market.marketId, selectedOutcome.clobTokenId, selectedTimeframe
+		)) {
 			return
 		}
 
@@ -151,7 +166,7 @@ function SingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNo
 			void fetchTimeframeData(selectedTimeframe, true)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedOutcome, selectedTimeframe, hasRealHistoricalData])
+	}, [selectedOutcome, market, selectedTimeframe, hasRealHistoricalData])
 
 	if (isUndefined(event)) {
 		return (

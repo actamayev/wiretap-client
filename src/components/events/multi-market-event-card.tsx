@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { Eye } from "lucide-react"
 import { observer } from "mobx-react"
 import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
@@ -12,12 +13,21 @@ import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
 import eventsClass from "../../classes/events-class"
 import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
+import retrieveEventPriceHistory from "../../utils/events/retrieve-event-price-history"
 import { timeframeConfig } from "../../utils/constants/polymarket-constants"
 import { cn } from "../../lib/utils"
 
 // eslint-disable-next-line max-lines-per-function, complexity
 function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const navigate = useTypedNavigate()
+
+	// Get the selected market
+	const selectedMarket = useMemo((): SingleMarket | undefined => {
+		return event.eventMarkets.find(
+			(m): boolean => m.marketId === event.selectedMarketId
+		) ?? event.eventMarkets[0]
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event, event.selectedMarketId])
 
 	const handleTitleClick = useCallback((): void => {
 		// Check if user is logged in
@@ -44,18 +54,24 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 		navigate(`/event/${event.eventSlug}`)
 	}, [navigate, event])
 
-	// Get selected timeframe from events class for the first market
+	// Handle selecting a market to view its chart
+	const handleSelectMarket = useCallback(async (marketId: MarketId): Promise<void> => {
+		eventsClass.setSelectedMarketId(event.eventSlug, marketId)
+		// Fetch price history for the newly selected market
+		await retrieveEventPriceHistory(event.eventSlug, marketId)
+	}, [event.eventSlug])
+
+	// Get selected timeframe from the selected market
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
-		const market = event.eventMarkets[0]
-		return market?.selectedTimeframe ?? "1w"
+		return selectedMarket?.selectedTimeframe ?? "1w"
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [event.eventSlug, event.eventMarkets[0]?.selectedTimeframe])
+	}, [event.eventSlug, selectedMarket?.selectedTimeframe])
 	const [isLoadingTimeframe, setIsLoadingTimeframe] = useState(false)
 
-	// Get the First outcome of the first market
+	// Get the First outcome of the selected market
 	const firstOutcome = useMemo((): SingleOutcome | undefined => {
-		return event.eventMarkets[0]?.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
-	}, [event])
+		return selectedMarket?.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)
+	}, [selectedMarket])
 
 	// Helper function to check if data is real historical data or just WebSocket updates
 	const hasRealHistoricalData = useCallback((
@@ -70,22 +86,26 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 
 	// Function to fetch price history for a specific timeframe
 	const fetchTimeframeData = useCallback(async (timeframe: keyof OutcomePriceHistories): Promise<void> => {
-		if (!firstOutcome) return
+		if (!selectedMarket || !firstOutcome) return
 
 		// Check if already retrieving
-		if (eventsClass.isRetrievingPriceHistory(event.eventSlug, firstOutcome.clobTokenId, timeframe)) {
+		if (eventsClass.isRetrievingPriceHistory(
+			event.eventSlug, selectedMarket.marketId, firstOutcome.clobTokenId, timeframe
+		)) {
 			return
 		}
 
 		// Check if real historical data already exists (not just WebSocket updates)
 		const existingData = firstOutcome.priceHistory[timeframe]
 		if (existingData && hasRealHistoricalData(existingData)) {
-			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, selectedMarket.marketId, timeframe)
 			return
 		}
 
 		setIsLoadingTimeframe(true)
-		eventsClass.setIsRetrievingPriceHistory(event.eventSlug, firstOutcome.clobTokenId, timeframe, true)
+		eventsClass.setIsRetrievingPriceHistory(
+			event.eventSlug, selectedMarket.marketId, firstOutcome.clobTokenId, timeframe, true
+		)
 		try {
 			const config = timeframeConfig[timeframe]
 			const priceHistoryResponse = await retrieveOutcomePriceHistory({
@@ -95,18 +115,21 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 			})
 			eventsClass.setOutcomePriceHistory(
 				event.eventSlug,
+				selectedMarket.marketId,
 				firstOutcome.clobTokenId,
 				timeframe,
 				priceHistoryResponse.history
 			)
-			eventsClass.setSelectedTimeframe(event.eventSlug, timeframe)
+			eventsClass.setSelectedTimeframe(event.eventSlug, selectedMarket.marketId, timeframe)
 		} catch (error) {
 			console.error(`Error retrieving price history for timeframe ${timeframe}:`, error)
-			eventsClass.setIsRetrievingPriceHistory(event.eventSlug, firstOutcome.clobTokenId, timeframe, false)
+			eventsClass.setIsRetrievingPriceHistory(
+				event.eventSlug, selectedMarket.marketId, firstOutcome.clobTokenId, timeframe, false
+			)
 		} finally {
 			setIsLoadingTimeframe(false)
 		}
-	}, [firstOutcome, event.eventSlug, hasRealHistoricalData])
+	}, [selectedMarket, firstOutcome, event.eventSlug, hasRealHistoricalData])
 
 	// Handle timeframe button click
 	const handleTimeframeClick = useCallback((timeframe: keyof OutcomePriceHistories): void => {
@@ -121,6 +144,11 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 	// For exact calculation, we'll use a custom aspect ratio that approximates this
 	// Mobile: 615/724 (2*350 + 24), Desktop: 615/374 (2*175 + 24)
 	const cardHeightClass = "aspect-[615/724] md:aspect-[615/374]"
+
+	// Get the index of the selected market for display purposes
+	const selectedMarketIndex = event.eventMarkets.findIndex(
+		(m): boolean => m.marketId === event.selectedMarketId
+	)
 
 	return (
 		<div
@@ -153,7 +181,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 					</div>
 					<div className="shrink-0 text-xl font-bold text-yes-green">
 						{((): number | string => {
-							const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
+							const percentage = (selectedMarket?.midpointPrice ?? 0) * 100
 							if (percentage >= 99.5) return ">99"
 							if (percentage < 1 && percentage > 0) return "< 1"
 							return Math.round(percentage)
@@ -206,57 +234,70 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 					</div>
 				</div>
 
-				{/* Row 4: First Market - First/Second Outcome Buttons */}
+				{/* Row 4: Selected Market - First/Second Outcome Buttons */}
 				<div className="flex gap-4">
 					<Button
 						variant="default"
 						size="sm"
-						className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
-						onClick={(): void => handleMarketOutcomeClick(0, 0)}
+						className={cn(
+							"flex-1 bg-yes-green hover:bg-yes-green-hover",
+							"rounded-[5px] text-button-text text-lg h-10"
+						)}
+						onClick={(): void => handleMarketOutcomeClick(
+							selectedMarketIndex >= 0 ? selectedMarketIndex : 0, 0
+						)}
 					>
-						{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
+						{selectedMarket?.outcomes.find(
+							(outcome): boolean => outcome.outcomeIndex === 0
+						)?.outcome}
 					</Button>
 					<Button
 						variant="default"
 						size="sm"
-						className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
-						onClick={(): void => handleMarketOutcomeClick(0, 1)}
+						className={cn(
+							"flex-1 bg-no-red hover:bg-no-red-hover",
+							"rounded-[5px] text-button-text text-lg h-10"
+						)}
+						onClick={(): void => handleMarketOutcomeClick(
+							selectedMarketIndex >= 0 ? selectedMarketIndex : 0, 1
+						)}
 					>
-						{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
+						{selectedMarket?.outcomes.find(
+							(outcome): boolean => outcome.outcomeIndex === 1
+						)?.outcome}
 					</Button>
 				</div>
 
-				{/* Additional Markets Section */}
-				{event.eventMarkets.length > 1 && (
-					<div className="flex flex-col gap-2 mt-2 pt-2 border-t border-white/20">
-						<div className="text-sm font-semibold text-white/60">Additional Markets</div>
-						{event.eventMarkets.slice(1).map((market, index): React.ReactNode => (
-							<div key={market.marketId} className="flex flex-col gap-2">
-								<div className="text-xs text-white/50 line-clamp-1">
-									{market.marketQuestion || market.groupItemTitle || `Market ${index + 2}`}
+				{/* Markets List Section */}
+				<div className="flex flex-col gap-2 mt-2 pt-2 border-t border-white/20 flex-1 overflow-y-auto">
+					<div className="text-sm font-semibold text-white/60">Markets</div>
+					{event.eventMarkets.map((market, index): React.ReactNode => (
+						<div key={market.marketId} className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<Button
+									variant="ghost"
+									size="sm"
+									className={cn(
+										"p-1 h-6 w-6",
+										market.marketId === event.selectedMarketId
+											? "text-primary"
+											: "text-white/40 hover:text-white/80"
+									)}
+									onClick={(): void => void handleSelectMarket(market.marketId)}
+									title="View chart for this market"
+								>
+									<Eye className="size-4" />
+								</Button>
+								<div className="text-xs text-white/50 line-clamp-1 flex-1">
+									{market.marketQuestion || market.groupItemTitle || `Market ${index + 1}`}
 								</div>
-								<div className="flex gap-2">
-									<Button
-										variant="outline"
-										size="sm"
-										className="flex-1 bg-yes-green/20 hover:bg-yes-green/30 rounded-[5px] text-button-text text-sm h-8"
-										onClick={(): void => handleMarketOutcomeClick(index + 1, 0)}
-									>
-										{market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										className="flex-1 bg-no-red/20 hover:bg-no-red/30 rounded-[5px] text-button-text text-sm h-8"
-										onClick={(): void => handleMarketOutcomeClick(index + 1, 1)}
-									>
-										{market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
-									</Button>
+								<div className="text-xs text-yes-green font-medium">
+									{Math.round((market.midpointPrice ?? 0) * 100)}%
 								</div>
 							</div>
-						))}
-					</div>
-				)}
+						</div>
+					))}
+				</div>
 			</div>
 
 			{/* Desktop Layout: Side by side */}
@@ -284,7 +325,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						</div>
 						<div className="shrink-0 text-xl font-bold text-yes-green">
 							{((): number | string => {
-								const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
+								const percentage = (selectedMarket?.midpointPrice ?? 0) * 100
 								if (percentage >= 99.5) return ">99"
 								if (percentage < 1 && percentage > 0) return "< 1"
 								return Math.round(percentage)
@@ -292,23 +333,37 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						</div>
 					</div>
 
-					{/* Row 2: First Market - First/Second Outcome Buttons */}
+					{/* Row 2: Selected Market - First/Second Outcome Buttons */}
 					<div className="flex gap-4">
 						<Button
 							variant="default"
 							size="sm"
-							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
-							onClick={(): void => handleMarketOutcomeClick(0, 0)}
+							className={cn(
+								"flex-1 bg-yes-green hover:bg-yes-green-hover",
+								"rounded-[5px] text-button-text text-lg h-10"
+							)}
+							onClick={(): void => handleMarketOutcomeClick(
+								selectedMarketIndex >= 0 ? selectedMarketIndex : 0, 0
+							)}
 						>
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
+							{selectedMarket?.outcomes.find(
+								(outcome): boolean => outcome.outcomeIndex === 0
+							)?.outcome}
 						</Button>
 						<Button
 							variant="default"
 							size="sm"
-							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
-							onClick={(): void => handleMarketOutcomeClick(0, 1)}
+							className={cn(
+								"flex-1 bg-no-red hover:bg-no-red-hover",
+								"rounded-[5px] text-button-text text-lg h-10"
+							)}
+							onClick={(): void => handleMarketOutcomeClick(
+								selectedMarketIndex >= 0 ? selectedMarketIndex : 0, 1
+							)}
 						>
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
+							{selectedMarket?.outcomes.find(
+								(outcome): boolean => outcome.outcomeIndex === 1
+							)?.outcome}
 						</Button>
 					</div>
 
@@ -342,43 +397,36 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						</div>
 					</div>
 
-					{/* Additional Markets Section */}
-					{event.eventMarkets.length > 1 && (
-						<div className="flex flex-col gap-2 flex-1 overflow-y-auto">
-							<div className="text-sm font-semibold text-white/60">Additional Markets</div>
-							{event.eventMarkets.slice(1).map((market, index): React.ReactNode => (
-								<div key={market.marketId} className="flex flex-col gap-2">
-									<div className="text-xs text-white/50 line-clamp-1">
-										{market.marketQuestion || market.groupItemTitle || `Market ${index + 2}`}
+					{/* Markets List Section */}
+					<div className="flex flex-col gap-2 flex-1 overflow-y-auto">
+						<div className="text-sm font-semibold text-white/60">Markets</div>
+						{event.eventMarkets.map((market, index): React.ReactNode => (
+							<div key={market.marketId} className="flex flex-col gap-2">
+								<div className="flex items-center gap-2">
+									<Button
+										variant="ghost"
+										size="sm"
+										className={cn(
+											"p-1 h-6 w-6",
+											market.marketId === event.selectedMarketId
+												? "text-primary"
+												: "text-white/40 hover:text-white/80"
+										)}
+										onClick={(): void => void handleSelectMarket(market.marketId)}
+										title="View chart for this market"
+									>
+										<Eye className="size-4" />
+									</Button>
+									<div className="text-xs text-white/50 line-clamp-1 flex-1">
+										{market.marketQuestion || market.groupItemTitle || `Market ${index + 1}`}
 									</div>
-									<div className="flex gap-2">
-										<Button
-											variant="outline"
-											size="sm"
-											className={cn(
-												"flex-1 bg-yes-green/20 hover:bg-yes-green/30",
-												"rounded-[5px] text-button-text text-sm h-8"
-											)}
-											onClick={(): void => handleMarketOutcomeClick(index + 1, 0)}
-										>
-											{market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
-										</Button>
-										<Button
-											variant="outline"
-											size="sm"
-											className={cn(
-												"flex-1 bg-no-red/20 hover:bg-no-red/30",
-												"rounded-[5px] text-button-text text-sm h-8"
-											)}
-											onClick={(): void => handleMarketOutcomeClick(index + 1, 1)}
-										>
-											{market.outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
-										</Button>
+									<div className="text-xs text-yes-green font-medium">
+										{Math.round((market.midpointPrice ?? 0) * 100)}%
 									</div>
 								</div>
-							))}
-						</div>
-					)}
+							</div>
+						))}
+					</div>
 				</div>
 
 				{/* Right Section - 2/5 width */}

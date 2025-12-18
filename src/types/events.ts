@@ -1,6 +1,7 @@
 declare global {
 	interface SingleEvent extends SingleEventMetadata {
 		eventMarkets: SingleMarket[]
+		selectedMarketId: MarketId
 	}
 
 	interface SingleMarket extends SingleMarketMetadata {

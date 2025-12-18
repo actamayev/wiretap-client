@@ -40,12 +40,8 @@ export default async function retrieveAllEvents(offset?: number): Promise<void> 
 			eventsClass.incrementOffset()
 		}
 
-		// Fetch price history for each event (1W interval)
-		// Set timeframe to "1w" for all events before fetching to ensure charts display correctly
-		eventsResponse.data.events.forEach((eventMetadata): void => {
-			eventsClass.setSelectedTimeframe(eventMetadata.eventSlug, "1w")
-		})
-
+		// Fetch price history for each event's selected market (1W interval)
+		// Timeframes are already set to "1w" by setEventsMetadata
 		const priceHistoryPromises = eventsResponse.data.events.map(
 			(event): Promise<void> => retrieveEventPriceHistory(event.eventSlug)
 		)
