@@ -54,9 +54,16 @@ class EventsClass {
 	})
 
 	public addSingleEventMetadata = action((eventSlug: EventSlug, event: SingleEventMetadata): void => {
+		// Sort markets by midpoint price in descending order (highest price first)
+		const sortedMarkets = [...event.eventMarkets].sort((a, b): number => {
+			const priceA = a.midpointPrice ?? 0
+			const priceB = b.midpointPrice ?? 0
+			return priceB - priceA
+		})
+
 		const extendedEvent: SingleEvent = {
 			...event,
-			eventMarkets: event.eventMarkets.map((market): SingleMarket => ({
+			eventMarkets: sortedMarkets.map((market): SingleMarket => ({
 				...market,
 				firstOutcomePrice: (market.midpointPrice ?? 0),
 				secondOutcomePrice: 1 - (market.midpointPrice ?? 0),
