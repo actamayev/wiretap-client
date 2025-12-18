@@ -15,7 +15,7 @@ import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome
 import retrieveEventPriceHistory from "../../utils/events/retrieve-event-price-history"
 import { timeframeConfig } from "../../utils/constants/polymarket-constants"
 import { cn } from "../../lib/utils"
-import { formatPercentage } from "../../utils/format"
+import { formatPercentage, formatVolume } from "../../utils/format"
 
 // eslint-disable-next-line max-lines-per-function
 function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNode {
@@ -145,43 +145,43 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 	// Mobile: 615/724 (2*350 + 24), Desktop: 615/374 (2*175 + 24)
 	const cardHeightClass = "aspect-[615/724] md:aspect-[615/374]"
 
-	// Get timeframe keys in order: 1h, 1d, 1w, 1m, max (for vertical stacking)
+	// Get timeframe keys in order
 	const timeframeKeys: Array<keyof OutcomePriceHistories> = ["1h", "1d", "1w", "1m", "max"]
 
 	return (
 		<div
 			className={cn(
-				"rounded-lg p-4 hover:shadow-md transition-shadow",
+				"rounded-lg py-4 pl-4 hover:shadow-md transition-shadow",
 				"bg-sidebar-blue flex flex-col border border-white/50",
 				cardHeightClass
 			)}
 		>
-			{/* Top Section: Event Metadata and Markets List */}
-			<div className="flex flex-col gap-3 flex-1 min-h-0">
-				{/* Icon and Title */}
-				<div className="flex items-center gap-3 shrink-0">
-					<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-transparent">
-						<Image
-							src={event.eventImageUrl}
-							alt={event.eventTitle}
-							width={48}
-							height={48}
-							className="w-full h-full object-cover"
-						/>
-					</div>
-					<div className="flex-1 min-w-0">
-						<h3
-							onClick={handleTitleClick}
-							className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
-						>
-							{event.eventTitle}
-						</h3>
-					</div>
+			{/* Row 1: Icon and Title */}
+			<div className="flex items-center gap-3 shrink-0 mb-3">
+				<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-transparent">
+					<Image
+						src={event.eventImageUrl}
+						alt={event.eventTitle}
+						width={48}
+						height={48}
+						className="w-full h-full object-cover"
+					/>
 				</div>
+				<div className="flex-1 min-w-0">
+					<h3
+						onClick={handleTitleClick}
+						className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
+					>
+						{event.eventTitle}
+					</h3>
+				</div>
+			</div>
 
-				{/* Markets List - Scrollable */}
+			{/* Row 2: Markets List (1/5) and Chart (4/5) */}
+			<div className="flex gap-4 flex-1 min-h-0 mb-3">
+				{/* Left: Markets List - 1/5 width */}
 				<div className={cn(
-					"flex flex-col gap-2 flex-1 overflow-y-auto min-h-0",
+					"w-1/4 flex flex-col gap-2 overflow-y-auto min-h-0",
 					"[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
 				)}>
 					{event.eventMarkets.map((market, index): React.ReactNode => {
@@ -193,29 +193,29 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						)?.outcome
 
 						return (
-							<div key={market.marketId} className="flex items-center gap-2 shrink-0">
+							<div key={market.marketId} className="flex items-center gap-1 shrink-0">
 								{/* Group Icon */}
 								{market.marketIconUrl ? (
-									<div className="relative w-8 h-8 shrink-0 rounded-md overflow-hidden bg-muted">
+									<div className="relative w-6 h-6 shrink-0 rounded-md overflow-hidden bg-muted">
 										<Image
 											src={market.marketIconUrl}
 											alt={market.groupItemTitle || `Market ${index + 1}`}
-											width={32}
-											height={32}
+											width={24}
+											height={24}
 											className="w-full h-full object-cover"
 										/>
 									</div>
 								) : (
-									<div className="w-8 h-8 shrink-0 rounded-md bg-muted" />
+									<div className="w-6 h-6 shrink-0 rounded-md bg-muted" />
 								)}
 
 								{/* Group Name */}
-								<div className="text-sm text-white/80 line-clamp-1 flex-1 min-w-0">
+								<div className="text-xs text-white/80 line-clamp-1 flex-1 min-w-0">
 									{market.groupItemTitle || market.marketQuestion || `Market ${index + 1}`}
 								</div>
 
 								{/* Midpoint Price */}
-								<div className="text-sm text-yes-green font-medium shrink-0">
+								<div className="text-xs text-yes-green font-medium shrink-0">
 									{formatPercentage(market.midpointPrice)}%
 								</div>
 
@@ -224,7 +224,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 									variant="ghost"
 									size="sm"
 									className={cn(
-										"p-1 h-7 w-7 shrink-0",
+										"p-0.5 h-5 w-5 shrink-0",
 										market.marketId === event.selectedMarketId
 											? "text-primary"
 											: "text-white/40 hover:text-white/80"
@@ -232,16 +232,16 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 									onClick={(): void => void handleSelectMarket(market.marketId)}
 									title="View chart for this market"
 								>
-									<Eye className="size-4" />
+									<Eye className="size-3" />
 								</Button>
 
 								{/* First Outcome Button */}
 								<Button
-									variant="outline"
+									variant="default"
 									size="sm"
 									className={cn(
-										"bg-yes-green/20 hover:bg-yes-green/30",
-										"rounded-[5px] text-button-text text-xs h-7 px-2 shrink-0"
+										"bg-yes-green hover:bg-yes-green-hover",
+										"rounded-[5px] text-button-text text-[10px] h-5 px-1 shrink-0"
 									)}
 									onClick={(): void => handleMarketOutcomeClick(index, 0)}
 								>
@@ -250,11 +250,11 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 
 								{/* Second Outcome Button */}
 								<Button
-									variant="outline"
+									variant="default"
 									size="sm"
 									className={cn(
-										"bg-no-red/20 hover:bg-no-red/30",
-										"rounded-[5px] text-button-text text-xs h-7 px-2 shrink-0"
+										"bg-no-red hover:bg-no-red-hover",
+										"rounded-[5px] text-button-text text-[10px] h-5 px-1 shrink-0"
 									)}
 									onClick={(): void => handleMarketOutcomeClick(index, 1)}
 								>
@@ -264,35 +264,9 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						)
 					})}
 				</div>
-			</div>
 
-			{/* Bottom Section: Timeframe and Chart */}
-			<div className="flex gap-4 -mx-4 -mb-4 mt-4 shrink-0">
-				{/* Left: Timeframe Buttons - Vertically Stacked */}
-				<div className="flex flex-col gap-2 shrink-0 pl-4">
-					{timeframeKeys.map((timeframe): React.ReactNode => (
-						<Button
-							key={timeframe}
-							variant={selectedTimeframe === timeframe ? "default" : "outline"}
-							size="sm"
-							onClick={(): void => handleTimeframeClick(timeframe)}
-							disabled={isLoadingTimeframe}
-							className={cn(
-								"min-w-[60px] h-9",
-								selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
-							)}
-						>
-							{isLoadingTimeframe && selectedTimeframe === timeframe ? (
-								<Spinner className="size-4" />
-							) : (
-								timeframeConfig[timeframe].label
-							)}
-						</Button>
-					))}
-				</div>
-
-				{/* Right: Chart */}
-				<div className="flex-1 min-h-0 overflow-hidden rounded-br-lg">
+				{/* Right: Chart - 4/5 width */}
+				<div className="w-3/4 flex-1 min-h-0 rounded-[5px] overflow-hidden">
 					{firstOutcome?.priceHistory[selectedTimeframe] &&
 							firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
 						<PriceHistoryChartCard
@@ -304,6 +278,37 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 							)}
 						/>
 					)}
+				</div>
+			</div>
+
+			{/* Row 3: Volume (left) and Timeframe Buttons (right) */}
+			<div className="flex items-center justify-between shrink-0">
+				{/* Volume */}
+				<div className="text-sm text-white/40">
+					{formatVolume(event.eventTotalVolume)}
+				</div>
+
+				{/* Timeframe Buttons */}
+				<div className="flex gap-1">
+					{timeframeKeys.map((timeframe): React.ReactNode => (
+						<Button
+							key={timeframe}
+							variant={selectedTimeframe === timeframe ? "default" : "outline"}
+							size="sm"
+							onClick={(): void => handleTimeframeClick(timeframe)}
+							disabled={isLoadingTimeframe}
+							className={cn(
+								"min-w-[45px] h-7 text-xs px-2",
+								selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+							)}
+						>
+							{isLoadingTimeframe && selectedTimeframe === timeframe ? (
+								<Spinner className="size-3" />
+							) : (
+								timeframeConfig[timeframe].label
+							)}
+						</Button>
+					))}
 				</div>
 			</div>
 		</div>
