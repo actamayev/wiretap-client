@@ -190,6 +190,7 @@ class FundsClass {
 			fund.transactions = {
 				purchaseOrders: [{
 					outcome: buyTransaction.position.outcome,
+					groupItemTitle: buyTransaction.position.groupItemTitle,
 					numberOfSharesPurchased: buyTransaction.position.numberOfSharesHeld,
 					marketQuestion: buyTransaction.position.marketQuestion,
 					totalCost: buyTransaction.position.numberOfSharesHeld * buyTransaction.position.costBasisPerShareUsd,
@@ -204,6 +205,7 @@ class FundsClass {
 
 		fund.transactions.purchaseOrders.push({
 			outcome: buyTransaction.position.outcome,
+			groupItemTitle: buyTransaction.position.groupItemTitle,
 			numberOfSharesPurchased: buyTransaction.position.numberOfSharesHeld,
 			marketQuestion: buyTransaction.position.marketQuestion,
 			totalCost: buyTransaction.position.numberOfSharesHeld * buyTransaction.position.costBasisPerShareUsd,
@@ -222,6 +224,7 @@ class FundsClass {
 				purchaseOrders: [],
 				saleOrders: [{
 					outcome: sellTransaction.outcomeData.outcome,
+					groupItemTitle: sellTransaction.outcomeData.groupItemTitle,
 					numberOfSharesSold: sellTransaction.numberOfSharesSold,
 					marketQuestion: sellTransaction.outcomeData.marketQuestion,
 					totalProceeds: sellTransaction.totalProceeds,
@@ -234,6 +237,7 @@ class FundsClass {
 		}
 		fund.transactions.saleOrders.push({
 			outcome: sellTransaction.outcomeData.outcome,
+			groupItemTitle: sellTransaction.outcomeData.groupItemTitle,
 			numberOfSharesSold: sellTransaction.numberOfSharesSold,
 			marketQuestion: sellTransaction.outcomeData.marketQuestion,
 			totalProceeds: sellTransaction.totalProceeds,

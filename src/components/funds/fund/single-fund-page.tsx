@@ -15,7 +15,7 @@ import PositionsTab from "./positions-tab"
 import TransactionHistoryTab from "./transaction-history-tab"
 import retrieveDetailedFund from "../../../utils/funds/retrieve-detailed-fund"
 import retrievePortfolioPriceHistory from "../../../utils/funds/retrieve-portfolio-price-history"
-import { timeframeConfig } from "../../../utils/constants/timeframe-config"
+import { timeframeConfig } from "../../../utils/constants/polymarket-constants"
 
 // eslint-disable-next-line max-lines-per-function
 function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
@@ -140,7 +140,9 @@ function SingleFundPage({ fundId }: { fundId: FundsUUID}): React.ReactNode {
 									disabled={isLoadingTimeframe}
 									className={cn(
 										"min-w-[60px]",
-										selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+										selectedTimeframe === timeframe
+											? "bg-primary text-primary-foreground"
+											: "bg-[rgb(29,42,57)] border-white/20 hover:bg-white/10 hover:border-white/30"
 									)}
 								>
 									{isLoadingTimeframe && selectedTimeframe === timeframe ? (

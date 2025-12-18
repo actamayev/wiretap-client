@@ -1,13 +1,14 @@
 declare global {
 	interface SingleEvent extends SingleEventMetadata {
 		eventMarkets: SingleMarket[]
+		selectedMarketId: MarketId
+		selectedTimeframe: keyof OutcomePriceHistories
 	}
 
 	interface SingleMarket extends SingleMarketMetadata {
 		outcomes: SingleOutcome[]
 		firstOutcomePrice: number
 		secondOutcomePrice: number
-		selectedTimeframe: keyof OutcomePriceHistories
 	}
 
 	interface SingleOutcome extends SingleOutcomeMetadata {

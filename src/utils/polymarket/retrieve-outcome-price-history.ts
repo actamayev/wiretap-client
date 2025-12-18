@@ -1,4 +1,5 @@
 import axios from "axios"
+import { POLYMARKET_CLOB_URL } from "../constants/polymarket-constants"
 
 interface PriceHistoryParams {
 	market: string
@@ -14,7 +15,7 @@ interface PriceHistoryResponse {
 
 export default async function retrieveOutcomePriceHistory(params: PriceHistoryParams): Promise<PriceHistoryResponse> {
 	try {
-		const response = await axios.get<PriceHistoryResponse>("https://clob.polymarket.com/prices-history", {
+		const response = await axios.get<PriceHistoryResponse>(`${POLYMARKET_CLOB_URL}/prices-history`, {
 			params
 		})
 		return response.data

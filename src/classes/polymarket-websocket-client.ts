@@ -1,6 +1,6 @@
 "use client"
 
-import { POLYMARKET_WS_URL, PING_INTERVAL_MS } from "../utils/constants/polymarket-websocket"
+import { POLYMARKET_WS_URL, PING_INTERVAL_MS } from "../utils/constants/polymarket-constants"
 import eventsClass from "./events-class"
 import fundsClass from "./funds-class"
 

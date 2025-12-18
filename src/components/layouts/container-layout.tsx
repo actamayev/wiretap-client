@@ -3,6 +3,8 @@
 import { observer } from "mobx-react"
 import HeaderContent from "./header-content"
 import CreateFundDialog from "../funds/funds-page/create-fund-dialog"
+import RegisterDialog from "../register-dialog"
+import FeedbackDialog from "./feedback-dialog"
 
 function ContainerLayout(props: { children: React.ReactNode }): React.ReactNode {
 	const { children } = props
@@ -34,6 +36,8 @@ function ContainerLayout(props: { children: React.ReactNode }): React.ReactNode 
 				{children}
 			</div>
 			<CreateFundDialog />
+			<RegisterDialog />
+			<FeedbackDialog />
 		</div>
 	)
 }

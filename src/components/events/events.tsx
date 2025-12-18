@@ -7,6 +7,7 @@ import ContainerLayout from "../layouts/container-layout"
 import retrieveAllEvents, { retrieveMoreEvents } from "../../utils/events/retrieve-all-events"
 import authClass from "../../classes/auth-class"
 import SingleEventCard from "./single-event-card"
+import MultiMarketEventCard from "./multi-market-event-card"
 import EventCardSkeleton from "./event-card-skeleton"
 
 // eslint-disable-next-line max-lines-per-function
@@ -126,10 +127,15 @@ function Events(): React.ReactNode {
 		}
 
 		return (
-			<div ref={containerRef} className="flex flex-col w-full p-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+			<div ref={containerRef} className="flex flex-col w-full p-3">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
 					{events.map((event): React.ReactNode => {
-						return <SingleEventCard key={event.eventId} event={event} />
+						const isMultiMarket = event.eventMarkets.length > 1
+						return isMultiMarket ? (
+							<MultiMarketEventCard key={event.eventId} event={event} />
+						) : (
+							<SingleEventCard key={event.eventId} event={event} />
+						)
 					})}
 				</div>
 				{/* Sentinel element for infinite scroll - only render when there are more events */}

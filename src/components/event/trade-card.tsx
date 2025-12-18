@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 "use client"
 
+import Image from "next/image"
 import { observer } from "mobx-react"
 import isUndefined from "lodash-es/isUndefined"
 import { useCallback, useState, useMemo } from "react"
@@ -95,8 +96,45 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 		}
 	}, [])
 
+	// Get the selected market (for multi-market events)
+	const selectedMarket = useMemo((): SingleMarket | undefined => {
+		if (event.eventMarkets.length === 1) return event.eventMarkets[0]
+		// For multi-market events, find the market matching tradeClass.marketId or event.selectedMarketId
+		if (tradeClass.marketId) {
+			return event.eventMarkets.find((m): boolean => m.marketId === tradeClass.marketId)
+		}
+		return event.eventMarkets.find((m): boolean => m.marketId === event.selectedMarketId) ?? event.eventMarkets[0]
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [event, tradeClass.marketId, event.selectedMarketId])
+
+	const isMultiMarket = event.eventMarkets.length > 1
+
 	return (
-		<div className="bg-sidebar-blue rounded-lg p-4 border-2 border-white/30">
+		<div className="bg-sidebar-blue rounded-lg p-4">
+			{/* Market Info (for multi-market events) */}
+			{isMultiMarket && selectedMarket && (
+				<div className="flex items-center gap-3 mb-4">
+					{selectedMarket.marketIconUrl ? (
+						<div className="relative w-10 h-10 shrink-0 rounded-md overflow-hidden bg-muted">
+							<Image
+								src={selectedMarket.marketIconUrl}
+								alt={selectedMarket.groupItemTitle || selectedMarket.marketQuestion || "Market"}
+								width={40}
+								height={40}
+								className="w-full h-full object-cover"
+							/>
+						</div>
+					) : (
+						<div className="w-10 h-10 shrink-0 rounded-md bg-muted" />
+					)}
+					<div className="flex-1 min-w-0">
+						<div className="text-sm font-medium line-clamp-1">
+							{selectedMarket.groupItemTitle || selectedMarket.marketQuestion || "Market"}
+						</div>
+					</div>
+				</div>
+			)}
+
 			{/* Tabs */}
 			<div className="flex items-center justify-between mb-4">
 				<div className="flex gap-2">
@@ -137,9 +175,9 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
 						<span className="font-semibold text-xl opacity-90">
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
+							{selectedMarket?.outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
 						</span>
-						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].firstOutcomePrice)}</span>
+						<span className="text-2xl font-bold">{formatPrice(selectedMarket?.firstOutcomePrice ?? 0)}</span>
 					</div>
 				</Button>
 				<Button
@@ -155,9 +193,9 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 				>
 					<div className="flex items-center justify-center gap-2 w-full">
 						<span className="font-semibold text-xl opacity-90">
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
+							{selectedMarket?.outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
 						</span>
-						<span className="text-2xl font-bold">{formatPrice(event.eventMarkets[0].secondOutcomePrice)}</span>
+						<span className="text-2xl font-bold">{formatPrice(selectedMarket?.secondOutcomePrice ?? 0)}</span>
 					</div>
 				</Button>
 			</div>
@@ -201,7 +239,7 @@ function TradeCard({ event }: { event: SingleEvent }): React.ReactNode {
 						{isLoading && <Spinner className="size-5" />}
 						<span>
 							{tradeClass.tradeTab} {" "}
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === tradeClass.selectedOutcomeIndex)?.outcome}
+							{selectedMarket?.outcomes.find((outcome): boolean => outcome.outcomeIndex === tradeClass.selectedOutcomeIndex)?.outcome}
 						</span>
 					</div>
 				</Button>
