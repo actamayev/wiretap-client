@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import { Eye } from "lucide-react"
 import { observer } from "mobx-react"
 import { useCallback, useState, useMemo } from "react"
 import { Button } from "../ui/button"
@@ -182,8 +181,8 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 			<div className="flex gap-4 flex-1 min-h-0">
 				{/* Left: Markets List - extends to bottom */}
 				<div className={cn(
-					"w-1/4 flex flex-col gap-2 overflow-y-auto min-h-0",
-					"[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+					"w-1/3 flex flex-col gap-2 overflow-y-auto min-h-0",
+					"[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] mb-2"
 				)}>
 					{event.eventMarkets.map((market, index): React.ReactNode => {
 						const firstOutcomeText = market.outcomes.find(
@@ -193,8 +192,20 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 							(outcome): boolean => outcome.outcomeIndex === 1
 						)?.outcome
 
+						const isSelected = market.marketId === event.selectedMarketId
+
 						return (
-							<div key={market.marketId} className="flex items-center gap-1 shrink-0">
+							<div
+								key={market.marketId}
+								className={cn(
+									"flex items-center gap-1 shrink-0 rounded-md px-2 py-1 cursor-pointer transition-colors",
+									isSelected
+										? "bg-primary/20"
+										: "hover:bg-white/10"
+								)}
+								onClick={(): void => void handleSelectMarket(market.marketId)}
+								title="View chart for this market"
+							>
 								{/* Group Icon */}
 								{market.marketIconUrl ? (
 									<div className="relative w-6 h-6 shrink-0 rounded-md overflow-hidden bg-muted">
@@ -211,7 +222,10 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 								)}
 
 								{/* Group Name */}
-								<div className="text-xs text-white/80 line-clamp-1 flex-1 min-w-0">
+								<div className={cn(
+									"text-xs line-clamp-1 flex-1 min-w-0",
+									isSelected ? "text-primary font-medium" : "text-white/80"
+								)}>
 									{market.groupItemTitle || market.marketQuestion || `Market ${index + 1}`}
 								</div>
 
@@ -219,22 +233,6 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 								<div className="text-xs text-yes-green font-medium shrink-0">
 									{formatPercentage(market.midpointPrice)}%
 								</div>
-
-								{/* Eye Button */}
-								<Button
-									variant="ghost"
-									size="sm"
-									className={cn(
-										"p-0.5 h-5 w-5 shrink-0",
-										market.marketId === event.selectedMarketId
-											? "text-primary"
-											: "text-white/40 hover:text-white/80"
-									)}
-									onClick={(): void => void handleSelectMarket(market.marketId)}
-									title="View chart for this market"
-								>
-									<Eye className="size-3" />
-								</Button>
 
 								{/* First Outcome Button */}
 								<Button
@@ -244,7 +242,10 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 										"bg-yes-green hover:bg-yes-green-hover",
 										"rounded-[5px] text-button-text text-[10px] h-5 px-1 shrink-0"
 									)}
-									onClick={(): void => handleMarketOutcomeClick(index, 0)}
+									onClick={(e): void => {
+										e.stopPropagation()
+										handleMarketOutcomeClick(index, 0)
+									}}
 								>
 									{firstOutcomeText}
 								</Button>
@@ -257,7 +258,10 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 										"bg-no-red hover:bg-no-red-hover",
 										"rounded-[5px] text-button-text text-[10px] h-5 px-1 shrink-0"
 									)}
-									onClick={(): void => handleMarketOutcomeClick(index, 1)}
+									onClick={(e): void => {
+										e.stopPropagation()
+										handleMarketOutcomeClick(index, 1)
+									}}
 								>
 									{secondOutcomeText}
 								</Button>
@@ -267,7 +271,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 				</div>
 
 				{/* Right: Chart Area - extends to bottom */}
-				<div className="w-3/4 flex flex-col flex-1 min-h-0">
+				<div className="w-2/3 flex flex-col flex-1 min-h-0">
 					{/* Top Row: Timescale (left) and Volume (right) */}
 					<div className="flex items-center justify-between shrink-0 mb-2">
 						{/* Timeframe Buttons */}
@@ -294,7 +298,7 @@ function MultiMarketEventCard({ event }: { event: SingleEvent }): React.ReactNod
 						</div>
 
 						{/* Volume */}
-						<Badge variant="outline" className="mr-4">
+						<Badge variant="outline" className="mr-2">
 							{formatVolume(event.eventTotalVolume)}
 						</Badge>
 					</div>
