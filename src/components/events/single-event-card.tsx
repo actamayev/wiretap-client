@@ -12,7 +12,6 @@ import tradeClass from "../../classes/trade-class"
 import useTypedNavigate from "../../hooks/navigate/use-typed-navigate"
 import authClass from "../../classes/auth-class"
 import eventsClass from "../../classes/events-class"
-import RegisterDialog from "../register-dialog"
 import retrieveOutcomePriceHistory from "../../utils/polymarket/retrieve-outcome-price-history"
 import { timeframeConfig } from "../../utils/constants/timeframe-config"
 import { cn } from "../../lib/utils"
@@ -20,33 +19,28 @@ import { cn } from "../../lib/utils"
 // eslint-disable-next-line max-lines-per-function, complexity
 function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	const navigate = useTypedNavigate()
-	const [showRegisterDialog, setShowRegisterDialog] = useState(false)
-	const [pendingNavigation, setPendingNavigation] = useState<{
-		eventSlug: EventSlug
-		outcomeIndex?: 0 | 1
-	} | null>(null)
 
 	const handleTitleClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
-			setPendingNavigation({
+			authClass.setPendingNavigation({
 				eventSlug: event.eventSlug
 				// No market - just viewing the event
-			})
-			setShowRegisterDialog(true)
+			}, event)
+			authClass.setShowRegisterDialog(true)
 			return
 		}
 		navigate(`/event/${event.eventSlug}`)
-	}, [navigate, event.eventSlug])
+	}, [navigate, event])
 
 	const handleFirstOutcomeClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
-			setPendingNavigation({
+			authClass.setPendingNavigation({
 				eventSlug: event.eventSlug,
 				outcomeIndex: 0
-			})
-			setShowRegisterDialog(true)
+			}, event)
+			authClass.setShowRegisterDialog(true)
 			return
 		}
 
@@ -55,16 +49,16 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[0].clobTokenId)
 		navigate(`/event/${event.eventSlug}`)
-	}, [navigate, event.eventSlug, event.eventMarkets])
+	}, [navigate, event])
 
 	const handleSecondOutcomeClick = useCallback((): void => {
 		// Check if user is logged in
 		if (!authClass.isLoggedIn) {
-			setPendingNavigation({
+			authClass.setPendingNavigation({
 				eventSlug: event.eventSlug,
 				outcomeIndex: 1
-			})
-			setShowRegisterDialog(true)
+			}, event)
+			authClass.setShowRegisterDialog(true)
 			return
 		}
 
@@ -73,13 +67,7 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 		tradeClass.setMarketId(market.marketId)
 		tradeClass.setSelectedClobToken(market.outcomes[1].clobTokenId)
 		navigate(`/event/${event.eventSlug}`)
-	}, [navigate, event.eventSlug, event.eventMarkets])
-
-	const handleDialogClose = useCallback((open: boolean): void => {
-		setShowRegisterDialog(open)
-		if (open) return
-		setPendingNavigation(null)
-	}, [])
+	}, [navigate, event])
 
 	// Get selected timeframe from events class
 	const selectedTimeframe = useMemo((): keyof OutcomePriceHistories => {
@@ -152,21 +140,113 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 	}, [fetchTimeframeData, isLoadingTimeframe])
 
 	return (
-		<>
-			<RegisterDialog
-				open={showRegisterDialog}
-				onOpenChange={handleDialogClose}
-				pendingNavigation={pendingNavigation}
-				event={event}
-			/>
-			<div
-				className={cn(
-					"rounded-lg p-4 hover:shadow-md transition-shadow",
-					"bg-sidebar-blue aspect-615/350 md:aspect-615/175 flex flex-col border border-white/50"
-				)}
-			>
-				{/* Mobile Layout: Stacked vertically */}
-				<div className="flex flex-col gap-3 md:hidden w-full">
+		<div
+			className={cn(
+				"rounded-lg p-4 hover:shadow-md transition-shadow",
+				"bg-sidebar-blue aspect-615/350 md:aspect-615/175 flex flex-col border border-white/50"
+			)}
+		>
+			{/* Mobile Layout: Stacked vertically */}
+			<div className="flex flex-col gap-3 md:hidden w-full">
+				{/* Row 1: Image, Name, Percentage */}
+				<div className="flex items-center gap-3">
+					<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
+						<Image
+							src={event.eventImageUrl}
+							alt={event.eventTitle}
+							width={48}
+							height={48}
+							className="w-full h-full object-cover"
+						/>
+					</div>
+					<div className="flex-1 min-w-0">
+						<h3
+							onClick={handleTitleClick}
+							className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
+						>
+							{event.eventTitle}
+						</h3>
+					</div>
+					<div className="shrink-0 text-xl font-bold text-yes-green">
+						{((): number | string => {
+							const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
+							if (percentage >= 99.5) return ">99"
+							if (percentage < 1 && percentage > 0) return "< 1"
+							return Math.round(percentage)
+						})()}%
+					</div>
+				</div>
+
+				{/* Row 2: Chart */}
+				<div className="w-full h-48 rounded-[5px] overflow-hidden">
+					{firstOutcome?.priceHistory[selectedTimeframe] &&
+							firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
+						<PriceHistoryChartCard
+							priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
+								(entry): SinglePriceSnapshot => ({
+									timestamp: new Date(entry.t * 1000),
+									price: entry.p
+								})
+							)}
+						/>
+					)}
+				</div>
+
+				{/* Row 3: Volume and Timeframe Selector */}
+				<div className="flex items-center justify-between">
+					<div className="text-sm text-white/40">
+						{formatVolume(event.eventTotalVolume)}
+					</div>
+					<div className="flex gap-1">
+						{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
+							(timeframe): React.ReactNode => (
+								<Button
+									key={timeframe}
+									variant={selectedTimeframe === timeframe ? "default" : "outline"}
+									size="sm"
+									onClick={(): void => handleTimeframeClick(timeframe)}
+									disabled={isLoadingTimeframe}
+									className={cn(
+										"min-w-[45px] h-7 text-xs px-2",
+										selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
+									)}
+								>
+									{isLoadingTimeframe && selectedTimeframe === timeframe ? (
+										<Spinner className="size-3" />
+									) : (
+										timeframeConfig[timeframe].label
+									)}
+								</Button>
+							)
+						)}
+					</div>
+				</div>
+
+				{/* Row 4: First/Second Outcome Buttons */}
+				<div className="flex gap-4">
+					<Button
+						variant="default"
+						size="sm"
+						className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
+						onClick={handleFirstOutcomeClick}
+					>
+						{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
+					</Button>
+					<Button
+						variant="default"
+						size="sm"
+						className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
+						onClick={handleSecondOutcomeClick}
+					>
+						{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
+					</Button>
+				</div>
+			</div>
+
+			{/* Desktop Layout: Side by side */}
+			<div className="hidden md:flex gap-8 w-full flex-1 min-h-0">
+				{/* Left Section - 3/5 width */}
+				<div className="w-3/5 flex flex-col gap-3 h-full">
 					{/* Row 1: Image, Name, Percentage */}
 					<div className="flex items-center gap-3">
 						<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
@@ -196,19 +276,24 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 						</div>
 					</div>
 
-					{/* Row 2: Chart */}
-					<div className="w-full h-48 rounded-[5px] overflow-hidden">
-						{firstOutcome?.priceHistory[selectedTimeframe] &&
-							firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
-							<PriceHistoryChartCard
-								priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
-									(entry): SinglePriceSnapshot => ({
-										timestamp: new Date(entry.t * 1000),
-										price: entry.p
-									})
-								)}
-							/>
-						)}
+					{/* Row 2: First/Second Outcome Buttons */}
+					<div className="flex gap-4">
+						<Button
+							variant="default"
+							size="sm"
+							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
+							onClick={handleFirstOutcomeClick}
+						>
+							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
+						</Button>
+						<Button
+							variant="default"
+							size="sm"
+							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
+							onClick={handleSecondOutcomeClick}
+						>
+							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
+						</Button>
 					</div>
 
 					{/* Row 3: Volume and Timeframe Selector */}
@@ -240,131 +325,26 @@ function SingleEventCard({ event }: { event: SingleEvent }): React.ReactNode {
 							)}
 						</div>
 					</div>
-
-					{/* Row 4: First/Second Outcome Buttons */}
-					<div className="flex gap-4">
-						<Button
-							variant="default"
-							size="sm"
-							className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
-							onClick={handleFirstOutcomeClick}
-						>
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
-						</Button>
-						<Button
-							variant="default"
-							size="sm"
-							className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
-							onClick={handleSecondOutcomeClick}
-						>
-							{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
-						</Button>
-					</div>
 				</div>
 
-				{/* Desktop Layout: Side by side */}
-				<div className="hidden md:flex gap-8 w-full flex-1 min-h-0">
-					{/* Left Section - 3/5 width */}
-					<div className="w-3/5 flex flex-col gap-3 h-full">
-						{/* Row 1: Image, Name, Percentage */}
-						<div className="flex items-center gap-3">
-							<div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-muted">
-								<Image
-									src={event.eventImageUrl}
-									alt={event.eventTitle}
-									width={48}
-									height={48}
-									className="w-full h-full object-cover"
-								/>
-							</div>
-							<div className="flex-1 min-w-0">
-								<h3
-									onClick={handleTitleClick}
-									className="font-semibold text-lg line-clamp-2 cursor-pointer hover:underline"
-								>
-									{event.eventTitle}
-								</h3>
-							</div>
-							<div className="shrink-0 text-xl font-bold text-yes-green">
-								{((): number | string => {
-									const percentage = (event.eventMarkets[0].midpointPrice ?? 0) * 100
-									if (percentage >= 99.5) return ">99"
-									if (percentage < 1 && percentage > 0) return "< 1"
-									return Math.round(percentage)
-								})()}%
-							</div>
-						</div>
-
-						{/* Row 2: First/Second Outcome Buttons */}
-						<div className="flex gap-4">
-							<Button
-								variant="default"
-								size="sm"
-								className="flex-1 bg-yes-green hover:bg-yes-green-hover rounded-[5px] text-button-text text-lg h-10"
-								onClick={handleFirstOutcomeClick}
-							>
-								{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 0)?.outcome}
-							</Button>
-							<Button
-								variant="default"
-								size="sm"
-								className="flex-1 bg-no-red hover:bg-no-red-hover rounded-[5px] text-button-text text-lg h-10"
-								onClick={handleSecondOutcomeClick}
-							>
-								{event.eventMarkets[0].outcomes.find((outcome): boolean => outcome.outcomeIndex === 1)?.outcome}
-							</Button>
-						</div>
-
-						{/* Row 3: Volume and Timeframe Selector */}
-						<div className="flex items-center justify-between">
-							<div className="text-sm text-white/40">
-								{formatVolume(event.eventTotalVolume)}
-							</div>
-							<div className="flex gap-1">
-								{(Object.keys(timeframeConfig) as Array<keyof OutcomePriceHistories>).map(
-									(timeframe): React.ReactNode => (
-										<Button
-											key={timeframe}
-											variant={selectedTimeframe === timeframe ? "default" : "outline"}
-											size="sm"
-											onClick={(): void => handleTimeframeClick(timeframe)}
-											disabled={isLoadingTimeframe}
-											className={cn(
-												"min-w-[45px] h-7 text-xs px-2",
-												selectedTimeframe === timeframe && "bg-primary text-primary-foreground"
-											)}
-										>
-											{isLoadingTimeframe && selectedTimeframe === timeframe ? (
-												<Spinner className="size-3" />
-											) : (
-												timeframeConfig[timeframe].label
-											)}
-										</Button>
-									)
-								)}
-							</div>
-						</div>
-					</div>
-
-					{/* Right Section - 2/5 width */}
-					<div className="w-2/5 flex flex-col h-full min-h-0">
-						<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
-							{firstOutcome?.priceHistory[selectedTimeframe] &&
+				{/* Right Section - 2/5 width */}
+				<div className="w-2/5 flex flex-col h-full min-h-0">
+					<div className="flex-1 min-h-0 rounded-[5px] overflow-hidden">
+						{firstOutcome?.priceHistory[selectedTimeframe] &&
 								firstOutcome.priceHistory[selectedTimeframe].length > 0 && (
-								<PriceHistoryChartCard
-									priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
-										(entry): SinglePriceSnapshot => ({
-											timestamp: new Date(entry.t * 1000),
-											price: entry.p
-										})
-									)}
-								/>
-							)}
-						</div>
+							<PriceHistoryChartCard
+								priceHistory={firstOutcome.priceHistory[selectedTimeframe].map(
+									(entry): SinglePriceSnapshot => ({
+										timestamp: new Date(entry.t * 1000),
+										price: entry.p
+									})
+								)}
+							/>
+						)}
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	)
 }
 

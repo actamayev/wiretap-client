@@ -9,6 +9,12 @@ class AuthClass {
 	// Auth state is now managed by server middleware, but we keep these for UI state
 	private _isAuthenticated = false
 	public isLoggingOut = false  // NEW
+	public showRegisterDialog = false
+	public pendingNavigation: {
+		eventSlug: EventSlug
+		outcomeIndex?: number
+	} | null = null
+	public pendingEvent: SingleEvent | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -35,11 +41,31 @@ class AuthClass {
 		this.isLoggingOut = state
 	})
 
+	public setShowRegisterDialog = action((state: boolean): void => {
+		this.showRegisterDialog = state
+		if (!state) {
+			// Clear pending navigation when dialog closes
+			this.pendingNavigation = null
+			this.pendingEvent = null
+		}
+	})
+
+	public setPendingNavigation = action((navigation: {
+		eventSlug: EventSlug
+		outcomeIndex?: number
+	} | null, event?: SingleEvent): void => {
+		this.pendingNavigation = navigation
+		this.pendingEvent = event || null
+	})
+
 	public logout = action((): void => {
 		// Just reset local auth state - your logout util handles the rest
 		this._isAuthenticated = false
 		this.setShowLoginOrRegister("Register")
 		this.setAuthenticating(false)
+		this.setShowRegisterDialog(false)
+		this.pendingNavigation = null
+		this.pendingEvent = null
 	})
 }
 
