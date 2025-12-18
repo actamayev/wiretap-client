@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 
 import { action, makeAutoObservable, observable } from "mobx"
 import { timeframeConfig } from "../utils/constants/polymarket-constants"
@@ -152,6 +153,7 @@ class EventsClass {
 		outcomeClobTokenId: ClobTokenId,
 		interval: keyof OutcomePriceHistories,
 		priceHistory: PriceHistoryEntry[]
+	// eslint-disable-next-line max-params
 	): void => {
 		const event = this.events.get(eventSlug)
 		if (!event) return
@@ -176,6 +178,7 @@ class EventsClass {
 		outcomeClobTokenId: ClobTokenId,
 		interval: keyof OutcomePriceHistories,
 		isRetrieving: boolean
+	// eslint-disable-next-line max-params
 	): void => {
 		const event = this.events.get(eventSlug)
 		if (!event) return

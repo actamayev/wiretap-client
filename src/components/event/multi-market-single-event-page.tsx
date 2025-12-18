@@ -23,7 +23,7 @@ import retrieveEventPriceHistory from "../../utils/events/retrieve-event-price-h
 import { timeframeConfig } from "../../utils/constants/polymarket-constants"
 import { formatPercentage } from "../../utils/format"
 
-// eslint-disable-next-line max-lines-per-function
+// eslint-disable-next-line max-lines-per-function, complexity
 function MultiMarketSingleEventPage({ eventSlug }: { eventSlug: EventSlug }): React.ReactNode {
 	useEffect((): void => {
 		void retrieveSingleEvent(eventSlug)
@@ -97,6 +97,7 @@ function MultiMarketSingleEventPage({ eventSlug }: { eventSlug: EventSlug }): Re
 	const fetchTimeframeData = useCallback(async (
 		timeframe: keyof OutcomePriceHistories,
 		skipTimeframeUpdate = false
+	// eslint-disable-next-line complexity
 	): Promise<void> => {
 		if (!selectedOutcome || !event || !selectedMarket) return
 
