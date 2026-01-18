@@ -2,8 +2,6 @@
 
 A modern web application for paper trading prediction markets. Users can create portfolios, discover prediction markets, track performance, and simulate trading with real market data from Polymarket.
 
-**Live Site**: [wiretap.pro](https://wiretap.pro)
-
 ## Features
 
 ### 📊 Market Discovery
